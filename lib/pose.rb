@@ -121,6 +121,7 @@ module Pose
         self.words << Word.find_or_create_by_text(word_to_add)
       end
     end
+  end
 end
 
 
