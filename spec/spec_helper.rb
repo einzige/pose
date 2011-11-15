@@ -8,6 +8,7 @@ require "lib/pose"
 require 'lib/pose_word.rb'
 require 'lib/pose_assignment.rb'
 require 'active_support/core_ext/string'
+require 'meta_where'
 
 # Configure Rails Environment
 ENV["RAILS_ENV"] = "test"

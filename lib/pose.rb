@@ -16,38 +16,6 @@ module Pose
     before_destroy :delete_pose_words
   end
   
-  module ClassMethods
-
-    def stored_block= value
-      @stored_block = value
-    end
-    
-    def stored_block
-      @stored_block
-    end
-    
-    # Returns all objects matching the given query.
-    def search query
-      ids = {}
-      query.split(' ').each do |query_word|
-        WordAssignment.joins(:word) \
-                      .where(:words => {:text.matches => "#{query_word}%"}) \
-                      .each do |word_assignment|
-          ids[word_assignment.wordable_type] = [] unless ids[word_assignment.wordable_type]
-          ids[word_assignment.wordable_type] << word_assignment.wordable_id
-        end
-      end
-
-      result = {}
-      ids.each do |key, value|
-        my_class = Kernel.const_get(key)
-        sym = key.downcase.pluralize.to_sym
-        result[sym] = my_class.where :id => value
-      end
-      result
-    end
-  end
-
   module InstanceMethods
     
     # Updates the associated words for this object in the database.
@@ -131,7 +99,32 @@ module Pose
     end
     result.uniq
   end
-  
+
+  # Returns all objects matching the given query.
+  def Pose.search query, classes = :all
+
+    classes = [classes].flatten
+
+    # Get the ids of the results.
+    result_classes_and_ids = {}
+    query.split(' ').each do |query_word|
+      PoseAssignment.joins(:pose_word) \
+                    .where(:pose_words => {:text.matches => "#{query_word}%"}) \
+                    .each do |pose_assignment|
+        result_classes_and_ids[pose_assignment.posable_type] ||= []
+        result_classes_and_ids[pose_assignment.posable_type] << pose_assignment.posable_id
+      end
+    end
+
+    # Load the results by id.
+    result = {}
+    result_classes_and_ids.each do |class_name, ids|
+      result_class = Kernel.const_get(class_name)
+      next if classes != [:all] and !classes.index result_class
+      result[result_class] = result_class.where :id => ids
+    end
+    result
+  end
 end
 
 

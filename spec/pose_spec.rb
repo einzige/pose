@@ -2,7 +2,15 @@ require "spec_helper"
 
 ActiveRecord::Base.establish_connection(:adapter => "sqlite3", :database => ":memory:")
 
-class TestPosable < ActiveRecord::Base
+class PosableOne < ActiveRecord::Base
+  posify
+  
+  def pose_content
+    [text]
+  end
+end
+
+class PosableTwo < ActiveRecord::Base
   posify
   
   def pose_content
@@ -13,7 +21,11 @@ end
 def setup_db
   ActiveRecord::Schema.define(:version => 1) do
 
-    create_table 'test_posables' do |t|
+    create_table 'posable_ones' do |t|
+      t.string 'text'
+    end
+
+    create_table 'posable_twos' do |t|
       t.string 'text'
     end
 
@@ -36,7 +48,7 @@ def teardown_db
 end
 
 describe Pose do
-  subject { TestPosable.new }
+  subject { PosableOne.new }
 
   before :all do
     setup_db
@@ -46,6 +58,13 @@ describe Pose do
   after :all do
     teardown_db
     Pose::CONFIGURATION[:search_in_tests] = false
+  end
+  
+  before :each do
+    PosableOne.delete_all
+    PosableTwo.delete_all
+    PoseAssignment.delete_all
+    PoseWord.delete_all
   end
   
   describe 'associations' do
@@ -167,5 +186,58 @@ describe Pose do
 
       result.should eql([])
     end
+  end
+
+  describe 'search' do
+    
+    it 'works' do
+      pos1 = PosableOne.create :text => 'one'
+      
+      result = Pose.search 'one'
+      
+      result.should have(1).items
+      result[PosableOne].should have(1).items
+      result[PosableOne][0].should == pos1
+    end
+    
+    it 'returns an empty array if nothing matches' do
+      pos1 = PosableOne.create :text => 'one'
+      
+      result = Pose.search 'two'
+      
+      result.should == {}
+    end
+    
+    it 'returns all different classes by default' do
+      pos1 = PosableOne.create :text => 'foo'
+      pos2 = PosableTwo.create :text => 'foo'
+      
+      result = Pose.search 'foo'
+      
+      result.should have(2).items
+      result[PosableOne].should == [pos1]
+      result[PosableTwo].should == [pos2]
+    end
+    
+    it 'allows to provide different classes to return' do
+      pos1 = PosableOne.create :text => 'foo'
+      pos2 = PosableTwo.create :text => 'foo'
+      
+      result = Pose.search 'foo', [PosableOne, PosableTwo]
+      
+      result.should have(2).items
+      result[PosableOne].should == [pos1]
+      result[PosableTwo].should == [pos2]
+    end
+    
+    it 'returns only instances of the given classes' do
+      pos1 = PosableOne.create :text => 'one'
+      pos2 = PosableTwo.create :text => 'one'
+      
+      result = Pose.search 'one', PosableOne
+      
+      result.should have(1).items
+      result[PosableOne].should == [pos1]
+    end    
   end
 end

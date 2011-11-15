@@ -17,7 +17,8 @@ Gem::Specification.new do |s|
   s.test_files = Dir["test/**/*"]
 
   s.add_dependency "activerecord", "~> 3"
-  s.add_dependency "activesupport", "~> 3 "
+  s.add_dependency "activesupport", "~> 3"
+  s.add_dependency "meta_where"  
 
   s.add_development_dependency "sqlite3"
   s.add_development_dependency "rspec"
