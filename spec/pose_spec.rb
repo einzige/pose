@@ -193,7 +193,7 @@ describe Pose do
     it 'works' do
       pos1 = PosableOne.create :text => 'one'
       
-      result = Pose.search 'one'
+      result = Pose.search 'one', PosableOne
       
       result.should have(1).items
       result[PosableOne].should have(1).items
@@ -203,16 +203,16 @@ describe Pose do
     it 'returns an empty array if nothing matches' do
       pos1 = PosableOne.create :text => 'one'
       
-      result = Pose.search 'two'
+      result = Pose.search 'two', PosableOne
       
-      result.should == {}
+      result.should == { PosableOne => [] }
     end
     
     it 'returns all different classes by default' do
       pos1 = PosableOne.create :text => 'foo'
       pos2 = PosableTwo.create :text => 'foo'
       
-      result = Pose.search 'foo'
+      result = Pose.search 'foo', [PosableOne, PosableTwo]
       
       result.should have(2).items
       result[PosableOne].should == [pos1]
@@ -238,6 +238,26 @@ describe Pose do
       
       result.should have(1).items
       result[PosableOne].should == [pos1]
-    end    
+    end
+    
+    it 'returns only objects that match all given query words' do
+      pos1 = PosableOne.create :text => 'one two'
+      pos2 = PosableOne.create :text => 'one three'
+      pos3 = PosableOne.create :text => 'two three'
+      
+      result = Pose.search 'two one', PosableOne
+      
+      result.should have(1).items
+      result[PosableOne].should == [pos1]
+    end
+    
+    it 'returns nothing if searching for a non-existing word' do
+      pos1 = PosableOne.create :text => 'one two'
+      
+      result = Pose.search 'one zonk', PosableOne
+      
+      result.should have(1).items
+      result[PosableOne].should == []
+    end
   end
 end

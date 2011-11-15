@@ -101,28 +101,43 @@ module Pose
   end
 
   # Returns all objects matching the given query.
-  def Pose.search query, classes = :all
-
+  def Pose.search query, classes
+    
+    # Turn 'classes' into an array.
     classes = [classes].flatten
+    classes_names = classes.map &:name
 
     # Get the ids of the results.
     result_classes_and_ids = {}
     query.split(' ').each do |query_word|
+      current_word_classes_and_ids = {}
+      classes.each { |clazz| current_word_classes_and_ids[clazz.name] = [] }
       PoseAssignment.joins(:pose_word) \
-                    .where(:pose_words => {:text.matches => "#{query_word}%"}) \
+                    .where(:pose_words => {:text.matches => "#{query_word}%"},
+                           :posable_type => classes_names) \
                     .each do |pose_assignment|
-        result_classes_and_ids[pose_assignment.posable_type] ||= []
-        result_classes_and_ids[pose_assignment.posable_type] << pose_assignment.posable_id
+        current_word_classes_and_ids[pose_assignment.posable_type] << pose_assignment.posable_id
+      end
+      
+      current_word_classes_and_ids.each do |class_name, ids|
+        if result_classes_and_ids.has_key? class_name
+          result_classes_and_ids[class_name] = result_classes_and_ids[class_name] & ids
+        else
+          result_classes_and_ids[class_name] = ids
+        end
       end
     end
 
     # Load the results by id.
     result = {}
+    classes.each { |clazz| result[clazz] = [] }
     result_classes_and_ids.each do |class_name, ids|
       result_class = Kernel.const_get(class_name)
-      next if classes != [:all] and !classes.index result_class
+      next unless classes.include? result_class
+      next if ids.empty?
       result[result_class] = result_class.where :id => ids
     end
+
     result
   end
 end
