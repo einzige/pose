@@ -135,6 +135,6 @@ module Pose
 end
 
 
-def posify &block
+def posify
   include Pose
 end
