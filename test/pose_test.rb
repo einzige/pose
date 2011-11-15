@@ -7,13 +7,13 @@ def setup_db
       t.string 'text'
     end
 
-    create_table "pose_assignments", :force => true do |t|
+    create_table "pose_assignments" do |t|
       t.integer "word_id",                     :null => false
       t.integer "wordable_id",                 :null => false
       t.string  "wordable_type", :limit => 20, :null => false
     end
 
-    create_table "words", :force => true do |t|
+    create_table "words" do |t|
       t.string "text", :limit => 80, :null => false
     end
   end
@@ -33,13 +33,14 @@ end
 
 
 class PoseTest < ActiveSupport::TestCase
+
   def setup
      setup_db
-   end
+  end
 
-   def teardown
-     teardown_db
-   end
+  def teardown
+   teardown_db
+  end
 
   test "truth" do
     assert_kind_of Module, Pose
@@ -47,6 +48,7 @@ class PoseTest < ActiveSupport::TestCase
   
   test 'foo' do
     t = TestPosable.new
+    assert
   end
   
 end

@@ -39,6 +39,7 @@ GEM
     builder (3.0.0)
     diff-lcs (1.1.3)
     erubis (2.7.0)
+    hashie (1.1.0)
     hike (1.2.1)
     i18n (0.6.0)
     jquery-rails (1.0.17)
@@ -103,6 +104,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  hashie
   jquery-rails
   pose!
   rspec
