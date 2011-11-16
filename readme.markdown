@@ -1,12 +1,13 @@
 = Pose
 
 Pose  ("Polymorphic Search") allows fulltext search for ActiveRecord objects.
-* You can search over several ActiveRecord classes at once.
-* The searchable content per document can be freely defined.
-* It uses the built-in database, no specialized search engines are necessary.
-* It works with a variety of data store types, ranging from SQL databases to NoSQL column stores
-  like Google's data store.
-* The search runs very fast.
+* Searches over several ActiveRecord classes at once.
+* The searchable fulltext content per document can be freely customized.
+* It uses the normal Rails database, no specialized search engines are necessary.
+* The algorithm is designed to work with a variety of data store types, 
+  basically anything that allows for range queries: SQL databases and NoSQL data stores. 
+* The search runs very fast, doing simple queries over fully indexed columns.
+* The Pose search index can provide data to autocomplete search fields.
 
 
 = Installation
@@ -20,6 +21,63 @@ Pose  ("Polymorphic Search") allows fulltext search for ActiveRecord objects.
 3. Create the database tables for pose.
     rails generate pose
     rake db:migrate
+    
+   Pose creates two tables in your database:
+   * pose_words: index of all the words that occur in the searchable content.
+   * pose_assignments: lists which word occurs in which document.
 
-4. Make your ActiveRecord models searchable.
 
+= Make your ActiveRecord models searchable.
+
+    class MyClass < ActiveRecord::Base
+      
+      # This line tells Pose that your class should be searchable. 
+      # Once Pose knows that, it will update the search index every time an instance is saved or deleted.
+      posify
+  
+      # This method returns the fulltext content that should be indexed.
+      # This method returns the text that should be indexed for each instance of the class.
+      # Note that you can return whatever content you want here, not only data from this object but also
+      # data from related objects, class names, etc.
+      def pose_content
+      
+        # Only active instances should show up in search results.
+        return nil unless status == :active
+        
+        # Return the fulltext content as an array of strings.
+        [self.foo, self.parent.bar, self.children.map &:name]
+      end
+    end
+
+
+= Maintain the search index.
+
+The search index is automatically updated when Objects are saved or deleted.
+To add existing records in the database without having to save them again, 
+or recreate the search index, please run 
+    rake pose:reindex_all[MyClass]
+
+
+= Perform a search
+
+    result = Pose.search 'foo', [MyClass, MyOtherClass]
+
+This searches for all instances of MyClass and MyOtherClass for 'foo', 
+and returns a hash that looks like this:
+    { 
+      MyClass => [ <myclass instance 1>, <myclass instance 2> ],
+      MyOtherClass => [ ],
+    }
+    
+In this example, it found two results of type MyClass and no results of type MyOtherClass.
+
+
+= Development
+
+If you find a bug, have a question, or a better idea, please open an issue on the 
+<a href="https://github.com/kevgo/pose/issues">Pose issue tracker</a>. 
+Or, clone the repository, make your changes, and submit a pull request.
+
+== Unit Tests
+
+    rspec spec/pose_spec.rb
