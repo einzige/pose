@@ -1,0 +1,6 @@
+lib/generators/pose_generator.rb 18e851e12b260fa23c54ae2a70fc34903e35bc74
+lib/pose.rb cc035052acd2f08bf7ab028f021b2481c08859ab
+lib/generators/templates/migration.rb 79c8d3b5207d3f3e5f17971e8b03ea5bba515b20
+lib/pose_assignment.rb 9b97ff223e2a1f2abaadbfd91bc3f470ada40deb
+lib/pose/version.rb bd21235dfb0dcbfb31386988926356b4f1d4a53c
+lib/pose_word.rb 4ed68f0328d0103c0566b5afe8cfd7680ec1919b

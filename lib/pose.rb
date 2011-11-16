@@ -1,6 +1,4 @@
-#
 # Polymorphic search for ActiveRecord objects.
-#
 module Pose
   extend ActiveSupport::Concern
 
@@ -12,14 +10,14 @@ module Pose
     has_many :pose_assignments, :as => :posable
     has_many :pose_words, :through => :pose_assignments
 
-    after_save :change_pose_words
-    before_destroy :delete_pose_words
+    after_save :update_pose_index
+    before_destroy :delete_pose_index
   end
   
   module InstanceMethods
     
     # Updates the associated words for this object in the database.
-    def change_pose_words
+    def update_pose_index
 
       # Don't do this in tests.
       return if Rails.env == 'test' and !CONFIGURATION[:search_in_tests]
@@ -28,7 +26,7 @@ module Pose
     end
 
     # Removes this objects from the search index.
-    def delete_pose_words
+    def delete_pose_index
       return if Rails.env == 'test' and !CONFIGURATION[:search_in_tests]
       self.words.clear
     end
@@ -36,6 +34,8 @@ module Pose
     # Helper method.
     # Updates the search words with the text returned by search_strings.
     def update_pose_words
+
+      # Step 1: get an array of all words for the current object.
       new_words = []
       search_strings = self.pose_content
       search_strings.flatten.each do |text|
@@ -46,32 +46,41 @@ module Pose
       end
       new_words.uniq!
 
-      # Remove now obsolete words from search index.
-      Pose.get_words_to_remove(self.pose_words, new_words).each do |word_to_remove|
-        self.pose_words.delete word_to_remove
-      end
-
-      # Add new words to the search index.
+      # Step 2: Add new words to the search index.
       Pose.get_words_to_add(self.pose_words, new_words).each do |word_to_add|
         self.pose_words << PoseWord.find_or_create_by_text(word_to_add)
+      end
+
+      # Step 3: Remove now obsolete words from search index.
+      Pose.get_words_to_remove(self.pose_words, new_words).each do |word_to_remove|
+        self.pose_words.delete word_to_remove
       end
     end
   end
 
-  # Helper method.
   # Returns all strings that are in new_words, but not in existing_words.
+  # Helper method.
+  # @param [Array<String>] existing_words The words that are already associated with the object.
+  # @param [Array<String>] new_words The words thet the object should have from now on.
+  # @return [Array<String>] The words that need to be added to the existing_words array.
   def Pose.get_words_to_add existing_words, new_words
     new_words - existing_words.map(&:text)
   end
 
-  # Helper method.
   # Returns the id of all word objects that are in existing_words, but not in new_words.
+  # Helper method.
+  # @param [Array<String>] existing_words The words that are already associated with the object.
+  # @param [Array<String>] new_words The words thet the object should have from now on.
+  # @return [Array<String>] The words that need to be removed from the existing_words array.
   def Pose.get_words_to_remove existing_words, new_words
     existing_words.map do |existing_word|
       new_words.include?(existing_word.text) ? nil : existing_word
     end.compact
   end
-  
+
+  # Returns whether the given string is a URL.
+  # @param [String] word The string to check.
+  # @return [Boolean]
   def Pose.is_url word
     uri = URI::parse word
     return uri.scheme == 'http'
@@ -79,7 +88,9 @@ module Pose
     false
   end
   
-  # Reduces the given word to it's search form.
+  # Simplifies the given word to a generic search form.
+  # @param [String] raw_word The word to make searchable.
+  # @return [String] The stemmed version of the word.
   def Pose.root_word raw_word
     result = []
     raw_word_copy = raw_word[0..-1]
@@ -101,6 +112,8 @@ module Pose
   end
 
   # Returns all objects matching the given query.
+  # @param [String] query The search query as entered by the user.
+  # @param [Array<String>] classes The classes that should be returned.
   def Pose.search query, classes
     
     # Turn 'classes' into an array.
