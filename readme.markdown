@@ -59,6 +59,7 @@ Pose  ("Polymorphic Search") allows fulltext search for ActiveRecord objects.
 The search index is automatically updated when Objects are saved or deleted.
 To add existing records in the database without having to save them again, 
 or recreate the search index, please run 
+
     rake pose:reindex_all[MyClass]
 
 
@@ -68,6 +69,7 @@ or recreate the search index, please run
 
 This searches for all instances of MyClass and MyOtherClass for 'foo', 
 and returns a hash that looks like this:
+
     { 
       MyClass => [ <myclass instance 1>, <myclass instance 2> ],
       MyOtherClass => [ ],
