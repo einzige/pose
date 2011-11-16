@@ -1,4 +1,4 @@
-= Pose
+# Pose
 
 Pose  ("Polymorphic Search") allows fulltext search for ActiveRecord objects.
 * Searches over several ActiveRecord classes at once.
@@ -10,7 +10,7 @@ Pose  ("Polymorphic Search") allows fulltext search for ActiveRecord objects.
 * The Pose search index can provide data to autocomplete search fields.
 
 
-= Installation
+# Installation
 
 1. Add the gem to your Gemfile.
     gem 'pose'
@@ -27,7 +27,7 @@ Pose  ("Polymorphic Search") allows fulltext search for ActiveRecord objects.
    * pose_assignments: lists which word occurs in which document.
 
 
-= Make your ActiveRecord models searchable.
+# Make your ActiveRecord models searchable.
 
     class MyClass < ActiveRecord::Base
       
@@ -50,7 +50,7 @@ Pose  ("Polymorphic Search") allows fulltext search for ActiveRecord objects.
     end
 
 
-= Maintain the search index.
+# Maintain the search index.
 
 The search index is automatically updated when Objects are saved or deleted.
 To add existing records in the database without having to save them again, 
@@ -58,7 +58,7 @@ or recreate the search index, please run
     rake pose:reindex_all[MyClass]
 
 
-= Perform a search
+# Perform a search
 
     result = Pose.search 'foo', [MyClass, MyOtherClass]
 
@@ -72,12 +72,12 @@ and returns a hash that looks like this:
 In this example, it found two results of type MyClass and no results of type MyOtherClass.
 
 
-= Development
+# Development
 
 If you find a bug, have a question, or a better idea, please open an issue on the 
 <a href="https://github.com/kevgo/pose/issues">Pose issue tracker</a>. 
 Or, clone the repository, make your changes, and submit a pull request.
 
-== Unit Tests
+## Unit Tests
 
     rspec spec/pose_spec.rb
