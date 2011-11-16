@@ -75,7 +75,7 @@ describe Pose do
     end
   end
 
-  describe 'change_pose_words' do
+  describe 'update_pose_index' do
 
     context "in the 'test' environment" do
       after :each do
@@ -85,13 +85,13 @@ describe Pose do
       it "doesn't calls update_pose_words in tests if the test flag is not enabled" do
         Pose::CONFIGURATION[:search_in_tests] = false
         subject.should_not_receive :update_pose_words
-        subject.change_pose_words
+        subject.update_pose_index
       end
 
       it "calls update_pose_words in tests if the test flag is enabled" do
         Pose::CONFIGURATION[:search_in_tests] = true
         subject.should_receive :update_pose_words
-        subject.change_pose_words
+        subject.update_pose_index
       end
     end
     
@@ -107,7 +107,7 @@ describe Pose do
       
       it "calls update_pose_words" do
         subject.should_receive :update_pose_words
-        subject.change_pose_words
+        subject.update_pose_index
       end
     end
   end

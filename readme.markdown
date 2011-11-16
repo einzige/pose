@@ -87,4 +87,4 @@ Or, clone the repository, make your changes, and submit a pull request.
 
 ## Unit Tests
 
-    rspec spec/pose_spec.rb
+    rake spec
