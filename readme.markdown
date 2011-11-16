@@ -4,24 +4,23 @@ Pose  ("Polymorphic Search") allows fulltext search for ActiveRecord objects.
 
 * Searches over several ActiveRecord classes at once.
 * The searchable fulltext content per document can be freely customized.
-* It uses the normal Rails database, no specialized search engines are necessary.
-* The algorithm is designed to work with a variety of data store types, 
-  basically anything that allows for range queries: SQL databases and NoSQL data stores. 
+* Uses the Rails database, no sparate search engines are necessary.
+* The algorithm is designed to work with any data store that allows for range queries: SQL and NoSQL. 
 * The search runs very fast, doing simple queries over fully indexed columns.
-* The Pose search index can provide data to autocomplete search fields.
+* The search index provides data for autocomplete search fields.
 
 
 # Installation
 
 1. Add the gem to your Gemfile.
-    gem 'pose'
+        gem 'pose'
 
 2. Update your gem bundle.
-    bundle install
+        bundle install
 
 3. Create the database tables for pose.
-    rails generate pose
-    rake db:migrate
+        rails generate pose
+        rake db:migrate
     
    Pose creates two tables in your database:
 
