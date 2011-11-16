@@ -1,6 +1,7 @@
 # Pose
 
 Pose  ("Polymorphic Search") allows fulltext search for ActiveRecord objects.
+
 * Searches over several ActiveRecord classes at once.
 * The searchable fulltext content per document can be freely customized.
 * It uses the normal Rails database, no specialized search engines are necessary.
@@ -23,6 +24,7 @@ Pose  ("Polymorphic Search") allows fulltext search for ActiveRecord objects.
     rake db:migrate
     
    Pose creates two tables in your database:
+
    * pose_words: index of all the words that occur in the searchable content.
    * pose_assignments: lists which word occurs in which document.
 
