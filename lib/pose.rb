@@ -132,7 +132,7 @@ module Pose
     result = {}
     classes.each { |clazz| result[clazz] = [] }
     result_classes_and_ids.each do |class_name, ids|
-      result_class = Kernel.const_get(class_name)
+      result_class = Kernel.const_get class_name
       next unless classes.include? result_class
       next if ids.empty?
       result[result_class] = result_class.where :id => ids
