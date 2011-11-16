@@ -75,8 +75,9 @@ and returns a hash that looks like this:
       MyOtherClass => [ ],
     }
     
-In this example, it found two results of type MyClass and no results of type MyOtherClass.
+In this example, it found two results of type _MyClass_ and no results of type _MyOtherClass_.
 
+Happy searching!  :)
 
 # Development
 
