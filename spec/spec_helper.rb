@@ -7,6 +7,7 @@ require 'active_record'
 require "lib/pose"
 require 'lib/pose_word.rb'
 require 'lib/pose_assignment.rb'
+require "lib/pose/posifier.rb"
 require 'active_support/core_ext/string'
 require 'meta_where'
 
