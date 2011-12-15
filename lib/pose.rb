@@ -78,7 +78,7 @@ module Pose
     # @return [Array<String>]
     def get_words_to_remove existing_words, new_words
       existing_words.map do |existing_word|
-        existing_word if new_words.include?(existing_word.text)
+        existing_word unless new_words.include?(existing_word.text)
       end.compact
     end
     
@@ -154,12 +154,12 @@ module Pose
       # Load the results by id.
       {}.tap do |result|
         result_classes_and_ids.each do |class_name, ids|
-          unless ids.empty?
-            result_class = Kernel.const_get class_name
+          result_class = Kernel.const_get class_name
 
-            if classes.include? result_class
-              result[result_class] = result_class.where :id => ids
-            end
+          if ids.any? && classes.include?(result_class)
+            result[result_class] = result_class.where :id => ids
+          else
+            result[result_class] = []
           end
         end
       end
