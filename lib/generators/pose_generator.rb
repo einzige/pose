@@ -12,5 +12,4 @@ class PoseGenerator < Rails::Generators::Base
   def self.next_migration_number(path)
       Time.now.utc.strftime("%Y%m%d%H%M%S")
   end
-
 end
