@@ -3,19 +3,11 @@ require "spec_helper"
 ActiveRecord::Base.establish_connection(:adapter => "sqlite3", :database => ":memory:")
 
 class PosableOne < ActiveRecord::Base
-  posify
-  
-  def pose_content
-    [text]
-  end
+  posify { [text] }
 end
 
 class PosableTwo < ActiveRecord::Base
-  posify
-  
-  def pose_content
-    [text]
-  end
+  posify { [text] }
 end
 
 def setup_db

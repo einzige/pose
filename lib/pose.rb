@@ -14,6 +14,8 @@ module Pose
 
     after_save :change_pose_words
     before_destroy :delete_pose_words
+
+    cattr_accessor :pose_content
   end
 
   # Asks if model should perform search.
@@ -38,7 +40,7 @@ module Pose
     # Helper method.
     # Updates the search words with the text returned by search_strings.
     def update_pose_words
-      search_strings = self.pose_content
+      search_strings = instance_eval &(self.class.pose_content)
 
       new_words = search_strings.flatten.reject(&:blank?).map do |text|
         text.to_s.split(' ').map { |word| Pose.root_word(word) }
