@@ -3,8 +3,9 @@ module Pose
     extend ActiveSupport::Concern
 
     module ClassMethods
-      def posify
+      def posify &block
         include Pose
+        self.pose_content = block_given? ? block : :pose_content.to_proc
       end
     end
   end
