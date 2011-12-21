@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
   s.files = Dir["{doc,lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.markdown"]
   s.test_files = Dir["spec/**/*"]
 
-  s.add_dependency "rails", ">= 3"
+  s.add_dependency "rails", ">= 3.0.0"
   s.add_dependency "meta_where"  
   s.add_dependency "rake"
 
