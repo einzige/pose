@@ -40,8 +40,7 @@ Pose  ("Polymorphic Search") allows fulltext search for ActiveRecord objects.
       #
       # The given block must return the searchble content as a string.
       # Note that you can return whatever content you want here, 
-      # not only data from this object but also
-      # data from related objects, class names, etc.
+      # not only data from this object but also data from related objects, class names, etc.
       posify do
 
         # Only active instances should show up in search results.
