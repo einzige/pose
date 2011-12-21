@@ -22,7 +22,7 @@ def setup_db
     end
 
     create_table "pose_assignments" do |t|
-      t.integer "pose_word_id",                     :null => false
+      t.integer "pose_word_id",               :null => false
       t.integer "posable_id",                 :null => false
       t.string  "posable_type", :limit => 20, :null => false
     end
@@ -38,6 +38,7 @@ def teardown_db
     ActiveRecord::Base.connection.drop_table(table)
   end
 end
+
 
 describe Pose do
   subject { PosableOne.new }

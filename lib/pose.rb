@@ -38,13 +38,10 @@ module Pose
     # Helper method.
     # Updates the search words with the text returned by search_strings.
     def update_pose_words
-      search_strings = instance_eval &(self.class.pose_content)
 
       # Step 1: get an array of all words for the current object.
-      search_strings = instance_eval &(self.class.pose_content)
-      new_words = search_strings.flatten.reject(&:blank?).map do |text|
-        text.to_s.split(' ').map { |word| Pose.root_word(word) }
-      end.flatten.uniq
+      search_string = instance_eval &(self.class.pose_content)
+      new_words = search_string.to_s.split(' ').map { |word| Pose.root_word(word) }.flatten.uniq
 
       # Step 2: Add new words to the search index.
       Pose.get_words_to_add(self.pose_words, new_words).each do |word_to_add|

@@ -37,19 +37,20 @@ Pose  ("Polymorphic Search") allows fulltext search for ActiveRecord objects.
       
       # This line tells Pose that your class should be searchable. 
       # Once Pose knows that, it will update the search index every time an instance is saved or deleted.
-      posify
-  
-      # This method tells Pose the fulltext content that should be indexed.
+      #
+      # The given block must return the searchble content as a string.
       # Note that you can return whatever content you want here, 
       # not only data from this object but also
       # data from related objects, class names, etc.
-      def pose_content
-      
+      posify do
+
         # Only active instances should show up in search results.
         return unless status == :active
         
-        # Return the fulltext content as an array of strings.
-        [self.foo, self.parent.bar, self.children.map &:name]
+        # Return the fulltext content.
+        [ self.foo,
+          self.parent.bar,
+          self.children.map &:name ].join ' '
       end
     end
 
@@ -67,8 +68,8 @@ or recreate the search index, please run
 
     result = Pose.search 'foo', [MyClass, MyOtherClass]
 
-This searches for all instances of MyClass and MyOtherClass for 'foo', 
-and returns a hash that looks like this:
+This searches for all instances of MyClass and MyOtherClass that contain the word 'foo'.
+The method returns a hash that looks like this:
 
     { 
       MyClass => [ <myclass instance 1>, <myclass instance 2> ],
@@ -78,6 +79,7 @@ and returns a hash that looks like this:
 In this example, it found two results of type _MyClass_ and no results of type _MyOtherClass_.
 
 Happy searching!  :)
+
 
 # Development
 
