@@ -9,11 +9,11 @@ Gem::Specification.new do |s|
   s.version     = Pose::VERSION
   s.authors     = ["Kevin Goslar"]
   s.email       = ["kevin.goslar@gmail.com"]
-  s.homepage    = "TODO"
+  s.homepage    = "http://github.com/kevgo/pose"
   s.summary     = "A polymorphic, storage-system independent search engine for Ruby on Rails."
-  s.description = "TODO: Description of Pose."
+  s.description = "Pose ('Polymorphic Search') allows fulltext search for ActiveRecord objects."
 
-  s.files = Dir["{app,config,db,lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.rdoc"]
+  s.files = Dir["{doc,lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.markdown"]
   s.test_files = Dir["spec/**/*"]
 
   s.add_dependency "rails", ">= 3"
