@@ -2,56 +2,8 @@ require "spec_helper"
 
 ActiveRecord::Base.establish_connection(:adapter => "sqlite3", :database => ":memory:")
 
-class PosableOne < ActiveRecord::Base
-  posify { [text] }
-end
-
-class PosableTwo < ActiveRecord::Base
-  posify { [text] }
-end
-
-def setup_db
-  ActiveRecord::Schema.define(:version => 1) do
-
-    create_table 'posable_ones' do |t|
-      t.string 'text'
-    end
-
-    create_table 'posable_twos' do |t|
-      t.string 'text'
-    end
-
-    create_table "pose_assignments" do |t|
-      t.integer "pose_word_id",               :null => false
-      t.integer "posable_id",                 :null => false
-      t.string  "posable_type", :limit => 20, :null => false
-    end
-
-    create_table "pose_words" do |t|
-      t.string "text", :limit => 80, :null => false
-    end
-  end
-end
-
-def teardown_db
-  ActiveRecord::Base.connection.tables.each do |table|
-    ActiveRecord::Base.connection.drop_table(table)
-  end
-end
-
-
 describe Pose do
   subject { PosableOne.new }
-
-  before :all do
-    setup_db
-    Pose::CONFIGURATION[:search_in_tests] = true
-  end
-
-  after :all do
-    teardown_db
-    Pose::CONFIGURATION[:search_in_tests] = false
-  end
   
   before :each do
     PosableOne.delete_all

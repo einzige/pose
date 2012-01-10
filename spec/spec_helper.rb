@@ -11,6 +11,9 @@ require 'pose_assignment.rb'
 require "pose/posifier.rb"
 require 'active_support/core_ext/string'
 require 'meta_where'
+require 'faker'
+require 'factory_girl'
+FactoryGirl.find_definitions
 
 # Configure Rails Environment
 ENV["RAILS_ENV"] = "test"
@@ -21,7 +24,6 @@ Rails = Hashie::Mash.new({:env => 'test'})
 
 
 # Load support files
-#Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
 #Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f}
 
@@ -40,6 +42,15 @@ RSpec.configure do |config|
   # examples within a transaction, remove the following line or assign false
   # instead of true.
 #  config.use_transactional_fixtures = true
+
+  config.before :suite do
+    setup_db
+    Pose::CONFIGURATION[:search_in_tests] = true
+  end
+  
+  config.after :suite do 
+    teardown_db
+  end
 end
 
 # Verifies that a taggable object has the given tags.
@@ -56,5 +67,43 @@ RSpec::Matchers.define :have_pose_words do |expected|
   failure_message_for_should do |actual|
     texts = actual.pose_words.map &:text
     "expected that subject would have pose words [#{expected.join ', '}], but it has [#{texts.join ', '}]"
+  end
+end
+
+
+class PosableOne < ActiveRecord::Base
+  posify { text }
+end
+
+class PosableTwo < ActiveRecord::Base
+  posify { text }
+end
+
+def setup_db
+  ActiveRecord::Schema.define(:version => 1) do
+
+    create_table 'posable_ones' do |t|
+      t.string 'text'
+    end
+
+    create_table 'posable_twos' do |t|
+      t.string 'text'
+    end
+
+    create_table "pose_assignments" do |t|
+      t.integer "pose_word_id",               :null => false
+      t.integer "posable_id",                 :null => false
+      t.string  "posable_type", :limit => 20, :null => false
+    end
+
+    create_table "pose_words" do |t|
+      t.string "text", :limit => 80, :null => false
+    end
+  end
+end
+
+def teardown_db
+  ActiveRecord::Base.connection.tables.each do |table|
+    ActiveRecord::Base.connection.drop_table(table)
   end
 end
