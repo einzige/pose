@@ -7,7 +7,7 @@ module Pose
   CONFIGURATION = { :search_in_tests => false }
 
   included do
-    has_many :pose_assignments, :as => :posable
+    has_many :pose_assignments, :as => :posable, :dependent => :delete_all
     has_many :pose_words, :through => :pose_assignments
 
     after_save :update_pose_index

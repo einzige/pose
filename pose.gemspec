@@ -20,6 +20,8 @@ Gem::Specification.new do |s|
   s.add_dependency "meta_where"  
   s.add_dependency "rake"
 
+  s.add_development_dependency "factory_girl"
+  s.add_development_dependency "faker"
   s.add_development_dependency "hashie"
   s.add_development_dependency "rspec"
   s.add_development_dependency "sqlite3"
