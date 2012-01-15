@@ -1,4 +1,5 @@
-class PoseMigrations < ActiveRecord::Migration
+class AddPoseTables < ActiveRecord::Migration
+
   def self.up
     create_table "pose_assignments" do |t|
       t.integer "pose_word_id",               :null => false
@@ -6,8 +7,8 @@ class PoseMigrations < ActiveRecord::Migration
       t.string  "posable_type", :limit => 40, :null => false
     end
 
-    add_index "pose_assignments", :word_id
-    add_index "pose_assignments", :wordable_id
+    add_index "pose_assignments", :pose_word_id
+    add_index "pose_assignments", :posable_id
 
     create_table "pose_words" do |t|
       t.string "text", :limit => 80, :null => false

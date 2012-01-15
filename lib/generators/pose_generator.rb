@@ -6,7 +6,7 @@ class PoseGenerator < Rails::Generators::Base
   source_root File.expand_path('../templates', __FILE__)
   
   def create_migration_file
-    migration_template 'migration.rb', 'db/migrate/pose.rb'
+    migration_template 'migration.rb', 'db/migrate/add_pose_tables.rb'
   end
   
   def self.next_migration_number(path)
