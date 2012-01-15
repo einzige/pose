@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    pose (0.0.3)
+    pose (0.1.1)
       meta_where
       rails (>= 3.0.0)
       rake
