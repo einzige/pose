@@ -13,7 +13,7 @@ class PoseMigrations < ActiveRecord::Migration
       t.string "text", :limit => 80, :null => false
     end
 
-    add_index "words", :text
+    add_index "pose_words", :text
   end
 
   def self.down
