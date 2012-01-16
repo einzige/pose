@@ -281,10 +281,10 @@ describe Pose do
         Factory :posable_one, :text => 'foo three'
         Factory :posable_one, :text => 'foo four'
 
-        result = Pose.search 'foo', PosableOne, 2
+        result = Pose.search 'foo', PosableOne, 3
         
         puts result.inspect
-        result[PosableOne].should have(2).items        
+        result[PosableOne].should have(3).items
       end
     end
   end

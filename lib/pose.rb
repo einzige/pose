@@ -158,19 +158,13 @@ module Pose
         end
       end
 
-      # Truncate id lists to the given limits.
-      if limit
-        result_classes_and_ids.each do |class_name, ids|
-          ids.slice! 0, limit
-        end
-      end
-
       # Load the results by id.
       {}.tap do |result|
         result_classes_and_ids.each do |class_name, ids|
           result_class = Kernel.const_get class_name
 
           if ids.any? && classes.include?(result_class)
+            ids = ids.slice(0, limit) if limit
             result[result_class] = result_class.where :id => ids
           else
             result[result_class] = []
