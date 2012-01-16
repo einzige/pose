@@ -31,7 +31,7 @@ Pose  ("Polymorphic Search") allows fulltext search for ActiveRecord objects.
     * _pose_assignments_: lists which word occurs in which document.
 
 
-# Make your ActiveRecord models searchable.
+# Make your ActiveRecord models searchable
 
     class MyClass < ActiveRecord::Base
       
@@ -54,23 +54,23 @@ Pose  ("Polymorphic Search") allows fulltext search for ActiveRecord objects.
     end
 
 
-# Maintain the search index.
+# Maintain the search index
 
 The search index is automatically updated when Objects are saved or deleted.
 
-## Indexing existing objects in the database.
+## Indexing existing objects in the database
 If you have existing objects in the database before adding Pose, you can either save them again, 
 or add them to the search index manually. Indexes are added per class.
 
     rake pose:reindex_all[MyClass]
 
-## Optimizing the search index.
+## Optimizing the search index
 The search index keeps all the words that were ever used around, in order to try to reuse them in the future.
 If you deleted a lot of objects, you can shrink the memory consumption of the search index by removing unused words.
 
     rake pose:cleanup_index
 
-## Removing the search index.
+## Removing the search index
 For development purposes, or if something went wrong, you can remove the search index for a class
 (let's call it "MyClass") completely.
 
@@ -106,4 +106,6 @@ Or, clone the repository, make your changes, and submit a pull request.
 
 ## Road Map
 
-* make Pose work with NoSQL databases like MongoDB, Redis
+Pose's algorithm works with all sorts of storage technologies that support range queries, i.e. relational databases, 
+Google's DataStore, and other NoSQL stores. Right now, only relational databases are supported. NoSQL support is easy,
+but not yet implemented.
