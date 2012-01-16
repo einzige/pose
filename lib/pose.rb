@@ -120,11 +120,12 @@ module Pose
     # Returns all objects matching the given query.
     #
     # @param [String] query
-    # @param [Array<Class>] classes
+    # @param (Class|[Array<Class>]) classes
+    # @param [Number?] limit Optional limit.
     #
     # @return [Hash<Class, ActiveRecord::Relation>]
-    def search query, classes
-      
+    def search query, classes, limit = nil
+
       # Turn 'classes' into an array.
       classes = [classes].flatten
       classes_names = classes.map &:name
@@ -134,13 +135,14 @@ module Pose
       query.split(' ').each do |query_word|
         current_word_classes_and_ids = {}
         classes.each { |clazz| current_word_classes_and_ids[clazz.name] = [] }
-        PoseAssignment.joins(:pose_word) \
-                      .where(:pose_words => {:text.matches => "#{query_word}%"},
-                             :posable_type => classes_names) \
-                      .each do |pose_assignment|
+        query = PoseAssignment.joins(:pose_word) \
+                              .where(:pose_words => {:text.matches => "#{query_word}%"},
+                                     :posable_type => classes_names)
+        query = query.limit(limit) if limit
+        query.each do |pose_assignment|
           current_word_classes_and_ids[pose_assignment.posable_type] << pose_assignment.posable_id
         end
-        
+
         current_word_classes_and_ids.each do |class_name, ids|
           if result_classes_and_ids.has_key? class_name
             result_classes_and_ids[class_name] = result_classes_and_ids[class_name] & ids
