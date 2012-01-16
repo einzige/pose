@@ -89,3 +89,7 @@ Or, clone the repository, make your changes, and submit a pull request.
 ## Unit Tests
 
     rake spec
+
+## Road Map
+
+* make Pose work with NoSQL databases like MongoDB, Redis
