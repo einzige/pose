@@ -170,6 +170,12 @@ module Pose
           end
         end
       end
-    end    
+    end
   end
 end
+
+
+require 'pose/posifier'
+require "pose/railtie" if defined? Rails
+require 'pose_assignment'
+require 'pose_word'
