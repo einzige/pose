@@ -1,3 +1,8 @@
+# Note (KG): Need to include the rake DSL here to prevent deprecation warnings in the Rakefile.
+require 'rake'
+include Rake::DSL
+
+
 # Polymorphic search for ActiveRecord objects.
 module Pose
   extend ActiveSupport::Concern
@@ -100,7 +105,8 @@ module Pose
     def root_word raw_word
       result = []
       raw_word_copy = raw_word[0..-1]
-      raw_word_copy.gsub! /[()*<>'",;]/, ' '
+      raw_word_copy.gsub! '%20', ' '
+      raw_word_copy.gsub! /[()*<>'",;\?\-\=&%#]/, ' '
       raw_word_copy.gsub! /\s+/, ' '
       raw_word_copy.split(' ').each do |word|
         if Pose.is_url?(word)

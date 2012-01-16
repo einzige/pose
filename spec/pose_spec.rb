@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 require "spec_helper"
 
 ActiveRecord::Base.establish_connection(:adapter => "sqlite3", :database => ":memory:")
@@ -132,6 +134,69 @@ describe Pose do
       result.should eql([])
     end
   end
+
+
+  describe 'root_word' do
+
+    it 'converts words into singular' do
+      Pose.root_word('bars').should eql(['bar'])
+    end
+
+    it 'removes special characters' do
+      Pose.root_word('(bar').should eql(['bar'])
+      Pose.root_word('bar)').should eql(['bar'])
+      Pose.root_word('(bar)').should eql(['bar'])
+      Pose.root_word('>foo').should eql(['foo'])
+      Pose.root_word('<foo').should eql(['foo'])
+      Pose.root_word('"foo"').should eql(['foo'])
+      Pose.root_word('"foo').should eql(['foo'])
+      Pose.root_word("'foo'").should eql(['foo'])
+      Pose.root_word("'foo's").should eql(['foo'])
+      Pose.root_word("foo?").should eql(['foo'])
+      Pose.root_word("foo!").should eql(['foo'])
+      Pose.root_word("foo/bar").should eql(['foo', 'bar'])
+      Pose.root_word("foo-bar").should eql(['foo', 'bar'])
+      Pose.root_word("foo--bar").should eql(['foo', 'bar'])
+      Pose.root_word("foo.bar").should eql(['foo', 'bar'])
+    end
+
+    it 'removes umlauts' do
+      Pose.root_word('fünf').should eql(['funf'])
+    end
+
+    it 'splits up numbers' do
+      Pose.root_word('11.2.2011').should eql(['11', '2', '2011'])
+      Pose.root_word('11-2-2011').should eql(['11', '2', '2011'])
+      Pose.root_word('30:4-5').should eql(['30', '4', '5'])
+    end
+
+    it 'converts into lowercase' do
+      Pose.root_word('London').should eql(['london'])
+    end
+
+    it "stores single-letter words" do
+      Pose.root_word('a b').should eql(['a', 'b'])
+    end
+
+    it "does't encode external URLs" do
+      Pose.root_word('http://web.com').should eql(['http', 'web', 'com'])
+    end
+
+    it "doesn't store empty words" do
+      Pose.root_word('  one two  ').should eql(['one', 'two'])
+    end
+
+    it "removes duplicates" do
+      Pose.root_word('one_one').should eql(['one'])
+      Pose.root_word('one one').should eql(['one'])
+    end
+    
+    it "splits up complex URLs" do
+      Pose.root_word('books?id=p7uyWPcVGZsC&dq=closure%20definitive%20guide&pg=PP1#v=onepage&q&f=false').should eql([
+        "book", "id", "p7uywpcvgzsc", "dq", "closure", "definitive", "guide", "pg", "pp1", "v", "onepage", "q", "f", "false"])
+    end
+  end
+
 
   describe 'search' do
     

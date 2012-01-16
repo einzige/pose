@@ -19,6 +19,7 @@ Gem::Specification.new do |s|
   s.add_dependency "rails", ">= 3.0.0"
   s.add_dependency "meta_where"  
   s.add_dependency "rake"
+  s.add_dependency 'ruby-progressbar'
 
   s.add_development_dependency "factory_girl"
   s.add_development_dependency "faker"
