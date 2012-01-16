@@ -37,7 +37,7 @@ module Pose
 
     # Removes this objects from the search index.
     def delete_pose_index
-      self.words.clear if perform_search?
+      self.pose_words.clear if perform_search?
     end
 
     # Helper method.
