@@ -57,10 +57,24 @@ Pose  ("Polymorphic Search") allows fulltext search for ActiveRecord objects.
 # Maintain the search index.
 
 The search index is automatically updated when Objects are saved or deleted.
-To add existing records in the database without having to save them again, 
-or recreate the search index, please run 
+
+## Indexing existing objects in the database.
+If you have existing objects in the database before adding Pose, you can either save them again, 
+or add them to the search index manually. Indexes are added per class.
 
     rake pose:reindex_all[MyClass]
+
+## Optimizing the search index.
+The search index keeps all the words that were ever used around, in order to try to reuse them in the future.
+If you deleted a lot of objects, you can shrink the memory consumption of the search index by removing unused words.
+
+    rake pose:cleanup_index
+
+## Removing the search index.
+For development purposes, or if something went wrong, you can remove the search index for a class
+(let's call it "MyClass") completely.
+
+    rake pose:delete_index[MyClass]
 
 
 # Perform a search
