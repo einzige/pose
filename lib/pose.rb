@@ -135,6 +135,7 @@ module Pose
       # Turn 'classes' into an array.
       classes = [classes].flatten
       classes_names = classes.map &:name
+      classes_names = classes_names[0] if classes_names.size == 1
 
       # Get the ids of the results.
       result_classes_and_ids = {}
@@ -144,7 +145,6 @@ module Pose
         query = PoseAssignment.joins(:pose_word) \
                               .where(:pose_words => {:text.matches => "#{query_word}%"},
                                      :posable_type => classes_names)
-        query = query.limit(limit) if limit
         query.each do |pose_assignment|
           current_word_classes_and_ids[pose_assignment.posable_type] << pose_assignment.posable_id
         end
@@ -155,6 +155,13 @@ module Pose
           else
             result_classes_and_ids[class_name] = ids
           end
+        end
+      end
+
+      # Truncate id lists to the given limits.
+      if limit
+        result_classes_and_ids.each do |class_name, ids|
+          ids.slice! 0, limit
         end
       end
 

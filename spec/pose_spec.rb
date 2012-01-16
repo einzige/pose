@@ -135,7 +135,6 @@ describe Pose do
     end
   end
 
-
   describe 'root_word' do
 
     it 'converts words into singular' do
@@ -197,7 +196,6 @@ describe Pose do
     end
   end
 
-
   describe 'search' do
     
     it 'works' do
@@ -210,64 +208,84 @@ describe Pose do
       result[PosableOne][0].should == pos1
     end
     
-    it 'returns an empty array if nothing matches' do
-      pos1 = PosableOne.create :text => 'one'
+    context 'classes parameter' do 
+      it 'returns all different classes by default' do
+        pos1 = PosableOne.create :text => 'foo'
+        pos2 = PosableTwo.create :text => 'foo'
       
-      result = Pose.search 'two', PosableOne
+        result = Pose.search 'foo', [PosableOne, PosableTwo]
       
-      result.should == { PosableOne => [] }
+        result.should have(2).items
+        result[PosableOne].should == [pos1]
+        result[PosableTwo].should == [pos2]
+      end
+    
+      it 'allows to provide different classes to return' do
+        pos1 = PosableOne.create :text => 'foo'
+        pos2 = PosableTwo.create :text => 'foo'
+      
+        result = Pose.search 'foo', [PosableOne, PosableTwo]
+      
+        result.should have(2).items
+        result[PosableOne].should == [pos1]
+        result[PosableTwo].should == [pos2]
+      end
+    
+      it 'returns only instances of the given classes' do
+        pos1 = PosableOne.create :text => 'one'
+        pos2 = PosableTwo.create :text => 'one'
+      
+        result = Pose.search 'one', PosableOne
+      
+        result.should have(1).items
+        result[PosableOne].should == [pos1]
+      end
     end
     
-    it 'returns all different classes by default' do
-      pos1 = PosableOne.create :text => 'foo'
-      pos2 = PosableTwo.create :text => 'foo'
+    context 'query parameter' do
+
+      it 'returns an empty array if nothing matches' do
+        pos1 = PosableOne.create :text => 'one'
+
+        result = Pose.search 'two', PosableOne
+
+        result.should == { PosableOne => [] }
+      end
+
+      it 'returns only objects that match all given query words' do
+        pos1 = PosableOne.create :text => 'one two'
+        pos2 = PosableOne.create :text => 'one three'
+        pos3 = PosableOne.create :text => 'two three'
       
-      result = Pose.search 'foo', [PosableOne, PosableTwo]
+        result = Pose.search 'two one', PosableOne
       
-      result.should have(2).items
-      result[PosableOne].should == [pos1]
-      result[PosableTwo].should == [pos2]
+        result.should have(1).items
+        result[PosableOne].should == [pos1]
+      end
+    
+      it 'returns nothing if searching for a non-existing word' do
+        pos1 = PosableOne.create :text => 'one two'
+      
+        result = Pose.search 'one zonk', PosableOne
+      
+        result.should have(1).items
+        result[PosableOne].should == []
+      end
     end
     
-    it 'allows to provide different classes to return' do
-      pos1 = PosableOne.create :text => 'foo'
-      pos2 = PosableTwo.create :text => 'foo'
+    context "'limit' parameter" do
       
-      result = Pose.search 'foo', [PosableOne, PosableTwo]
-      
-      result.should have(2).items
-      result[PosableOne].should == [pos1]
-      result[PosableTwo].should == [pos2]
-    end
-    
-    it 'returns only instances of the given classes' do
-      pos1 = PosableOne.create :text => 'one'
-      pos2 = PosableTwo.create :text => 'one'
-      
-      result = Pose.search 'one', PosableOne
-      
-      result.should have(1).items
-      result[PosableOne].should == [pos1]
-    end
-    
-    it 'returns only objects that match all given query words' do
-      pos1 = PosableOne.create :text => 'one two'
-      pos2 = PosableOne.create :text => 'one three'
-      pos3 = PosableOne.create :text => 'two three'
-      
-      result = Pose.search 'two one', PosableOne
-      
-      result.should have(1).items
-      result[PosableOne].should == [pos1]
-    end
-    
-    it 'returns nothing if searching for a non-existing word' do
-      pos1 = PosableOne.create :text => 'one two'
-      
-      result = Pose.search 'one zonk', PosableOne
-      
-      result.should have(1).items
-      result[PosableOne].should == []
+      it 'works' do
+        Factory :posable_one, :text => 'foo one'
+        Factory :posable_one, :text => 'foo two'
+        Factory :posable_one, :text => 'foo three'
+        Factory :posable_one, :text => 'foo four'
+
+        result = Pose.search 'foo', PosableOne, 2
+        
+        puts result.inspect
+        result[PosableOne].should have(2).items        
+      end
     end
   end
 end
