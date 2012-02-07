@@ -143,8 +143,8 @@ module Pose
         current_word_classes_and_ids = {}
         classes.each { |clazz| current_word_classes_and_ids[clazz.name] = [] }
         query = PoseAssignment.joins(:pose_word) \
-                              .where(:pose_words => {:text.matches => "#{query_word}%"},
-                                     :posable_type => classes_names)
+                              .where('pose_words.text LIKE ?', "#{query_word}%") \
+                              .where('posable_type IN (?)', classes_names)
         query.each do |pose_assignment|
           current_word_classes_and_ids[pose_assignment.posable_type] << pose_assignment.posable_id
         end
