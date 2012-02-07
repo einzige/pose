@@ -1,4 +1,5 @@
 #!/usr/bin/env rake
+require 'rake/dsl_definition' 
 begin
   require 'bundler/setup'
 rescue LoadError
@@ -23,4 +24,3 @@ end
 
 desc "Run the unit tests"
 task :spec => ['spec:unit']
-

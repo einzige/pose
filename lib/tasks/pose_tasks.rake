@@ -1,4 +1,4 @@
-include Rake::DSL
+include Rake::DSL if defined?(Rake::DSL)
 namespace :pose do
 
   desc "Cleans out unused data from the search index."

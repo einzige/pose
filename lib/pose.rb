@@ -1,6 +1,6 @@
 # Note (KG): Need to include the rake DSL here to prevent deprecation warnings in the Rakefile.
 require 'rake'
-include Rake::DSL
+include Rake::DSL if defined? Rake::DSL
 
 
 # Polymorphic search for ActiveRecord objects.
