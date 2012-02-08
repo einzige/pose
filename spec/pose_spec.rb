@@ -6,14 +6,14 @@ ActiveRecord::Base.establish_connection(:adapter => "sqlite3", :database => ":me
 
 describe Pose do
   subject { PosableOne.new }
-  
+
   before :each do
     PosableOne.delete_all
     PosableTwo.delete_all
     PoseAssignment.delete_all
     PoseWord.delete_all
   end
-  
+
   describe 'associations' do
     it 'allows to access the associated words of a posable object directly' do
       subject.should have(0).pose_words
@@ -28,7 +28,7 @@ describe Pose do
       after :each do
         Pose::CONFIGURATION[:search_in_tests] = true
       end
-      
+
       it "doesn't calls update_pose_words in tests if the test flag is not enabled" do
         Pose::CONFIGURATION[:search_in_tests] = false
         subject.should_not_receive :update_pose_words
@@ -41,17 +41,17 @@ describe Pose do
         subject.update_pose_index
       end
     end
-    
+
     context "in the 'production' environment' do" do
       before :each do
         @old_env = Rails.env
         Rails.env = 'production'
       end
-      
+
       after :each do
         Rails.env = @old_env
       end
-      
+
       it "calls update_pose_words" do
         subject.should_receive :update_pose_words
         subject.update_pose_index
@@ -71,7 +71,7 @@ describe Pose do
     it 'updates the search index when the text is changed' do
       subject.text = 'foo'
       subject.save!
-      
+
       subject.text = 'other text'
       subject.update_pose_words
 
@@ -189,7 +189,7 @@ describe Pose do
       Pose.root_word('one_one').should eql(['one'])
       Pose.root_word('one one').should eql(['one'])
     end
-    
+
     it "splits up complex URLs" do
       Pose.root_word('books?id=p7uyWPcVGZsC&dq=closure%20definitive%20guide&pg=PP1#v=onepage&q&f=false').should eql([
         "book", "id", "p7uywpcvgzsc", "dq", "closure", "definitive", "guide", "pg", "pp1", "v", "onepage", "q", "f", "false"])
@@ -197,51 +197,51 @@ describe Pose do
   end
 
   describe 'search' do
-    
+
     it 'works' do
       pos1 = PosableOne.create :text => 'one'
-      
+
       result = Pose.search 'one', PosableOne
-      
+
       result.should have(1).items
       result[PosableOne].should have(1).items
       result[PosableOne][0].should == pos1
     end
-    
-    context 'classes parameter' do 
+
+    context 'classes parameter' do
       it 'returns all different classes by default' do
         pos1 = PosableOne.create :text => 'foo'
         pos2 = PosableTwo.create :text => 'foo'
-      
+
         result = Pose.search 'foo', [PosableOne, PosableTwo]
-      
+
         result.should have(2).items
         result[PosableOne].should == [pos1]
         result[PosableTwo].should == [pos2]
       end
-    
+
       it 'allows to provide different classes to return' do
         pos1 = PosableOne.create :text => 'foo'
         pos2 = PosableTwo.create :text => 'foo'
-      
+
         result = Pose.search 'foo', [PosableOne, PosableTwo]
-      
+
         result.should have(2).items
         result[PosableOne].should == [pos1]
         result[PosableTwo].should == [pos2]
       end
-    
+
       it 'returns only instances of the given classes' do
         pos1 = PosableOne.create :text => 'one'
         pos2 = PosableTwo.create :text => 'one'
-      
+
         result = Pose.search 'one', PosableOne
-      
+
         result.should have(1).items
         result[PosableOne].should == [pos1]
       end
     end
-    
+
     context 'query parameter' do
 
       it 'returns an empty array if nothing matches' do
@@ -256,25 +256,25 @@ describe Pose do
         pos1 = PosableOne.create :text => 'one two'
         pos2 = PosableOne.create :text => 'one three'
         pos3 = PosableOne.create :text => 'two three'
-      
+
         result = Pose.search 'two one', PosableOne
-      
+
         result.should have(1).items
         result[PosableOne].should == [pos1]
       end
-    
+
       it 'returns nothing if searching for a non-existing word' do
         pos1 = PosableOne.create :text => 'one two'
-      
+
         result = Pose.search 'one zonk', PosableOne
-      
+
         result.should have(1).items
         result[PosableOne].should == []
       end
     end
-    
+
     context "'limit' parameter" do
-      
+
       it 'works' do
         Factory :posable_one, :text => 'foo one'
         Factory :posable_one, :text => 'foo two'
@@ -282,10 +282,45 @@ describe Pose do
         Factory :posable_one, :text => 'foo four'
 
         result = Pose.search 'foo', PosableOne, 3
-        
-        puts result.inspect
+
         result[PosableOne].should have(3).items
       end
+    end
+  end
+
+  describe 'autocomplete_words' do
+
+    it 'returns words that start with the given phrase' do
+      PosableOne.create :text => 'great green pine tree'
+
+      result = Pose.autocomplete_words 'gr'
+
+      result.should have(2).words
+      result.should include('great')
+      result.should include('green')
+    end
+
+    it 'returns words that match the given phrase exactly' do
+      PoseWord.create :text => 'cat'
+
+      result = Pose.autocomplete_words 'cat'
+
+      result.should == %w(cat)
+    end
+
+    it 'stems the search query' do
+      PosableOne.create :text => 'car'
+
+      result = Pose.autocomplete_words 'cars'
+
+      result.should have(1).words
+      result[0].should == 'car'
+    end
+
+    it 'returns nothing if the search query is empty' do
+      PosableOne.create :text => 'foo bar'
+      result = Pose.autocomplete_words ''
+      result.should have(0).words
     end
   end
 end

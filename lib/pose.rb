@@ -29,7 +29,7 @@ module Pose
   end
 
   module InstanceMethods
-    
+
     # Updates the associated words for this object in the database.
     def update_pose_index
       update_pose_words if perform_search?
@@ -61,6 +61,16 @@ module Pose
   end
 
   class <<self
+
+    # Returns all words that begin with the given query string.
+    # This can be used for autocompletion functionality.
+    #
+    # @param [String]
+    # @return [Array<String>]
+    def autocomplete_words query
+      return [] if query.blank?
+      PoseWord.where('text LIKE ?', "#{Pose.root_word(query)[0]}%").map(&:text)
+    end
 
     # Returns all strings that are in new_words, but not in existing_words.
     # Helper method.
@@ -96,7 +106,7 @@ module Pose
     rescue URI::InvalidURIError
       false
     end
-    
+
     # Simplifies the given word to a generic search form.
     #
     # @param [String] raw_word The word to make searchable.
