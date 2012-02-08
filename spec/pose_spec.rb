@@ -305,7 +305,7 @@ describe Pose do
 
       result = Pose.autocomplete_words 'cat'
 
-      result.should == %w(cat)
+      result.should == ['cat']
     end
 
     it 'stems the search query' do

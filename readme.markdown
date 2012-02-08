@@ -95,10 +95,10 @@ In this example, it found two results of type _MyClass_ and no results of type _
 Happy searching!  :)
 
 
-# Autocomplete support.
+# Autocomplete support
 
 Because the search index contains a list of all the words known to the search engine,
-you can use it to get data for autocompletion functionality. Pose provides a convenience method:
+it can provide data for autocompletion functionality through the following convenience method:
 
     # Returns an array of strings that start with 'cat'.
     autocomplete_words = Pose.autocomplete_words 'cat'
