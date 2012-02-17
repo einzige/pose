@@ -103,6 +103,14 @@ it can provide data for autocompletion functionality through the following conve
     # Returns an array of strings that start with 'cat'.
     autocomplete_words = Pose.autocomplete_words 'cat'
 
+# Use Pose in your tests
+
+By default, Pose doesn't run in Rails' test environment. This is to not slow down tests due to constant updating of the search index when objects are created.
+If you want to test your models search functionality, you need to enable searching in tests:
+
+    Pose::CONFIGURATION[:search_in_tests] = true
+    
+Please don't forget to set this value to `false` when you are done, or your remaining tests will be slow. A good place to enable/disable this flag is in before/after blocks of your test cases.
 
 
 # Development
@@ -111,9 +119,10 @@ If you find a bug, have a question, or a better idea, please open an issue on th
 <a href="https://github.com/kevgo/pose/issues">Pose issue tracker</a>.
 Or, clone the repository, make your changes, and submit a pull request.
 
-## Unit Tests
+## Run the unit tests for the Pose Gem
 
     rake spec
+
 
 ## Road Map
 
