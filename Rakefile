@@ -1,4 +1,5 @@
 #!/usr/bin/env rake
+require 'rake/dsl_definition' 
 begin
   require 'bundler/setup'
 rescue LoadError

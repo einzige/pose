@@ -1,6 +1,6 @@
 # Note (KG): Need to include the rake DSL here to prevent deprecation warnings in the Rakefile.
 require 'rake'
-include Rake::DSL
+include Rake::DSL if defined? Rake::DSL
 
 
 # Polymorphic search for ActiveRecord objects.
@@ -29,7 +29,7 @@ module Pose
   end
 
   module InstanceMethods
-    
+
     # Updates the associated words for this object in the database.
     def update_pose_index
       update_pose_words if perform_search?
@@ -61,6 +61,16 @@ module Pose
   end
 
   class <<self
+
+    # Returns all words that begin with the given query string.
+    # This can be used for autocompletion functionality.
+    #
+    # @param [String]
+    # @return [Array<String>]
+    def autocomplete_words query
+      return [] if query.blank?
+      PoseWord.where('text LIKE ?', "#{Pose.root_word(query)[0]}%").map(&:text)
+    end
 
     # Returns all strings that are in new_words, but not in existing_words.
     # Helper method.
@@ -96,7 +106,7 @@ module Pose
     rescue URI::InvalidURIError
       false
     end
-    
+
     # Simplifies the given word to a generic search form.
     #
     # @param [String] raw_word The word to make searchable.
@@ -143,8 +153,8 @@ module Pose
         current_word_classes_and_ids = {}
         classes.each { |clazz| current_word_classes_and_ids[clazz.name] = [] }
         query = PoseAssignment.joins(:pose_word) \
-                              .where(:pose_words => {:text.matches => "#{query_word}%"},
-                                     :posable_type => classes_names)
+                              .where('pose_words.text LIKE ?', "#{query_word}%") \
+                              .where('posable_type IN (?)', classes_names)
         query.each do |pose_assignment|
           current_word_classes_and_ids[pose_assignment.posable_type] << pose_assignment.posable_id
         end
