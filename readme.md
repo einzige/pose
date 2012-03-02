@@ -13,6 +13,7 @@ Pose  ("Polymorphic Search") allows fulltext search for ActiveRecord objects.
 # Installation
 
 1.  Add the gem to your Gemfile.
+
     ```ruby
     gem 'pose'
     ```
