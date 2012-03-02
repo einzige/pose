@@ -17,6 +17,7 @@ FactoryGirl.find_definitions
 # Configure Rails Environment
 ENV["RAILS_ENV"] = "test"
 Rails = Hashie::Mash.new({:env => 'test'})
+ActiveRecord::Base.send :extend, Pose::BaseAdditions
 
 
 #require 'your_gem_name' # and any other gems you need

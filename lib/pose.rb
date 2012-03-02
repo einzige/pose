@@ -146,7 +146,6 @@ end
 
 require 'pose/base_additions'
 require 'pose/model_additions'
-require 'pose/posifier'
 require "pose/railtie" if defined? Rails
 require 'pose_assignment'
 require 'pose_word'
