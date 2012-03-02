@@ -5,10 +5,7 @@ require 'bundler/setup'
 require 'hashie'
 require 'active_record'
 require 'active_support/core_ext/module/aliasing'
-require "pose"
-require 'pose_word.rb'
-require 'pose_assignment.rb'
-require "pose/posifier.rb"
+require 'pose'
 require 'active_support/core_ext/string'
 require 'faker'
 require 'factory_girl'
