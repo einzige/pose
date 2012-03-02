@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    pose (0.3)
+    pose (1.0.0)
       rails (>= 3.0.0)
       rake
       ruby-progressbar
