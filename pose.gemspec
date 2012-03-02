@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.summary     = "A polymorphic, storage-system independent search engine for Ruby on Rails."
   s.description = "Pose ('Polymorphic Search') allows fulltext search for ActiveRecord objects."
 
-  s.files = Dir["{doc,lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.markdown"]
+  s.files = Dir["{doc,lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.md"]
   s.test_files = Dir["spec/**/*"]
 
   s.add_dependency "rails", ">= 3.0.0"
