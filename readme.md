@@ -20,12 +20,16 @@ Pose  ("Polymorphic Search") allows fulltext search for ActiveRecord objects.
 
 2.  Update your gem bundle.
 
-        $ bundle install
+    ```bash
+    $ bundle install
+    ```
 
 3.  Create the database tables for pose.
 
-        $ rails generate pose
-        $ rake db:migrate
+    ```bash
+    $ rails generate pose
+    $ rake db:migrate
+    ```
 
     Pose creates two tables in your database:
 
@@ -35,25 +39,27 @@ Pose  ("Polymorphic Search") allows fulltext search for ActiveRecord objects.
 
 # Make your ActiveRecord models searchable
 
-    class MyClass < ActiveRecord::Base
+```ruby
+class MyClass < ActiveRecord::Base
 
-      # This line tells Pose that your class should be searchable.
-      # Once Pose knows that, it will update the search index every time an instance is saved or deleted.
-      #
-      # The given block must return the searchble content as a string.
-      # Note that you can return whatever content you want here,
-      # not only data from this object but also data from related objects, class names, etc.
-      posify do
+  # This line tells Pose that your class should be searchable.
+  # Once Pose knows that, it will update the search index every time an instance is saved or deleted.
+  #
+  # The given block must return the searchble content as a string.
+  # Note that you can return whatever content you want here,
+  # not only data from this object but also data from related objects, class names, etc.
+  posify do
 
-        # Only active instances should show up in search results.
-        return unless status == :active
+    # Only active instances should show up in search results.
+    return unless status == :active
 
-        # Return the fulltext content.
-        [ self.foo,
-          self.parent.bar,
-          self.children.map &:name ].join ' '
-      end
-    end
+    # Return the fulltext content.
+    [ self.foo,
+      self.parent.bar,
+      self.children.map &:name ].join ' '
+  end
+end
+```
 
 
 # Maintain the search index
@@ -65,7 +71,9 @@ If you had existing data in your database before adding Pose, it isn't automatic
 They will be added on the next save/update operation on them.
 You can also manually add existing objects to the search index.
 
-    rake pose:reindex_all[MyClass]
+```bash
+rake pose:reindex_all[MyClass]
+```
 
 ## Optimizing the search index
 The search index keeps all the words that were ever used around, in order to try to reuse them in the future.
