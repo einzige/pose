@@ -72,33 +72,41 @@ They will be added on the next save/update operation on them.
 You can also manually add existing objects to the search index.
 
 ```bash
-rake pose:reindex_all[MyClass]
+$ rake pose:reindex_all[MyClass]
 ```
 
 ## Optimizing the search index
 The search index keeps all the words that were ever used around, in order to try to reuse them in the future.
 If you deleted a lot of objects, you can shrink the memory consumption of the search index by removing unused words.
 
-    rake pose:cleanup_index
+```bash
+$ rake pose:cleanup_index
+```
 
 ## Removing the search index
 For development purposes, or if something went wrong, you can remove the search index for a class
 (let's call it "MyClass") completely.
 
-    rake pose:delete_index[MyClass]
+```bash
+rake pose:delete_index[MyClass]
+```
 
 
 # Perform a search
 
-    result = Pose.search 'foo', [MyClass, MyOtherClass]
+```ruby
+result = Pose.search 'foo', [MyClass, MyOtherClass]
+```
 
 This searches for all instances of MyClass and MyOtherClass that contain the word 'foo'.
 The method returns a hash that looks like this:
 
-    {
-      MyClass => [ <myclass instance 1>, <myclass instance 2> ],
-      MyOtherClass => [ ],
-    }
+```ruby
+{
+  MyClass => [ <myclass instance 1>, <myclass instance 2> ],
+  MyOtherClass => [ ],
+}
+```
 
 In this example, it found two results of type _MyClass_ and no results of type _MyOtherClass_.
 
@@ -110,15 +118,19 @@ Happy searching!  :)
 Because the search index contains a list of all the words known to the search engine,
 it can provide data for autocompletion functionality through the following convenience method:
 
-    # Returns an array of strings that start with 'cat'.
-    autocomplete_words = Pose.autocomplete_words 'cat'
+```ruby
+# Returns an array of strings that start with 'cat'.
+autocomplete_words = Pose.autocomplete_words 'cat'
+```
 
 # Use Pose in your tests
 
 By default, Pose doesn't run in Rails' test environment. This is to not slow down tests due to constant updating of the search index when objects are created.
 If you want to test your models search functionality, you need to enable searching in tests:
 
-    Pose::CONFIGURATION[:search_in_tests] = true
+```ruby
+Pose::CONFIGURATION[:search_in_tests] = true
+```
     
 Please don't forget to set this value to `false` when you are done, or your remaining tests will be slow. A good place to enable/disable this flag is in before/after blocks of your test cases.
 
@@ -131,7 +143,9 @@ Or, clone the repository, make your changes, and submit a pull request.
 
 ## Run the unit tests for the Pose Gem
 
-    rake spec
+```bash
+$ rake spec
+```
 
 
 ## Road Map
