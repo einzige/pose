@@ -5,8 +5,8 @@ require 'bundler/setup'
 require 'hashie'
 require 'active_record'
 require 'active_support/core_ext/module/aliasing'
-require 'pose'
 require 'active_support/core_ext/string'
+require 'pose'
 require 'faker'
 require 'factory_girl'
 FactoryGirl.find_definitions
@@ -14,15 +14,12 @@ FactoryGirl.find_definitions
 # Configure Rails Environment
 ENV["RAILS_ENV"] = "test"
 Rails = Hashie::Mash.new({:env => 'test'})
+
+# We have no Railtie in these tests --> load Pose manually.
 ActiveRecord::Base.send :extend, Pose::BaseAdditions
-
-
-#require 'your_gem_name' # and any other gems you need
-
 
 # Load support files
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
-#Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f}
 
 
 RSpec.configure do |config|
@@ -50,6 +47,11 @@ RSpec.configure do |config|
   end
 end
 
+
+#####################
+# MATCHERS
+#
+
 # Verifies that a taggable object has the given tags.
 RSpec::Matchers.define :have_pose_words do |expected|
   match do |actual|
@@ -68,6 +70,10 @@ RSpec::Matchers.define :have_pose_words do |expected|
 end
 
 
+#####################
+# TEST CLASSES
+#
+
 class PosableOne < ActiveRecord::Base
   posify { text }
 end
@@ -75,6 +81,11 @@ end
 class PosableTwo < ActiveRecord::Base
   posify { text }
 end
+
+
+#####################
+# DATABASE SETUP
+#
 
 def setup_db
   ActiveRecord::Schema.define(:version => 1) do
