@@ -276,10 +276,10 @@ describe Pose do
     context "'limit' parameter" do
 
       it 'works' do
-        Factory :posable_one, :text => 'foo one'
-        Factory :posable_one, :text => 'foo two'
-        Factory :posable_one, :text => 'foo three'
-        Factory :posable_one, :text => 'foo four'
+        FactoryGirl.create :posable_one, :text => 'foo one'
+        FactoryGirl.create :posable_one, :text => 'foo two'
+        FactoryGirl.create :posable_one, :text => 'foo three'
+        FactoryGirl.create :posable_one, :text => 'foo four'
 
         result = Pose.search 'foo', PosableOne, 3
 
