@@ -281,7 +281,7 @@ describe Pose do
         FactoryGirl.create :posable_one, :text => 'foo three'
         FactoryGirl.create :posable_one, :text => 'foo four'
 
-        result = Pose.search 'foo', PosableOne, 3
+        result = Pose.search 'foo', PosableOne, :limit => 3
 
         result[PosableOne].should have(3).items
       end

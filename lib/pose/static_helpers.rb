@@ -90,10 +90,10 @@ module Pose
     #
     # @param [String] query
     # @param (Class|[Array<Class>]) classes
-    # @param [Number?] limit Optional limit.
+    # @param [Hash?] options Additional options.
     #
     # @return [Hash<Class, ActiveRecord::Relation>]
-    def search query, classes, limit = nil
+    def search query, classes, options = {}
 
       # Turn 'classes' into an array.
       classes = [classes].flatten
@@ -132,7 +132,7 @@ module Pose
           result_class = Kernel.const_get class_name
 
           if ids.any? && classes.include?(result_class)
-            ids = ids.slice(0, limit) if limit
+            ids = ids.slice(0, options[:limit]) if options[:limit]
             result[result_class] = result_class.where :id => ids
           else
             result[result_class] = []
