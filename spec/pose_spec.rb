@@ -208,7 +208,7 @@ describe Pose do
       result[PosableOne][0].should == pos1
     end
 
-    context 'classes parameter' do
+    describe 'classes parameter' do
       it 'returns all different classes by default' do
         pos1 = PosableOne.create :text => 'foo'
         pos2 = PosableTwo.create :text => 'foo'
@@ -242,7 +242,7 @@ describe Pose do
       end
     end
 
-    context 'query parameter' do
+    describe 'query parameter' do
 
       it 'returns an empty array if nothing matches' do
         pos1 = PosableOne.create :text => 'one'
@@ -273,7 +273,7 @@ describe Pose do
       end
     end
 
-    context "'limit' parameter" do
+    describe "'limit' parameter" do
 
       it 'works' do
         FactoryGirl.create :posable_one, :text => 'foo one'
