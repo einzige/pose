@@ -106,11 +106,16 @@ module Pose
         current_word_classes_and_ids = {}
         classes.each { |clazz| current_word_classes_and_ids[clazz.name] = [] }
         query = PoseAssignment.joins(:pose_word) \
+                              .select('pose_assignments.posable_id, pose_assignments.posable_type') \
                               .where('pose_words.text LIKE ?', "#{query_word}%") \
                               .where('posable_type IN (?)', classes_names)
-        query.each do |pose_assignment|
-          current_word_classes_and_ids[pose_assignment.posable_type] << pose_assignment.posable_id
+        PoseAssignment.connection.select_all(query.to_sql).each do |pose_assignment|
+          current_word_classes_and_ids[pose_assignment['posable_type']] << pose_assignment['posable_id']
         end
+        # This is the old ActiveRecord way. Removed for performance reasons.
+        # query.each do |pose_assignment|
+        #   current_word_classes_and_ids[pose_assignment.posable_type] << pose_assignment.posable_id
+        # end
 
         current_word_classes_and_ids.each do |class_name, ids|
           if result_classes_and_ids.has_key? class_name
