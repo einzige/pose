@@ -133,7 +133,7 @@ module Pose
 
           if ids.any? && classes.include?(result_class)
             ids = ids.slice(0, options[:limit]) if options[:limit]
-            result[result_class] = options[:result_type] == :ids ? ids : result_class.where(:id => ids)
+            result[result_class] = options[:result_type] == :ids ? ids : result_class.where(id: ids)
           else
             result[result_class] = []
           end
