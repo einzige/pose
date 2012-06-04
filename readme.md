@@ -119,7 +119,7 @@ Happy searching!  :)
 result = Pose.search 'foo',
                      MyClass,
                      :limit => 3,            # Limit the result count to 3.
-                     :result_type => :ids    # Don't load the resulting objects, return just their ids instead.
+                     :result_type => :ids    # Don't load the resulting objects, return just their ids.
 ```
 
 
