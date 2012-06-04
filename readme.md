@@ -113,6 +113,16 @@ In this example, it found two results of type _MyClass_ and no results of type _
 Happy searching!  :)
 
 
+## Search options
+
+```ruby
+result = Pose.search 'foo',
+                     MyClass,
+                     :limit => 3,            # Limit the result count to 3.
+                     :result_type => :ids    # Don't load the resulting objects, return just their ids instead.
+```
+
+
 # Autocomplete support
 
 Because the search index contains a list of all the words known to the search engine,
