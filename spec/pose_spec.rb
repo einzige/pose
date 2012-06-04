@@ -286,6 +286,27 @@ describe Pose do
         result[PosableOne].should have(3).items
       end
     end
+
+    describe "'result_type' parameter" do
+
+      before :each do
+        @foo_one = FactoryGirl.create :posable_one, :text => 'foo one'
+      end
+
+      describe 'default behavior' do
+        it 'returns full objects' do
+          result = Pose.search 'foo', PosableOne
+          result[PosableOne][0].should == @foo_one
+        end
+      end
+
+      context ':ids given' do
+        it 'returns ids instead of objects' do
+          result = Pose.search 'foo', PosableOne, :result_type => :ids
+          result[PosableOne][0].should == @foo_one.id
+        end
+      end
+    end
   end
 
   describe 'autocomplete_words' do

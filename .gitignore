@@ -1,5 +1,6 @@
 .bundle/
 .idea/
+*.swp
 log/*.log
 pkg/
 test/dummy/db/*.sqlite3
