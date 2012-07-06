@@ -1,12 +1,15 @@
-Factory.define :pose_word do |word|
-  word.text { Faker::Lorem.words(1).first }
-end
+FactoryGirl.define do
 
-Factory.define :pose_assignment do |assignment|
-  assignment.association :pose_word
-  assignment.association :posable, :factory => :posable_one
-end
+  factory :pose_word do
+    text { Faker::Lorem.words(1).first }
+  end
 
-Factory.define :posable_one do |posable|
-  posable.text { Faker::Lorem.words(3).join ' ' }
+  factory :pose_assignment do
+    pose_word
+    posable :factory => :posable_one
+  end
+
+  factory :posable_one do
+    text { Faker::Lorem.words(3).join ' ' }
+  end
 end
