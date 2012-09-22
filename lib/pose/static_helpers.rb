@@ -102,7 +102,8 @@ module Pose
 
       # Get the ids of the results.
       result_classes_and_ids = {}
-      query.split(' ').each do |query_word|
+      query_words = query.split(' ').map{|query_word| Pose.root_word query_word}.flatten
+      query_words.each do |query_word|
         current_word_classes_and_ids = {}
         classes.each { |clazz| current_word_classes_and_ids[clazz.name] = [] }
         query = PoseAssignment.joins(:pose_word) \

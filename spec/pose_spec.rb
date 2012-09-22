@@ -271,6 +271,15 @@ describe Pose do
         result.should have(1).items
         result[PosableOne].should == []
       end
+
+      it 'works if the query is given in uppercase' do
+        pos1 = PosableOne.create text: 'one two'
+
+        result = Pose.search 'OnE TwO', PosableOne
+
+        result.should have(1).items
+        result[PosableOne].should == [pos1]
+      end
     end
 
     describe "'limit' parameter" do
