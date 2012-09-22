@@ -153,6 +153,15 @@ Or, clone the repository, make your changes, and submit a pull request.
 
 ## Run the unit tests for the Pose Gem
 
+Pose uses Postgresql for tests, since it is the most strict database.
+To run tests, first, create a test database.
+
+```bash
+createdb pose_test
+```
+
+Then run the tests.
+
 ```bash
 $ rake spec
 ```

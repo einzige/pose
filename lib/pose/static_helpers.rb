@@ -110,7 +110,7 @@ module Pose
                               .where('pose_words.text LIKE ?', "#{query_word}%") \
                               .where('posable_type IN (?)', classes_names)
         PoseAssignment.connection.select_all(query.to_sql).each do |pose_assignment|
-          current_word_classes_and_ids[pose_assignment['posable_type']] << pose_assignment['posable_id']
+          current_word_classes_and_ids[pose_assignment['posable_type']] << pose_assignment['posable_id'].to_i
         end
         # This is the old ActiveRecord way. Removed for performance reasons.
         # query.each do |pose_assignment|
