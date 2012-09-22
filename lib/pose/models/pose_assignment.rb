@@ -1,7 +1,7 @@
 # Assigns searchable objects to words in the search index.
 class PoseAssignment < ActiveRecord::Base
   belongs_to :pose_word
-  belongs_to :posable, :polymorphic => true
+  belongs_to :posable, polymorphic: true
 
   # Removes all PoseAssignments for the given class.
   def self.delete_class_index clazz
@@ -10,7 +10,7 @@ class PoseAssignment < ActiveRecord::Base
 
   # Removes all PoseAssignments that aren't used anymore.
   def self.cleanup_orphaned_pose_assignments progress_bar = nil
-    PoseAssignment.find_each(:include => [:posable, :pose_word], :batch_size => 5000) do |assignment|
+    PoseAssignment.find_each(include: [:posable, :pose_word], batch_size: 5000) do |assignment|
       progress_bar.inc if progress_bar
 
       # Delete the assignment if the posable object no longer exists.

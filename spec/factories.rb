@@ -6,7 +6,7 @@ FactoryGirl.define do
 
   factory :pose_assignment do
     pose_word
-    posable :factory => :posable_one
+    posable factory: :posable_one
   end
 
   factory :posable_one do

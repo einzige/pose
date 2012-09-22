@@ -17,7 +17,7 @@ describe Pose do
   describe 'associations' do
     it 'allows to access the associated words of a posable object directly' do
       subject.should have(0).pose_words
-      subject.pose_words << PoseWord.new(:text => 'one')
+      subject.pose_words << PoseWord.new(text: 'one')
       subject.should have_pose_words(['one'])
     end
   end
@@ -88,8 +88,8 @@ describe Pose do
   describe 'get_words_to_remove' do
 
     it "returns an array of word objects that need to be removed" do
-      word1 = PoseWord.new :text => 'one'
-      word2 = PoseWord.new :text => 'two'
+      word1 = PoseWord.new text: 'one'
+      word2 = PoseWord.new text: 'two'
       existing_words = [word1, word2]
       new_words = ['one', 'three']
 
@@ -99,8 +99,8 @@ describe Pose do
     end
 
     it 'returns an empty array if there are no words to be removed' do
-      word1 = PoseWord.new :text => 'one'
-      word2 = PoseWord.new :text => 'two'
+      word1 = PoseWord.new text: 'one'
+      word2 = PoseWord.new text: 'two'
       existing_words = [word1, word2]
       new_words = ['one', 'two']
 
@@ -113,8 +113,8 @@ describe Pose do
   describe 'get_words_to_add' do
 
     it 'returns an array with strings that need to be added' do
-      word1 = PoseWord.new :text => 'one'
-      word2 = PoseWord.new :text => 'two'
+      word1 = PoseWord.new text: 'one'
+      word2 = PoseWord.new text: 'two'
       existing_words = [word1, word2]
       new_words = ['one', 'three']
 
@@ -124,8 +124,8 @@ describe Pose do
     end
 
     it 'returns an empty array if there is nothing to be added' do
-      word1 = PoseWord.new :text => 'one'
-      word2 = PoseWord.new :text => 'two'
+      word1 = PoseWord.new text: 'one'
+      word2 = PoseWord.new text: 'two'
       existing_words = [word1, word2]
       new_words = ['one', 'two']
 
@@ -199,7 +199,7 @@ describe Pose do
   describe 'search' do
 
     it 'works' do
-      pos1 = PosableOne.create :text => 'one'
+      pos1 = PosableOne.create text: 'one'
 
       result = Pose.search 'one', PosableOne
 
@@ -210,8 +210,8 @@ describe Pose do
 
     describe 'classes parameter' do
       it 'returns all different classes by default' do
-        pos1 = PosableOne.create :text => 'foo'
-        pos2 = PosableTwo.create :text => 'foo'
+        pos1 = PosableOne.create text: 'foo'
+        pos2 = PosableTwo.create text: 'foo'
 
         result = Pose.search 'foo', [PosableOne, PosableTwo]
 
@@ -221,8 +221,8 @@ describe Pose do
       end
 
       it 'allows to provide different classes to return' do
-        pos1 = PosableOne.create :text => 'foo'
-        pos2 = PosableTwo.create :text => 'foo'
+        pos1 = PosableOne.create text: 'foo'
+        pos2 = PosableTwo.create text: 'foo'
 
         result = Pose.search 'foo', [PosableOne, PosableTwo]
 
@@ -232,8 +232,8 @@ describe Pose do
       end
 
       it 'returns only instances of the given classes' do
-        pos1 = PosableOne.create :text => 'one'
-        pos2 = PosableTwo.create :text => 'one'
+        pos1 = PosableOne.create text: 'one'
+        pos2 = PosableTwo.create text: 'one'
 
         result = Pose.search 'one', PosableOne
 
@@ -245,7 +245,7 @@ describe Pose do
     describe 'query parameter' do
 
       it 'returns an empty array if nothing matches' do
-        pos1 = PosableOne.create :text => 'one'
+        pos1 = PosableOne.create text: 'one'
 
         result = Pose.search 'two', PosableOne
 
@@ -253,9 +253,9 @@ describe Pose do
       end
 
       it 'returns only objects that match all given query words' do
-        pos1 = PosableOne.create :text => 'one two'
-        pos2 = PosableOne.create :text => 'one three'
-        pos3 = PosableOne.create :text => 'two three'
+        pos1 = PosableOne.create text: 'one two'
+        pos2 = PosableOne.create text: 'one three'
+        pos3 = PosableOne.create text: 'two three'
 
         result = Pose.search 'two one', PosableOne
 
@@ -264,7 +264,7 @@ describe Pose do
       end
 
       it 'returns nothing if searching for a non-existing word' do
-        pos1 = PosableOne.create :text => 'one two'
+        pos1 = PosableOne.create text: 'one two'
 
         result = Pose.search 'one zonk', PosableOne
 
@@ -285,12 +285,12 @@ describe Pose do
     describe "'limit' parameter" do
 
       it 'works' do
-        FactoryGirl.create :posable_one, :text => 'foo one'
-        FactoryGirl.create :posable_one, :text => 'foo two'
-        FactoryGirl.create :posable_one, :text => 'foo three'
-        FactoryGirl.create :posable_one, :text => 'foo four'
+        FactoryGirl.create :posable_one, text: 'foo one'
+        FactoryGirl.create :posable_one, text: 'foo two'
+        FactoryGirl.create :posable_one, text: 'foo three'
+        FactoryGirl.create :posable_one, text: 'foo four'
 
-        result = Pose.search 'foo', PosableOne, :limit => 3
+        result = Pose.search 'foo', PosableOne, limit: 3
 
         result[PosableOne].should have(3).items
       end
@@ -299,7 +299,7 @@ describe Pose do
     describe "'result_type' parameter" do
 
       before :each do
-        @foo_one = FactoryGirl.create :posable_one, :text => 'foo one'
+        @foo_one = FactoryGirl.create :posable_one, text: 'foo one'
       end
 
       describe 'default behavior' do
@@ -311,7 +311,7 @@ describe Pose do
 
       context ':ids given' do
         it 'returns ids instead of objects' do
-          result = Pose.search 'foo', PosableOne, :result_type => :ids
+          result = Pose.search 'foo', PosableOne, result_type: :ids
           result[PosableOne][0].should == @foo_one.id
         end
       end
@@ -321,7 +321,7 @@ describe Pose do
   describe 'autocomplete_words' do
 
     it 'returns words that start with the given phrase' do
-      PosableOne.create :text => 'great green pine tree'
+      PosableOne.create text: 'great green pine tree'
 
       result = Pose.autocomplete_words 'gr'
 
@@ -331,7 +331,7 @@ describe Pose do
     end
 
     it 'returns words that match the given phrase exactly' do
-      PoseWord.create :text => 'cat'
+      PoseWord.create text: 'cat'
 
       result = Pose.autocomplete_words 'cat'
 
@@ -339,7 +339,7 @@ describe Pose do
     end
 
     it 'stems the search query' do
-      PosableOne.create :text => 'car'
+      PosableOne.create text: 'car'
 
       result = Pose.autocomplete_words 'cars'
 
@@ -348,7 +348,7 @@ describe Pose do
     end
 
     it 'returns nothing if the search query is empty' do
-      PosableOne.create :text => 'foo bar'
+      PosableOne.create text: 'foo bar'
       result = Pose.autocomplete_words ''
       result.should have(0).words
     end

@@ -13,7 +13,7 @@ FactoryGirl.find_definitions
 
 # Configure Rails Environment
 ENV["RAILS_ENV"] = "test"
-Rails = Hashie::Mash.new({:env => 'test'})
+Rails = Hashie::Mash.new({env: 'test'})
 
 # We have no Railtie in these tests --> load Pose manually.
 ActiveRecord::Base.send :extend, Pose::BaseAdditions
@@ -88,7 +88,7 @@ end
 #
 
 def setup_db
-  ActiveRecord::Schema.define(:version => 1) do
+  ActiveRecord::Schema.define(version: 1) do
 
     create_table 'posable_ones' do |t|
       t.string 'text'
@@ -99,13 +99,13 @@ def setup_db
     end
 
     create_table "pose_assignments" do |t|
-      t.integer "pose_word_id",               :null => false
-      t.integer "posable_id",                 :null => false
-      t.string  "posable_type", :limit => 20, :null => false
+      t.integer "pose_word_id",            null: false
+      t.integer "posable_id",              null: false
+      t.string  "posable_type", limit: 20, null: false
     end
 
     create_table "pose_words" do |t|
-      t.string "text", :limit => 80, :null => false
+      t.string "text", limit: 80, null: false
     end
   end
 end

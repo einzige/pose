@@ -4,8 +4,8 @@ module Pose
     extend ActiveSupport::Concern
 
     included do
-      has_many :pose_assignments, :as => :posable, :dependent => :delete_all
-      has_many :pose_words, :through => :pose_assignments
+      has_many :pose_assignments, as: :posable, dependent: :delete_all
+      has_many :pose_words, through: :pose_assignments
 
       after_save :update_pose_index
       before_destroy :delete_pose_index

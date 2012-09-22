@@ -4,7 +4,7 @@ module Pose
 
   # By default, doesn't run in tests.
   # Set this to true to test the search functionality.
-  CONFIGURATION = { :search_in_tests => false }
+  CONFIGURATION = { search_in_tests: false }
 
   class <<self
 
