@@ -1,3 +1,5 @@
+before_script:
+  - psql -c 'create database pose_test;' -U postgres
 language: ruby
 rvm:
   - 1.9.2
