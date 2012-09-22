@@ -8,7 +8,8 @@ module Pose
 
   class <<self
 
-    # Asks if model should perform search.
+    # Returns whether Pose is configured to perform search.
+    # This setting exists to disable search in tests.
     #
     # @return [false, true]
     def perform_search?
