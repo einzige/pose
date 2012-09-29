@@ -20,6 +20,7 @@ Gem::Specification.new do |s|
   s.add_dependency "rake"
   s.add_dependency 'ruby-progressbar'
 
+  s.add_development_dependency "autotest-standalone"
   s.add_development_dependency "factory_girl"
   s.add_development_dependency "faker"
   s.add_development_dependency "hashie"
