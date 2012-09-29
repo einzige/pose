@@ -148,8 +148,8 @@ module Pose
 
               if options.has_key? :scope
                 # We have a scope.
-                options[:scope].each do |key, value|
-                  result[result_class] = result_class.select('id').where(key => value).map(&:id)
+                options[:scope].each do |scope|
+                  result[result_class] = result_class.select('id').where(scope).map(&:id)
                 end
               else
                 result[result_class] = ids
@@ -160,8 +160,8 @@ module Pose
 
               result[result_class] = result_class.where(id: ids)
               if options.has_key? :scope
-                options[:scope].each do |key, value|
-                  result[result_class] = result[result_class].where(key => value)
+                options[:scope].each do |scope|
+                  result[result_class] = result[result_class].where(scope)
                 end
               end
             end

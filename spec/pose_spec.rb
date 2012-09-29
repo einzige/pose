@@ -327,18 +327,35 @@ describe Pose do
       context 'with result type :classes' do
 
         it 'limits the result set by the given scope' do
-          result = Pose.search 'foo', PosableOne, scope: { private: true }
-
+          result = Pose.search 'foo', PosableOne, scope: [ private: true ]
           result[PosableOne].should have(1).item
           result[PosableOne].should include @one
+        end
+
+        it 'allows to use the hash syntax for queries' do
+          result = Pose.search 'foo', PosableOne, scope: [ private: true ]
+          result[PosableOne].should have(1).item
+          result[PosableOne].should include @one
+        end
+
+        it 'allows to use the string syntax for queries' do
+          result = Pose.search 'foo', PosableOne, scope: [ ['private = ?', true] ]
+          result[PosableOne].should have(1).item
+          result[PosableOne].should include @one
+        end
+
+        it 'allows to combine several scopes' do
+          @three = FactoryGirl.create :posable_one, text: 'foo two', private: true
+          result = Pose.search 'foo', PosableOne, scope: [ {private: true}, ['text = ?', 'foo two'] ]
+          result[PosableOne].should have(1).item
+          result[PosableOne].should include @three
         end
       end
 
       context 'with result type :ids' do
 
         it 'limits the result set by the given scope' do
-          result = Pose.search 'foo', PosableOne, result_type: :ids, scope: { private: true }
-
+          result = Pose.search 'foo', PosableOne, result_type: :ids, scope: [ private: true ]
           result[PosableOne].should have(1).item
           result[PosableOne].should include @one.id
         end
