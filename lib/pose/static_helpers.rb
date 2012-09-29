@@ -133,11 +133,38 @@ module Pose
         result_classes_and_ids.each do |class_name, ids|
           result_class = Kernel.const_get class_name
 
-          if ids.any? && classes.include?(result_class)
-            ids = ids.slice(0, options[:limit]) if options[:limit]
-            result[result_class] = options[:result_type] == :ids ? ids : result_class.where(id: ids)
-          else
+          if ids.size == 0
+            # Handle no results.
             result[result_class] = []
+
+          else
+            # Here we have results.
+
+            # Limit.
+            ids = ids.slice(0, options[:limit]) if options[:limit]
+
+            if options[:result_type] == :ids
+              # Ids requested for result.
+
+              if options.has_key? :scope
+                # We have a scope.
+                options[:scope].each do |key, value|
+                  result[result_class] = result_class.select('id').where(key => value).map(&:id)
+                end
+              else
+                result[result_class] = ids
+              end
+
+            else
+              # Classes requested for result.
+
+              result[result_class] = result_class.where(id: ids)
+              if options.has_key? :scope
+                options[:scope].each do |key, value|
+                  result[result_class] = result[result_class].where(key => value)
+                end
+              end
+            end
           end
         end
       end

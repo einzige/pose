@@ -92,10 +92,12 @@ def setup_db
 
     create_table 'posable_ones' do |t|
       t.string 'text'
+      t.boolean 'private'
     end
 
     create_table 'posable_twos' do |t|
       t.string 'text'
+      t.boolean 'private'
     end
 
     create_table "pose_assignments" do |t|

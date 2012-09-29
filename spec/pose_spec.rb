@@ -316,6 +316,34 @@ describe Pose do
         end
       end
     end
+
+    describe "'scopes' parameter" do
+
+      before :each do
+        @one = FactoryGirl.create :posable_one, text: 'foo one', private: true
+        @two = FactoryGirl.create :posable_one, text: 'foo two', private: false
+      end
+
+      context 'with result type :classes' do
+
+        it 'limits the result set by the given scope' do
+          result = Pose.search 'foo', PosableOne, scope: { private: true }
+
+          result[PosableOne].should have(1).item
+          result[PosableOne].should include @one
+        end
+      end
+
+      context 'with result type :ids' do
+
+        it 'limits the result set by the given scope' do
+          result = Pose.search 'foo', PosableOne, result_type: :ids, scope: { private: true }
+
+          result[PosableOne].should have(1).item
+          result[PosableOne].should include @one.id
+        end
+      end
+    end
   end
 
   describe 'autocomplete_words' do
