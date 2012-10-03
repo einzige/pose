@@ -2,8 +2,6 @@
 
 require "spec_helper"
 
-ActiveRecord::Base.establish_connection adapter: 'postgresql', database: 'pose_test', min_messages: 'WARNING'
-
 describe Pose do
   subject { PosableOne.new }
 

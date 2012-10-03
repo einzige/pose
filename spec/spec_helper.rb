@@ -37,16 +37,12 @@ RSpec.configure do |config|
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
   # instead of true.
-#  config.use_transactional_fixtures = true
+  # config.use_transactional_fixtures = true
 
   config.before :suite do
     setup_db
     Pose::CONFIGURATION[:search_in_tests] = true
     DatabaseCleaner.strategy = :truncation
-  end
-
-  config.after :suite do
-    teardown_db
   end
 
   config.before :each do
@@ -60,71 +56,43 @@ end
 
 
 #####################
-# MATCHERS
-#
-
-# Verifies that a taggable object has the given tags.
-RSpec::Matchers.define :have_pose_words do |expected|
-  match do |actual|
-    actual.should have(expected.size).pose_words
-    texts = actual.pose_words.map &:text
-    expected.each do |expected_word|
-      # Note (KG): Can't use text.should include(expected_word) here
-      #            because Ruby thinks I want to include a Module for some reason.
-      texts.include?(expected_word).should be_true
-    end
-  end
-  failure_message_for_should do |actual|
-    texts = actual.pose_words.map &:text
-    "expected that subject would have pose words [#{expected.join ', '}], but it has [#{texts.join ', '}]"
-  end
-end
-
-
-#####################
-# TEST CLASSES
-#
-
-class PosableOne < ActiveRecord::Base
-  posify { text }
-end
-
-class PosableTwo < ActiveRecord::Base
-  posify { text }
-end
-
-
-#####################
 # DATABASE SETUP
 #
 
 def setup_db
+  ActiveRecord::Base.establish_connection adapter:      'postgresql',
+                                          database:     'pose_test',
+                                          password:     'pose',
+                                          username:     'pose',
+                                          min_messages: 'WARNING'
+
   ActiveRecord::Schema.define(version: 1) do
-
-    create_table 'posable_ones' do |t|
-      t.string 'text'
-      t.boolean 'private'
+    unless table_exists? 'posable_ones'
+      create_table 'posable_ones' do |t|
+        t.string 'text'
+        t.boolean 'private'
+      end
     end
 
-    create_table 'posable_twos' do |t|
-      t.string 'text'
-      t.boolean 'private'
+    unless table_exists? 'posable_twos'
+      create_table 'posable_twos' do |t|
+        t.string 'text'
+        t.boolean 'private'
+      end
     end
 
-    create_table "pose_assignments" do |t|
-      t.integer "pose_word_id",            null: false
-      t.integer "posable_id",              null: false
-      t.string  "posable_type", limit: 20, null: false
+    unless table_exists? 'pose_assignments'
+      create_table "pose_assignments" do |t|
+        t.integer "pose_word_id",            null: false
+        t.integer "posable_id",              null: false
+        t.string  "posable_type", limit: 20, null: false
+      end
     end
 
-    create_table "pose_words" do |t|
-      t.string "text", limit: 80, null: false
+    unless table_exists? 'pose_words'
+      create_table "pose_words" do |t|
+        t.string "text", limit: 80, null: false
+      end
     end
-  end
-end
-
-def teardown_db
-  ActiveRecord::Base.connection.tables.each do |table|
-    ActiveRecord::Base.connection.drop_table(table)
   end
 end
