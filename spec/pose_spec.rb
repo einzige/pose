@@ -5,13 +5,6 @@ require "spec_helper"
 describe Pose do
   subject { PosableOne.new }
 
-  before :each do
-    PosableOne.delete_all
-    PosableTwo.delete_all
-    PoseAssignment.delete_all
-    PoseWord.delete_all
-  end
-
   describe 'associations' do
     it 'allows to access the associated words of a posable object directly' do
       subject.should have(0).pose_words
