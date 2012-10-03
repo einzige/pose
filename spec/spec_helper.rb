@@ -9,6 +9,8 @@ require 'active_support/core_ext/string'
 require 'pose'
 require 'faker'
 require 'factory_girl'
+require 'database_cleaner'
+
 FactoryGirl.find_definitions
 
 # Configure Rails Environment
@@ -40,10 +42,19 @@ RSpec.configure do |config|
   config.before :suite do
     setup_db
     Pose::CONFIGURATION[:search_in_tests] = true
+    DatabaseCleaner.strategy = :truncation
   end
-  
-  config.after :suite do 
+
+  config.after :suite do
     teardown_db
+  end
+
+  config.before :each do
+    DatabaseCleaner.start
+  end
+
+  config.after :each do
+    DatabaseCleaner.clean
   end
 end
 
@@ -58,7 +69,7 @@ RSpec::Matchers.define :have_pose_words do |expected|
     actual.should have(expected.size).pose_words
     texts = actual.pose_words.map &:text
     expected.each do |expected_word|
-      # Note (KG): Can't use text.should include(expected_word) here 
+      # Note (KG): Can't use text.should include(expected_word) here
       #            because Ruby thinks I want to include a Module for some reason.
       texts.include?(expected_word).should be_true
     end
