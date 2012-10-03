@@ -64,7 +64,7 @@ def setup_db
                                           database:     'pose_test',
                                           password:     'pose',
                                           username:     'pose',
-                                          min_messages: 'WARNING'
+                                          min_messages: 'INFO'
 
   ActiveRecord::Schema.define(version: 1) do
     unless table_exists? 'posable_ones'
