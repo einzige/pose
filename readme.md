@@ -1,4 +1,4 @@
-# Pose <a href="http://travis-ci.org/#!/kevgo/pose" target="_blank"><img src="https://secure.travis-ci.org/kevgo/pose.png" alt="Build status"></a>
+# Pose <a href="http://travis-ci.org/#!/kevgo/pose" target="_blank"><img src="https://secure.travis-ci.org/kevgo/pose.png" alt="Build status"></a> <a href="https://codeclimate.com/github/kevgo/pose" target="_blank"><img src="https://codeclimate.com/badge.png" /></a>
 
 Pose  ("Polymorphic Search") allows fulltext search for ActiveRecord objects.
 
