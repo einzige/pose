@@ -201,6 +201,7 @@ describe Pose do
 
       before :each do
         @one = FactoryGirl.create :posable_one, text: 'foo one', private: true
+        @bar = FactoryGirl.create :posable_one, text: 'bar one', private: true
         @two = FactoryGirl.create :posable_one, text: 'foo two', private: false
       end
 

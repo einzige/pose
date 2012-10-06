@@ -57,13 +57,15 @@ module Pose
             if options[:result_type] == :ids
               # Ids requested for result.
 
-              if options.has_key? :scope
+              if options[:scope].blank?
+                # No scope.
+                result[result_class] = ids
+              else
                 # We have a scope.
                 options[:scope].each do |scope|
-                  result[result_class] = result_class.select('id').where(scope).map(&:id)
+                  query = result_class.select('id').where('id IN (?)', ids).where(scope).to_sql
+                  result[result_class] = result_class.connection.select_values(query).map(&:to_i)
                 end
-              else
-                result[result_class] = ids
               end
 
             else
@@ -72,7 +74,7 @@ module Pose
               result[result_class] = result_class.where(id: ids)
               if options.has_key? :scope
                 options[:scope].each do |scope|
-                  result[result_class] = result[result_class].where(scope)
+                  result[result_class] = result[result_class].where('id IN (?)', ids).where(scope)
                 end
               end
             end
