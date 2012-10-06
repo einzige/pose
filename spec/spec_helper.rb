@@ -62,8 +62,6 @@ end
 def setup_db
   ActiveRecord::Base.establish_connection adapter:      'postgresql',
                                           database:     'pose_test',
-                                          password:     'pose',
-                                          username:     'pose',
                                           min_messages: 'INFO'
 
   ActiveRecord::Schema.define(version: 1) do
