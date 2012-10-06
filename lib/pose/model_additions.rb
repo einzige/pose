@@ -1,4 +1,4 @@
-# This Module contains code that gets added to classes that are posified.
+# Additions to posified ActiveRecord models.
 module Pose
   module ModelAdditions
     extend ActiveSupport::Concern

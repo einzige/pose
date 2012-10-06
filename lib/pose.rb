@@ -3,7 +3,7 @@ require 'rake'
 include Rake::DSL if defined? Rake::DSL
 
 require 'pose/static_helpers'
-require 'pose/base_additions'
+require 'pose/activerecord_base_additions'
 require 'pose/model_additions'
 require 'pose/railtie' if defined? Rails
 require 'pose/models/pose_assignment'

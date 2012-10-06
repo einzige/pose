@@ -1,5 +1,6 @@
+# Additions to ActiveRecord::Base.
 module Pose
-  module BaseAdditions
+  module ActiveRecordBaseAdditions
 
     def posify &block
       raise "You must provide a block that returns the searchable content to 'posify'." unless block_given?

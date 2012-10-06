@@ -18,7 +18,7 @@ ENV["RAILS_ENV"] = "test"
 Rails = Hashie::Mash.new({env: 'test'})
 
 # We have no Railtie in these tests --> load Pose manually.
-ActiveRecord::Base.send :extend, Pose::BaseAdditions
+ActiveRecord::Base.send :extend, Pose::ActiveRecordBaseAdditions
 
 # Load support files
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
