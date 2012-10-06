@@ -45,7 +45,33 @@ describe Pose::Helpers do
     it 'leaves arrays as arrays' do
       Pose::Helpers.make_array([1]).should == [1]
     end
+  end
 
+
+  describe 'merge_search_result_word_matches' do
+    context 'given a new class name' do
+
+      before :each do
+        @result = {}
+      end
+
+      it 'sets the given ids as the ids for this class name' do
+        Pose::Helpers.merge_search_result_word_matches @result, 'class1', [1, 2]
+        @result.should == { 'class1' => [1, 2] }
+      end
+    end
+
+    context 'given a class name with already existing ids from another word' do
+
+      before :each do
+        @result = { 'class1' => [1, 2] }
+      end
+
+      it 'only keeps the ids that are included in both sets' do
+        Pose::Helpers.merge_search_result_word_matches @result, 'class1', [1, 3]
+        @result.should == { 'class1' => [1] }
+      end
+    end
   end
 
 

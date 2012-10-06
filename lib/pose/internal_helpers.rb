@@ -52,6 +52,16 @@ module Pose
       end
 
 
+      # Merges the given posable object ids for a single query word into the given search result.
+      def merge_search_result_word_matches result, class_name, ids
+        if result.has_key? class_name
+          result[class_name] = result[class_name] & ids
+        else
+          result[class_name] = ids
+        end
+      end
+
+
       # Returns a hash mapping classes to ids for the a single given word.
       def search_classes_and_ids_for_word word, class_names
         result = {}.tap { |hash| class_names.each { |class_name| hash[class_name] = [] }}

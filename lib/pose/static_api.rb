@@ -35,11 +35,7 @@ module Pose
       result_classes_and_ids = {}
       Pose::Helpers.query_terms(query).each do |query_word|
         Pose::Helpers.search_classes_and_ids_for_word(query_word, class_names).each do |class_name, ids|
-          if result_classes_and_ids.has_key? class_name
-            result_classes_and_ids[class_name] = result_classes_and_ids[class_name] & ids
-          else
-            result_classes_and_ids[class_name] = ids
-          end
+          Pose::Helpers.merge_search_result_word_matches result_classes_and_ids, class_name, ids
         end
       end
 
