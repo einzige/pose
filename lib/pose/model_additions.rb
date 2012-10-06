@@ -29,15 +29,15 @@ module Pose
 
       # Step 1: get an array of all words for the current object.
       search_string = instance_eval &(self.class.pose_content)
-      new_words = search_string.to_s.split(' ').map { |word| Pose.root_word(word) }.flatten.uniq
+      new_words = search_string.to_s.split(' ').map { |word| Pose::Helpers.root_word(word) }.flatten.uniq
 
       # Step 2: Add new words to the search index.
-      Pose.get_words_to_add(self.pose_words, new_words).each do |word_to_add|
+      Pose::Helpers.get_words_to_add(self.pose_words, new_words).each do |word_to_add|
         self.pose_words << PoseWord.find_or_create_by_text(word_to_add)
       end
 
       # Step 3: Remove now obsolete words from search index.
-      Pose.get_words_to_remove(self.pose_words, new_words).each do |word_to_remove|
+      Pose::Helpers.get_words_to_remove(self.pose_words, new_words).each do |word_to_remove|
         self.pose_words.delete word_to_remove
       end
     end

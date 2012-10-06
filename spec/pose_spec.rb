@@ -91,96 +91,6 @@ describe Pose do
     end
   end
 
-  describe '::get_words_to_remove' do
-    let(:one) { PoseWord.new(text: 'one') }
-    let(:two) { PoseWord.new(text: 'two') }
-
-    it "returns an array of word objects that need to be removed" do
-      Pose.get_words_to_remove([one, two], %w{one three}).should eql([two])
-    end
-
-    it 'returns an empty array if there are no words to be removed' do
-      Pose.get_words_to_remove([one, two], %w{one two}).should be_empty
-    end
-  end
-
-  describe '::get_words_to_add' do
-    let(:one) { PoseWord.new(text: 'one') }
-    let(:two) { PoseWord.new(text: 'two') }
-
-    context 'having a new word to be added' do
-      it 'returns an array with strings that need to be added' do
-        Pose.get_words_to_add([one, two], %w{one three}).should eql(['three'])
-      end
-    end
-
-    context 'nothing to add' do
-      it 'returns an empty array' do
-        Pose.get_words_to_add([one, two], %w{one two}).should be_empty
-      end
-    end
-  end
-
-  describe 'root_word' do
-
-    it 'converts words into singular' do
-      Pose.root_word('bars').should eql(['bar'])
-    end
-
-    it 'removes special characters' do
-      Pose.root_word('(bar').should == ['bar']
-      Pose.root_word('bar)').should == ['bar']
-      Pose.root_word('(bar)').should == ['bar']
-      Pose.root_word('>foo').should == ['foo']
-      Pose.root_word('<foo').should == ['foo']
-      Pose.root_word('"foo"').should == ['foo']
-      Pose.root_word('"foo').should == ['foo']
-      Pose.root_word("'foo'").should == ['foo']
-      Pose.root_word("'foo's").should == ['foo']
-      Pose.root_word("foo?").should == ['foo']
-      Pose.root_word("foo!").should == ['foo']
-      Pose.root_word("foo/bar").should == ['foo', 'bar']
-      Pose.root_word("foo-bar").should == ['foo', 'bar']
-      Pose.root_word("foo--bar").should == ['foo', 'bar']
-      Pose.root_word("foo.bar").should == ['foo', 'bar']
-    end
-
-    it 'removes umlauts' do
-      Pose.root_word('fünf').should == ['funf']
-    end
-
-    it 'splits up numbers' do
-      Pose.root_word('11.2.2011').should == ['11', '2', '2011']
-      Pose.root_word('11-2-2011').should == ['11', '2', '2011']
-      Pose.root_word('30:4-5').should == ['30', '4', '5']
-    end
-
-    it 'converts into lowercase' do
-      Pose.root_word('London').should == ['london']
-    end
-
-    it "stores single-letter words" do
-      Pose.root_word('a b').should == ['a', 'b']
-    end
-
-    it "does't encode external URLs" do
-      Pose.root_word('http://web.com').should == ['http', 'web', 'com']
-    end
-
-    it "doesn't store empty words" do
-      Pose.root_word('  one two  ').should == ['one', 'two']
-    end
-
-    it "removes duplicates" do
-      Pose.root_word('one_one').should == ['one']
-      Pose.root_word('one one').should == ['one']
-    end
-
-    it "splits up complex URLs" do
-      Pose.root_word('books?id=p7uyWPcVGZsC&dq=closure%20definitive%20guide&pg=PP1#v=onepage&q&f=false').should eql([
-        "book", "id", "p7uywpcvgzsc", "dq", "closure", "definitive", "guide", "pg", "pp1", "v", "onepage", "q", "f", "false"])
-    end
-  end
 
   describe 'search' do
 
@@ -339,7 +249,7 @@ describe Pose do
     it 'returns words that start with the given phrase' do
       PosableOne.create text: 'great green pine tree'
 
-      result = Pose.autocomplete_words 'gr'
+      result = Pose::Helpers.autocomplete_words 'gr'
 
       result.should have(2).words
       result.should include 'great'
@@ -348,20 +258,20 @@ describe Pose do
 
     it 'returns words that match the given phrase exactly' do
       PoseWord.create text: 'cat'
-      result = Pose.autocomplete_words 'cat'
+      result = Pose::Helpers.autocomplete_words 'cat'
       result.should == ['cat']
     end
 
     it 'stems the search query' do
       PosableOne.create text: 'car'
-      result = Pose.autocomplete_words 'cars'
+      result = Pose::Helpers.autocomplete_words 'cars'
       result.should have(1).words
       result[0].should == 'car'
     end
 
     it 'returns nothing if the search query is empty' do
       PosableOne.create text: 'foo bar'
-      result = Pose.autocomplete_words ''
+      result = Pose::Helpers.autocomplete_words ''
       result.should be_empty
     end
   end
