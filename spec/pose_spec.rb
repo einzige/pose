@@ -50,25 +50,27 @@ describe Pose do
       before :each do
         @old_env = Rails.env
         Rails.env = 'production'
+        Pose::CONFIGURATION[:search_in_tests] = false
       end
 
       after :each do
         Rails.env = @old_env
+        Pose::CONFIGURATION[:search_in_tests] = true
       end
 
-      it "calls update_pose_words" do
+      it "always calls update_pose_words, even when search_in_tests is disabled" do
         subject.should_receive :update_pose_words
         subject.update_pose_index
       end
     end
   end
 
+
   describe '#update_pose_words' do
 
     it 'saves the words for search' do
       subject.text = 'foo bar'
       subject.update_pose_words
-      subject.should have(2).pose_words
       subject.should have_pose_words ['foo', 'bar']
     end
 
@@ -126,52 +128,52 @@ describe Pose do
     end
 
     it 'removes special characters' do
-      Pose.root_word('(bar').should eql(['bar'])
-      Pose.root_word('bar)').should eql(['bar'])
-      Pose.root_word('(bar)').should eql(['bar'])
-      Pose.root_word('>foo').should eql(['foo'])
-      Pose.root_word('<foo').should eql(['foo'])
-      Pose.root_word('"foo"').should eql(['foo'])
-      Pose.root_word('"foo').should eql(['foo'])
-      Pose.root_word("'foo'").should eql(['foo'])
-      Pose.root_word("'foo's").should eql(['foo'])
-      Pose.root_word("foo?").should eql(['foo'])
-      Pose.root_word("foo!").should eql(['foo'])
-      Pose.root_word("foo/bar").should eql(['foo', 'bar'])
-      Pose.root_word("foo-bar").should eql(['foo', 'bar'])
-      Pose.root_word("foo--bar").should eql(['foo', 'bar'])
-      Pose.root_word("foo.bar").should eql(['foo', 'bar'])
+      Pose.root_word('(bar').should == ['bar']
+      Pose.root_word('bar)').should == ['bar']
+      Pose.root_word('(bar)').should == ['bar']
+      Pose.root_word('>foo').should == ['foo']
+      Pose.root_word('<foo').should == ['foo']
+      Pose.root_word('"foo"').should == ['foo']
+      Pose.root_word('"foo').should == ['foo']
+      Pose.root_word("'foo'").should == ['foo']
+      Pose.root_word("'foo's").should == ['foo']
+      Pose.root_word("foo?").should == ['foo']
+      Pose.root_word("foo!").should == ['foo']
+      Pose.root_word("foo/bar").should == ['foo', 'bar']
+      Pose.root_word("foo-bar").should == ['foo', 'bar']
+      Pose.root_word("foo--bar").should == ['foo', 'bar']
+      Pose.root_word("foo.bar").should == ['foo', 'bar']
     end
 
     it 'removes umlauts' do
-      Pose.root_word('fünf').should eql(['funf'])
+      Pose.root_word('fünf').should == ['funf']
     end
 
     it 'splits up numbers' do
-      Pose.root_word('11.2.2011').should eql(['11', '2', '2011'])
-      Pose.root_word('11-2-2011').should eql(['11', '2', '2011'])
-      Pose.root_word('30:4-5').should eql(['30', '4', '5'])
+      Pose.root_word('11.2.2011').should == ['11', '2', '2011']
+      Pose.root_word('11-2-2011').should == ['11', '2', '2011']
+      Pose.root_word('30:4-5').should == ['30', '4', '5']
     end
 
     it 'converts into lowercase' do
-      Pose.root_word('London').should eql(['london'])
+      Pose.root_word('London').should == ['london']
     end
 
     it "stores single-letter words" do
-      Pose.root_word('a b').should eql(['a', 'b'])
+      Pose.root_word('a b').should == ['a', 'b']
     end
 
     it "does't encode external URLs" do
-      Pose.root_word('http://web.com').should eql(['http', 'web', 'com'])
+      Pose.root_word('http://web.com').should == ['http', 'web', 'com']
     end
 
     it "doesn't store empty words" do
-      Pose.root_word('  one two  ').should eql(['one', 'two'])
+      Pose.root_word('  one two  ').should == ['one', 'two']
     end
 
     it "removes duplicates" do
-      Pose.root_word('one_one').should eql(['one'])
-      Pose.root_word('one one').should eql(['one'])
+      Pose.root_word('one_one').should == ['one']
+      Pose.root_word('one one').should == ['one']
     end
 
     it "splits up complex URLs" do
@@ -182,46 +184,38 @@ describe Pose do
 
   describe 'search' do
 
-    context '~ ?' do
-      let!(:pos) { PosableOne.create text: 'foo' }
-      let(:result) { Pose.search 'foo', PosableOne }
-
-      it 'works' do
-        result.should == {PosableOne => [pos]}
-      end
+    it 'works' do
+      pos = PosableOne.create text: 'foo'
+      result = Pose.search 'foo', PosableOne
+      result.should == { PosableOne => [pos] }
     end
 
     describe 'classes parameter' do
-      it 'returns all different classes by default' do
-        pos1 = PosableOne.create text: 'foo'
-        pos2 = PosableTwo.create text: 'foo'
 
-        result = Pose.search 'foo', [PosableOne, PosableTwo]
-
-        result.should have(2).items
-        result[PosableOne].should == [pos1]
-        result[PosableTwo].should == [pos2]
+      before :each do
+        @pos1 = PosableOne.create text: 'foo'
+        @pos2 = PosableTwo.create text: 'foo'
       end
 
-      it 'allows to provide different classes to return' do # NOTE(SZ): duplicate spec.
-        pos1 = PosableOne.create text: 'foo'
-        pos2 = PosableTwo.create text: 'foo'
-
+      it 'returns all requested classes' do
         result = Pose.search 'foo', [PosableOne, PosableTwo]
 
-        result.should have(2).items
-        result[PosableOne].should == [pos1]
-        result[PosableTwo].should == [pos2]
+        result.keys.should have(2).items
+        result.keys.should include PosableOne
+        result.keys.should include PosableTwo
+      end
+
+      it 'returns all matching instances of each requested class' do
+        result = Pose.search 'foo', [PosableOne, PosableTwo]
+
+        result[PosableOne].should == [@pos1]
+        result[PosableTwo].should == [@pos2]
       end
 
       it 'returns only instances of the given classes' do
-        pos1 = PosableOne.create text: 'one'
-        pos2 = PosableTwo.create text: 'one'
-
-        result = Pose.search 'one', PosableOne
-
-        result.should have(1).items
-        result[PosableOne].should == [pos1]
+        result = Pose.search 'foo', PosableOne
+        result.keys.should include PosableOne
+        result.keys.should_not include PosableTwo
       end
     end
 
@@ -229,10 +223,8 @@ describe Pose do
 
       it 'returns an empty array if nothing matches' do
         pos1 = PosableOne.create text: 'one'
-
         result = Pose.search 'two', PosableOne
-
-        result.should == { PosableOne => [] }
+        result[PosableOne].should be_empty
       end
 
       it 'returns only objects that match all given query words' do
@@ -242,28 +234,22 @@ describe Pose do
 
         result = Pose.search 'two one', PosableOne
 
-        result.should have(1).items
         result[PosableOne].should == [pos1]
       end
 
       it 'returns nothing if searching for a non-existing word' do
         pos1 = PosableOne.create text: 'one two'
-
         result = Pose.search 'one zonk', PosableOne
-
-        result.should have(1).items
-        result[PosableOne].should == []
+        result[PosableOne].should be_empty
       end
 
       it 'works if the query is given in uppercase' do
         pos1 = PosableOne.create text: 'one two'
-
         result = Pose.search 'OnE TwO', PosableOne
-
-        result.should have(1).items
         result[PosableOne].should == [pos1]
       end
     end
+
 
     describe "'limit' parameter" do
 
@@ -271,13 +257,13 @@ describe Pose do
         FactoryGirl.create :posable_one, text: 'foo one'
         FactoryGirl.create :posable_one, text: 'foo two'
         FactoryGirl.create :posable_one, text: 'foo three'
-        FactoryGirl.create :posable_one, text: 'foo four'
 
-        result = Pose.search 'foo', PosableOne, limit: 3
+        result = Pose.search 'foo', PosableOne, limit: 2
 
-        result[PosableOne].should have(3).items
+        result[PosableOne].should have(2).items
       end
     end
+
 
     describe "'result_type' parameter" do
 
@@ -288,17 +274,18 @@ describe Pose do
       describe 'default behavior' do
         it 'returns full objects' do
           result = Pose.search 'foo', PosableOne
-          result[PosableOne][0].should == @foo_one
+          result[PosableOne].first.should == @foo_one
         end
       end
 
       context ':ids given' do
         it 'returns ids instead of objects' do
           result = Pose.search 'foo', PosableOne, result_type: :ids
-          result[PosableOne][0].should == @foo_one.id
+          result[PosableOne].first.should == @foo_one.id
         end
       end
     end
+
 
     describe "'scopes' parameter" do
 
@@ -346,6 +333,7 @@ describe Pose do
     end
   end
 
+
   describe 'autocomplete_words' do
 
     it 'returns words that start with the given phrase' do
@@ -354,23 +342,19 @@ describe Pose do
       result = Pose.autocomplete_words 'gr'
 
       result.should have(2).words
-      result.should include('great')
-      result.should include('green')
+      result.should include 'great'
+      result.should include 'green'
     end
 
     it 'returns words that match the given phrase exactly' do
       PoseWord.create text: 'cat'
-
       result = Pose.autocomplete_words 'cat'
-
       result.should == ['cat']
     end
 
     it 'stems the search query' do
       PosableOne.create text: 'car'
-
       result = Pose.autocomplete_words 'cars'
-
       result.should have(1).words
       result[0].should == 'car'
     end
@@ -378,7 +362,7 @@ describe Pose do
     it 'returns nothing if the search query is empty' do
       PosableOne.create text: 'foo bar'
       result = Pose.autocomplete_words ''
-      result.should have(0).words
+      result.should be_empty
     end
   end
 end

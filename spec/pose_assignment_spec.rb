@@ -19,13 +19,14 @@ describe PoseAssignment do
     end
   end
 
+
   describe "cleanup_orphaned_pose_assignments" do
 
     it "deletes the assignment if the posable object doesn't exist" do
       FactoryGirl.create :pose_assignment, posable_id: 2, posable_type: 'PosableOne'
       PoseAssignment.count.should > 0
       PoseAssignment.cleanup_orphaned_pose_assignments
-      PoseAssignment.should have(0).items
+      PoseAssignment.count.should == 0
     end
 
     it "deletes the assignment if the pose_word doesn't exist" do

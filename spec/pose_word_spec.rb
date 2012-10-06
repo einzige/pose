@@ -6,18 +6,19 @@ describe PoseWord do
     subject { PoseWord }
 
     describe '::remove_unused_words' do
-      let(:snippet) { FactoryGirl.create :pose_word }
 
       before :each do
-        snippet and PoseWord.remove_unused_words
+        instantiate_objects
+        PoseWord.remove_unused_words
       end
 
       context 'having unused words' do
+        let(:instantiate_objects) { FactoryGirl.create :pose_word }
         its(:count) { should == 0 }
       end
 
       context 'having used words' do
-        let(:snippet) { FactoryGirl.create :posable_one }
+        let(:instantiate_objects) { FactoryGirl.create :posable_one }
         its(:count) { should > 0 }
       end
     end
