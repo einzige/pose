@@ -87,6 +87,10 @@ describe Pose::Helpers do
     it 'splits complex words into separate terms' do
       Pose::Helpers.query_terms('one-two').should == ['one', 'two']
     end
+
+    it 'removes duplicates' do
+      Pose::Helpers.query_terms('foo-bar foo').should == ['foo', 'bar']
+    end
   end
 
 

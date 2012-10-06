@@ -84,7 +84,7 @@ module Pose
 
       # Returns the search terms that are contained in the given query.
       def query_terms query
-        query.split(' ').map{|query_word| Pose::Helpers.root_word query_word}.flatten
+        query.split(' ').map{|query_word| Pose::Helpers.root_word query_word}.flatten.uniq
       end
 
       # Simplifies the given word to a generic search form.

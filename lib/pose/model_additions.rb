@@ -28,8 +28,8 @@ module Pose
     def update_pose_words
 
       # Step 1: get an array of all words for the current object.
-      search_string = instance_eval &(self.class.pose_content)
-      new_words = search_string.to_s.split(' ').map { |word| Pose::Helpers.root_word(word) }.flatten.uniq
+      search_text = instance_eval &(self.class.pose_content)
+      new_words = Pose::Helpers.query_terms search_text.to_s
 
       # Step 2: Add new words to the search index.
       Pose::Helpers.get_words_to_add(self.pose_words, new_words).each do |word_to_add|
