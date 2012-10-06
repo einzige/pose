@@ -4,19 +4,6 @@ require "spec_helper"
 
 describe Pose::Helpers do
 
-  describe '::get_words_to_remove' do
-    let(:one) { PoseWord.new(text: 'one') }
-    let(:two) { PoseWord.new(text: 'two') }
-
-    it "returns an array of word objects that need to be removed" do
-      Pose::Helpers.get_words_to_remove([one, two], %w{one three}).should eql([two])
-    end
-
-    it 'returns an empty array if there are no words to be removed' do
-      Pose::Helpers.get_words_to_remove([one, two], %w{one two}).should be_empty
-    end
-  end
-
   describe '::get_words_to_add' do
     let(:one) { PoseWord.new(text: 'one') }
     let(:two) { PoseWord.new(text: 'two') }
@@ -33,6 +20,21 @@ describe Pose::Helpers do
       end
     end
   end
+
+
+  describe '::get_words_to_remove' do
+    let(:one) { PoseWord.new(text: 'one') }
+    let(:two) { PoseWord.new(text: 'two') }
+
+    it "returns an array of word objects that need to be removed" do
+      Pose::Helpers.get_words_to_remove([one, two], %w{one three}).should eql([two])
+    end
+
+    it 'returns an empty array if there are no words to be removed' do
+      Pose::Helpers.get_words_to_remove([one, two], %w{one two}).should be_empty
+    end
+  end
+
 
   describe 'root_word' do
 
