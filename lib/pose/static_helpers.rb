@@ -1,6 +1,5 @@
 # Static helper methods of the Pose gem. 
 module Pose
-  extend ActiveSupport::Concern
 
   # By default, doesn't run in tests.
   # Set this to true to test the search functionality.
