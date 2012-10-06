@@ -42,7 +42,7 @@ RSpec.configure do |config|
   config.before :suite do
     setup_db
     Pose::CONFIGURATION[:search_in_tests] = true
-    DatabaseCleaner.strategy = :truncation
+    DatabaseCleaner.strategy = :deletion
   end
 
   config.before :each do
