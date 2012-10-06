@@ -4,10 +4,6 @@ class PoseAssignment < ActiveRecord::Base
   belongs_to :posable, polymorphic: true
   attr_accessible :pose_word, :posable
 
-
-  attr_accessible :pose_word, :posable
-
-
   # Removes all PoseAssignments for the given class.
   def self.delete_class_index clazz
     PoseAssignment.delete_all(['posable_type=?', clazz.name])

@@ -2,17 +2,8 @@
 
 require "spec_helper"
 
-ActiveRecord::Base.establish_connection adapter: 'postgresql', database: 'pose_test', min_messages: 'WARNING'
-
 describe Pose do
   subject { PosableOne.new }
-
-  before :each do
-    PosableOne.delete_all
-    PosableTwo.delete_all
-    PoseAssignment.delete_all
-    PoseWord.delete_all
-  end
 
   describe 'associations' do
     it 'allows to access the associated words of a posable object directly' do
@@ -22,26 +13,39 @@ describe Pose do
     end
   end
 
-  describe 'update_pose_index' do
+  describe '#update_pose_index' do
 
     context "in the 'test' environment" do
+      # Set global env configuration.
+      before :each do
+        Pose::CONFIGURATION[:search_in_tests] = search_in_tests
+      end
+
+      # Restores global configuration to default.
       after :each do
         Pose::CONFIGURATION[:search_in_tests] = true
       end
 
-      it "doesn't calls update_pose_words in tests if the test flag is not enabled" do
-        Pose::CONFIGURATION[:search_in_tests] = false
-        subject.should_not_receive :update_pose_words
-        subject.update_pose_index
+      context "search_in_tests flag is not enabled" do
+        let(:search_in_tests) { false }
+
+        it "doesn't call update_pose_words" do
+          subject.should_not_receive :update_pose_words
+          subject.update_pose_index
+        end
       end
 
-      it "calls update_pose_words in tests if the test flag is enabled" do
-        Pose::CONFIGURATION[:search_in_tests] = true
-        subject.should_receive :update_pose_words
-        subject.update_pose_index
+      context "search_in_tests flag is enabled" do
+        let(:search_in_tests) { true }
+
+        it "calls update_pose_words" do
+          subject.should_receive :update_pose_words
+          subject.update_pose_index
+        end
       end
     end
 
+    # TODO(REMOVE).
     context "in the 'production' environment' do" do
       before :each do
         @old_env = Rails.env
@@ -59,7 +63,7 @@ describe Pose do
     end
   end
 
-  describe 'update_pose_words' do
+  describe '#update_pose_words' do
 
     it 'saves the words for search' do
       subject.text = 'foo bar'
@@ -85,53 +89,33 @@ describe Pose do
     end
   end
 
-  describe 'get_words_to_remove' do
+  describe '::get_words_to_remove' do
+    let(:one) { PoseWord.new(text: 'one') }
+    let(:two) { PoseWord.new(text: 'two') }
 
     it "returns an array of word objects that need to be removed" do
-      word1 = PoseWord.new text: 'one'
-      word2 = PoseWord.new text: 'two'
-      existing_words = [word1, word2]
-      new_words = ['one', 'three']
-
-      result = Pose.get_words_to_remove existing_words, new_words
-
-      result.should eql([word2])
+      Pose.get_words_to_remove([one, two], %w{one three}).should eql([two])
     end
 
     it 'returns an empty array if there are no words to be removed' do
-      word1 = PoseWord.new text: 'one'
-      word2 = PoseWord.new text: 'two'
-      existing_words = [word1, word2]
-      new_words = ['one', 'two']
-
-      result = Pose.get_words_to_remove existing_words, new_words
-
-      result.should eql([])
+      Pose.get_words_to_remove([one, two], %w{one two}).should be_empty
     end
   end
 
-  describe 'get_words_to_add' do
+  describe '::get_words_to_add' do
+    let(:one) { PoseWord.new(text: 'one') }
+    let(:two) { PoseWord.new(text: 'two') }
 
-    it 'returns an array with strings that need to be added' do
-      word1 = PoseWord.new text: 'one'
-      word2 = PoseWord.new text: 'two'
-      existing_words = [word1, word2]
-      new_words = ['one', 'three']
-
-      result = Pose.get_words_to_add existing_words, new_words
-
-      result.should eql(['three'])
+    context 'having a new word to be added' do
+      it 'returns an array with strings that need to be added' do
+        Pose.get_words_to_add([one, two], %w{one three}).should eql(['three'])
+      end
     end
 
-    it 'returns an empty array if there is nothing to be added' do
-      word1 = PoseWord.new text: 'one'
-      word2 = PoseWord.new text: 'two'
-      existing_words = [word1, word2]
-      new_words = ['one', 'two']
-
-      result = Pose.get_words_to_add existing_words, new_words
-
-      result.should eql([])
+    context 'nothing to add' do
+      it 'returns an empty array' do
+        Pose.get_words_to_add([one, two], %w{one two}).should be_empty
+      end
     end
   end
 
@@ -198,14 +182,13 @@ describe Pose do
 
   describe 'search' do
 
-    it 'works' do
-      pos1 = PosableOne.create text: 'one'
+    context '~ ?' do
+      let!(:pos) { PosableOne.create text: 'foo' }
+      let(:result) { Pose.search 'foo', PosableOne }
 
-      result = Pose.search 'one', PosableOne
-
-      result.should have(1).items
-      result[PosableOne].should have(1).items
-      result[PosableOne][0].should == pos1
+      it 'works' do
+        result.should == {PosableOne => [pos]}
+      end
     end
 
     describe 'classes parameter' do
@@ -220,7 +203,7 @@ describe Pose do
         result[PosableTwo].should == [pos2]
       end
 
-      it 'allows to provide different classes to return' do
+      it 'allows to provide different classes to return' do # NOTE(SZ): duplicate spec.
         pos1 = PosableOne.create text: 'foo'
         pos2 = PosableTwo.create text: 'foo'
 
