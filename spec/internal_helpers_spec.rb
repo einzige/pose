@@ -36,6 +36,19 @@ describe Pose::Helpers do
   end
 
 
+  describe 'make_array' do
+
+    it 'converts a single value into an array' do
+      Pose::Helpers.make_array(1).should == [1]
+    end
+
+    it 'leaves arrays as arrays' do
+      Pose::Helpers.make_array([1]).should == [1]
+    end
+
+  end
+
+
   describe 'root_word' do
 
     it 'converts words into singular' do

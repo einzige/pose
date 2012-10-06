@@ -29,10 +29,8 @@ module Pose
     # @return [Hash<Class, ActiveRecord::Relation>]
     def search query, classes, options = {}
 
-      # Turn 'classes' into an array.
-      classes = [classes].flatten
-      classes_names = classes.map &:name
-      classes_names = classes_names[0] if classes_names.size == 1
+      classes = Pose::Helpers.make_array classes
+      class_names = classes.map &:name
 
       # Get the ids of the results.
       result_classes_and_ids = {}
@@ -43,7 +41,7 @@ module Pose
         query = PoseAssignment.joins(:pose_word) \
                               .select('pose_assignments.posable_id, pose_assignments.posable_type') \
                               .where('pose_words.text LIKE ?', "#{query_word}%") \
-                              .where('posable_type IN (?)', classes_names)
+                              .where('posable_type IN (?)', class_names)
         PoseAssignment.connection.select_all(query.to_sql).each do |pose_assignment|
           current_word_classes_and_ids[pose_assignment['posable_type']] << pose_assignment['posable_id'].to_i
         end

@@ -13,6 +13,7 @@ module Pose
         PoseWord.where('text LIKE ?', "#{Pose::Helpers.root_word(query)[0]}%").map(&:text)
       end
 
+
       # Returns all strings that are in new_words, but not in existing_words.
       # Helper method.
       #
@@ -23,6 +24,7 @@ module Pose
       def get_words_to_add existing_words, new_words
         new_words - existing_words.map(&:text)
       end
+
 
       # Helper method.
       # Returns the id of all word objects that are in existing_words, but not in new_words.
@@ -37,6 +39,7 @@ module Pose
         end.compact
       end
 
+
       # Returns whether the given string is a URL.
       #
       # @param [String] word The string to check.
@@ -46,6 +49,12 @@ module Pose
         URI::parse(word).scheme == 'http'
       rescue URI::InvalidURIError
         false
+      end
+
+
+      # Makes the given input an array.
+      def make_array input
+        [input].flatten
       end
 
       # Simplifies the given word to a generic search form.
