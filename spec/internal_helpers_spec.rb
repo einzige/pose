@@ -49,6 +49,21 @@ describe Pose::Helpers do
   end
 
 
+  describe 'query_terms' do
+    it 'returns all individual words resulting from the given query' do
+      Pose::Helpers.query_terms('foo bar').should == ['foo', 'bar']
+    end
+
+    it 'converts the individual words into their root form' do
+      Pose::Helpers.query_terms('bars').should == ['bar']
+    end
+
+    it 'splits complex words into separate terms' do
+      Pose::Helpers.query_terms('one-two').should == ['one', 'two']
+    end
+  end
+
+
   describe 'root_word' do
 
     it 'converts words into singular' do
@@ -110,5 +125,24 @@ describe Pose::Helpers do
     end
   end
 
+
+  describe 'search_classes_and_ids_for_word' do
+
+    it 'returns a hash that contains all the given classes' do
+      result = Pose::Helpers.search_classes_and_ids_for_word 'foo', %w{PosableOne PosableTwo}
+      result.keys.sort.should == %w{PosableOne PosableTwo}
+    end
+
+    it 'returns the ids of all the posable objects that include the given word' do
+      pos1 = PosableOne.create text: 'one two'
+      pos2 = PosableTwo.create text: 'one three'
+      pos3 = PosableTwo.create text: 'two three'
+
+      result = Pose::Helpers.search_classes_and_ids_for_word 'one', %w{PosableOne PosableTwo}
+
+      result['PosableOne'].should == [pos1.id]
+      result['PosableTwo'].should == [pos2.id]
+    end
+  end
 end
 

@@ -29,28 +29,12 @@ module Pose
     # @return [Hash<Class, ActiveRecord::Relation>]
     def search query, classes, options = {}
 
-      classes = Pose::Helpers.make_array classes
-      class_names = classes.map &:name
 
       # Get the ids of the results.
+      class_names = Pose::Helpers.make_array(classes).map &:name
       result_classes_and_ids = {}
-      query_words = query.split(' ').map{|query_word| Pose::Helpers.root_word query_word}.flatten
-      query_words.each do |query_word|
-        current_word_classes_and_ids = {}
-        classes.each { |clazz| current_word_classes_and_ids[clazz.name] = [] }
-        query = PoseAssignment.joins(:pose_word) \
-                              .select('pose_assignments.posable_id, pose_assignments.posable_type') \
-                              .where('pose_words.text LIKE ?', "#{query_word}%") \
-                              .where('posable_type IN (?)', class_names)
-        PoseAssignment.connection.select_all(query.to_sql).each do |pose_assignment|
-          current_word_classes_and_ids[pose_assignment['posable_type']] << pose_assignment['posable_id'].to_i
-        end
-        # This is the old ActiveRecord way. Removed for performance reasons.
-        # query.each do |pose_assignment|
-        #   current_word_classes_and_ids[pose_assignment.posable_type] << pose_assignment.posable_id
-        # end
-
-        current_word_classes_and_ids.each do |class_name, ids|
+      Pose::Helpers.query_terms(query).each do |query_word|
+        Pose::Helpers.search_classes_and_ids_for_word(query_word, class_names).each do |class_name, ids|
           if result_classes_and_ids.has_key? class_name
             result_classes_and_ids[class_name] = result_classes_and_ids[class_name] & ids
           else

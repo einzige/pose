@@ -52,9 +52,29 @@ module Pose
       end
 
 
+      # Returns a hash mapping classes to ids for the a single given word.
+      def search_classes_and_ids_for_word word, class_names
+        result = {}.tap { |hash| class_names.each { |class_name| hash[class_name] = [] }}
+        query = PoseAssignment.joins(:pose_word) \
+                              .select('pose_assignments.posable_id, pose_assignments.posable_type') \
+                              .where('pose_words.text LIKE ?', "#{word}%") \
+                              .where('posable_type IN (?)', class_names)
+        PoseAssignment.connection.select_all(query.to_sql).each do |pose_assignment|
+          result[pose_assignment['posable_type']] << pose_assignment['posable_id'].to_i
+        end
+        result
+      end
+
+
       # Makes the given input an array.
       def make_array input
         [input].flatten
+      end
+
+
+      # Returns the search terms that are contained in the given query.
+      def query_terms query
+        query.split(' ').map{|query_word| Pose::Helpers.root_word query_word}.flatten
       end
 
       # Simplifies the given word to a generic search form.
