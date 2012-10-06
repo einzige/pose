@@ -45,7 +45,6 @@ describe Pose do
       end
     end
 
-    # TODO(REMOVE).
     context "in the 'production' environment' do" do
       before :each do
         @old_env = Rails.env
@@ -197,7 +196,7 @@ describe Pose do
     end
 
 
-    describe "'scopes' parameter" do
+    describe "'where' parameter" do
 
       before :each do
         @one = FactoryGirl.create :posable_one, text: 'foo one', private: true
@@ -207,27 +206,27 @@ describe Pose do
 
       context 'with result type :classes' do
 
-        it 'limits the result set by the given scope' do
-          result = Pose.search 'foo', PosableOne, scope: [ private: true ]
+        it 'limits the result set by the given conditions' do
+          result = Pose.search 'foo', PosableOne, where: [ private: true ]
           result[PosableOne].should have(1).item
           result[PosableOne].should include @one
         end
 
         it 'allows to use the hash syntax for queries' do
-          result = Pose.search 'foo', PosableOne, scope: [ private: true ]
+          result = Pose.search 'foo', PosableOne, where: [ private: true ]
           result[PosableOne].should have(1).item
           result[PosableOne].should include @one
         end
 
         it 'allows to use the string syntax for queries' do
-          result = Pose.search 'foo', PosableOne, scope: [ ['private = ?', true] ]
+          result = Pose.search 'foo', PosableOne, where: [ ['private = ?', true] ]
           result[PosableOne].should have(1).item
           result[PosableOne].should include @one
         end
 
-        it 'allows to combine several scopes' do
+        it 'allows to combine several conditions' do
           @three = FactoryGirl.create :posable_one, text: 'foo two', private: true
-          result = Pose.search 'foo', PosableOne, scope: [ {private: true}, ['text = ?', 'foo two'] ]
+          result = Pose.search 'foo', PosableOne, where: [ {private: true}, ['text = ?', 'foo two'] ]
           result[PosableOne].should have(1).item
           result[PosableOne].should include @three
         end
@@ -235,8 +234,8 @@ describe Pose do
 
       context 'with result type :ids' do
 
-        it 'limits the result set by the given scope' do
-          result = Pose.search 'foo', PosableOne, result_type: :ids, scope: [ private: true ]
+        it 'limits the result set by the given condition' do
+          result = Pose.search 'foo', PosableOne, result_type: :ids, where: [ private: true ]
           result[PosableOne].should have(1).item
           result[PosableOne].should include @one.id
         end
