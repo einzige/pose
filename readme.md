@@ -34,8 +34,8 @@ Pose  ("Polymorphic Search") allows fulltext search for ActiveRecord objects.
 
     Pose creates two tables in your database:
 
-    * _pose_words_: index of all the words that occur in the searchable content.
-    * _pose_assignments_: lists which word occurs in which document.
+        * _pose_words_: index of all the words that occur in the searchable content.
+        * _pose_assignments_: lists which word occurs in which document.
 
 
 # Make your ActiveRecord models searchable
