@@ -5,7 +5,7 @@ Pose  ("Polymorphic Search") allows fulltext search for ActiveRecord objects.
 * Searches over several ActiveRecord classes at once.
 * The searchable fulltext content per document can be freely customized.
 * Uses the main Rails database, no sparate search engines are necessary.
-* Does not require to add attributes to the searchable classes or their database tables.
+* Does not pollute searchable classes or their database tables with search-related attributes.
 * The algorithm is designed to work with any data store that allows for range queries, which covers pretty much every SQL or NoSQL database.
 * The search is very fast, doing only simple queries over fully indexed columns.
 * The search index provides data for autocomplete search fields.
