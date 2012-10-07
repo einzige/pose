@@ -162,14 +162,38 @@ describe Pose do
 
     describe "'limit' parameter" do
 
-      it 'works' do
-        FactoryGirl.create :posable_one, text: 'foo one'
-        FactoryGirl.create :posable_one, text: 'foo two'
-        FactoryGirl.create :posable_one, text: 'foo three'
+      before :each do
+        @pos1 = FactoryGirl.create :posable_one, text: 'foo', private: true
+        @pos2 = FactoryGirl.create :posable_one, text: 'foo', private: true
+        @pos3 = FactoryGirl.create :posable_one, text: 'foo', private: false
+      end
 
-        result = Pose.search 'foo', PosableOne, limit: 2
+      context 'with ids and no scope' do
+        it 'limits the result set to the given number' do
+          result = Pose.search 'foo', PosableOne, result_type: :ids, limit: 1
+          result[PosableOne].should have(1).item
+        end
+      end
 
-        result[PosableOne].should have(2).items
+      context 'with ids and scope' do
+        it 'limits the result set to the given number' do
+          result = Pose.search 'foo', PosableOne, result_type: :ids, limit: 1, where: [private: false]
+          result[PosableOne].should have(1).item
+        end
+      end
+
+      context 'with classes and no scope' do
+        it 'limits the result set to the given number' do
+          result = Pose.search 'foo', PosableOne, limit: 1
+          result[PosableOne].should have(1).item
+        end
+      end
+
+      context 'with classes and scope' do
+        it 'limits the result set to the given number' do
+          result = Pose.search 'foo', PosableOne, limit: 1, where: [private: false]
+          result[PosableOne].should have(1).item
+        end
       end
     end
 

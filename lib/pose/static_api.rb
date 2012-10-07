@@ -51,19 +51,18 @@ module Pose
           else
             # Here we have results.
 
-            # Limit.
-            ids = ids.slice(0, options[:limit]) if options[:limit]
-
             if options[:result_type] == :ids
               # Ids requested for result.
 
               if options[:where].blank?
                 # No scope.
-                result[result_class] = ids
+                result[result_class] = options[:limit] ? ids.slice(0, options[:limit]) : ids
               else
                 # We have a scope.
                 options[:where].each do |scope|
-                  query = result_class.select('id').where('id IN (?)', ids).where(scope).to_sql
+                  query = result_class.select('id').where('id IN (?)', ids).where(scope)
+                  query = query.limit(options[:limit]) unless options[:limit].blank?
+                  query = query.to_sql
                   result[result_class] = result_class.connection.select_values(query).map(&:to_i)
                 end
               end
@@ -72,6 +71,7 @@ module Pose
               # Classes requested for result.
 
               result[result_class] = result_class.where(id: ids)
+              result[result_class] = result[result_class].limit(options[:limit]) unless options[:limit].blank?
               unless options[:where].blank?
                 options[:where].each do |scope|
                   result[result_class] = result[result_class].where('id IN (?)', ids).where(scope)
