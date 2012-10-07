@@ -1,60 +1,52 @@
 # Pose <a href="http://travis-ci.org/#!/kevgo/pose" target="_blank"><img src="https://secure.travis-ci.org/kevgo/pose.png" alt="Build status"></a> <a href="https://codeclimate.com/github/kevgo/pose" target="_blank"><img src="https://codeclimate.com/badge.png" /></a>
 
-Pose  ("Polymorphic Search") allows fulltext search for ActiveRecord objects.
+Pose  ("Polymorphic Search") allows fulltext search for ActiveRecord objects in Ruby on Rails.
 
-* Searches over several ActiveRecord classes at once.
-* The searchable fulltext content per document can be freely customized.
-* Uses the main Rails database, no sparate search engines are necessary.
-* Does not pollute searchable classes or their database tables with search-related attributes.
+* Searches over several classes at once.
+* The searchable content of each class and document can be freely customized.
+* Uses the main Rails database, no separate servers, databases, or search engines are necessary.
+* Does not pollute the searchable classes or their database tables with any attributes.
+* Allows to combine the fulltext search with any other custom database searches.
 * The algorithm is designed to work with any data store that allows for range queries, which covers pretty much every SQL or NoSQL database.
 * The search is very fast, doing only simple queries over fully indexed columns.
-* The search index provides data for autocomplete search fields.
 
 
 # Installation
 
-1.  Add the gem to your Gemfile.
+## Set up the gem.
 
-    ```ruby
-    gem 'pose'
-    ```
+Add the gem to your Gemfile and run `bundle install`
 
-2.  Update your gem bundle.
+```ruby
+gem 'pose'
+```
 
-    ```bash
-    $ bundle install
-    ```
+## Create the database tables for pose.
 
-3.  Create the database tables for pose.
+```bash
+$ rails generate pose
+$ rake db:migrate
+```
 
-    ```bash
-    $ rails generate pose
-    $ rake db:migrate
-    ```
+Pose creates two tables in your database. These tables are automatically populated and kept up to date.
 
-    Pose creates two tables in your database:
-
-        * _pose_words_: index of all the words that occur in the searchable content.
-        * _pose_assignments_: lists which word occurs in which document.
+* _pose_words_: index of all the words that occur in the searchable content.
+* _pose_assignments_: lists which word occurs in which document.
 
 
-# Make your ActiveRecord models searchable
+## Make your ActiveRecord models searchable
 
 ```ruby
 class MyClass < ActiveRecord::Base
 
-  # This line tells Pose that your class should be searchable.
-  # Once Pose knows that, it will update the search index every time an instance is saved or deleted.
-  #
+  # This line makes your class searchable.
   # The given block must return the searchble content as a string.
-  # Note that you can return whatever content you want here,
-  # not only data from this object but also data from related objects, class names, etc.
   posify do
 
     # Only active instances should show up in search results.
-    return unless status == :active
+    return nil unless status == :active
 
-    # Return the fulltext content.
+    # The searchable content.
     [ self.foo,
       self.parent.bar,
       self.children.map &:name ].join ' '
@@ -62,44 +54,31 @@ class MyClass < ActiveRecord::Base
 end
 ```
 
+Note that you can return whatever content you want in the `posify` block,
+not only data from this object, but also data from related objects, class names, etc. 
 
-# Maintain the search index
-
-The search index is automatically updated when Objects are saved or deleted.
-
-## Indexing existing objects in the database
-If you had existing data in your database before adding Pose, it isn't automatically included in the search index.
-They will be added on the next save/update operation on them.
-You can also manually add existing objects to the search index.
-
-```bash
-$ rake pose:reindex_all[MyClass]
-```
-
-## Optimizing the search index
-The search index keeps all the words that were ever used around, in order to try to reuse them in the future.
-If you deleted a lot of objects, you can shrink the memory consumption of the search index by removing unused words.
-
-```bash
-$ rake pose:cleanup_index
-```
-
-## Removing the search index
-For development purposes, or if something went wrong, you can remove the search index for a class
-(let's call it "MyClass") completely.
-
-```bash
-rake pose:delete_index[MyClass]
-```
+Now that this class is posified, any `create`, `update`, or `delete` operation on any instance of this class will update the search index automatically.
 
 
-# Perform a search
+## Index existing records in your database
+
+Data that existed in your database before adding Pose isn't automatically included in the search index.
+You have to index those records manually once. Future updates will happen automatically.
+
+To index all entries of `MyClass`, run `rake pose:reindex_all[MyClass]` on the command line.
+
+At this point, you are all set up. Let's perform a search!
+
+
+# Searching
+
+To search, simply call Pose's `search` method, and tell it the search query as well as in which classes it should search.
 
 ```ruby
 result = Pose.search 'foo', [MyClass, MyOtherClass]
 ```
 
-This searches for all instances of MyClass and MyOtherClass that contain the word 'foo'.
+This searches for all instances of `MyClass` and `MyOtherClass` that contain the word 'foo'.
 The method returns a hash that looks like this:
 
 ```ruby
@@ -110,34 +89,89 @@ The method returns a hash that looks like this:
 ```
 
 In this example, it found two results of type _MyClass_ and no results of type _MyOtherClass_.
-
-Happy searching!  :)
+A Pose search returns the object instances that match the query. This behavior, as well as many others, is configurable through
+search options.
 
 
 ## Search options
 
+### Configure the searched classes
+
+Pose accepts an array of classes to search over. When searching a single class, it can be provided directly, i.e. not as an array.
+
 ```ruby
-result = Pose.search 'foo',
-                     MyClass,
-                     limit: 3,            # Limit the result count to 3.
-                     result_type: :ids    # Don't load the resulting objects, return just their ids.
-                     where: [ public: true, ['user_id <> ?', @user.id] ]    # Additional where clauses for when the result entries are loaded from the database.
+result = Pose.search 'foo', MyClass
 ```
 
 
-# Autocomplete support
+### Configure the result data
 
-Because the search index contains a list of all the words known to the search engine,
-it can provide data for autocompletion functionality through the following convenience method:
+By default, search results are the instances of the objects matching the search query. 
+If you want to just get the ids of the search results, and not the full instances, use the parameter `:result_type`.
 
 ```ruby
-# Returns an array of strings that start with 'cat'.
-autocomplete_words = Pose.autocomplete_words 'cat'
+result = Pose.search 'foo', MyClass, result_type: :ids   # Returns ids instead of object instances.
 ```
+
+
+### Limit the amount of search results
+
+By default, Pose returns all matching items. Large result sets can become very slow and resource intensive to process.
+To limit the result set, use the `:limit` search parameter.
+
+```ruby
+result = Pose.search 'foo', MyClass, limit: 20    # Returns only 20 search results.
+```
+
+
+### Combine fulltext search with structured data search
+
+You can add your own ActiveRecord query clauses to a fulltext search operation. 
+For example, given a class `Note` that belongs to a `User` class and has a boolean attribute `public`,
+finding all public notes from other users containing "foo" is as easy as:
+
+```ruby
+result = Pose.search 'foo', MyClass, where: [ public: true, ['user_id <> ?', @current_user.id] ]    
+```
+
+
+# Maintenance
+
+Besides an accasional search index cleanup, Pose is relatively maintenance free. 
+The search index is automatically updated when objects are created, updated, or deleted.
+
+
+## Optimizing the search index
+
+For performance reasons, the search index keeps all the words that were ever used around, in order to try to reuse them as much as possible.
+After deleting or changing a large number of objects, you can shrink the memory consumption of Pose's search index by 
+removing no longer used search terms from it.
+
+```bash
+$ rake pose:index:vacuum
+```
+
+
+## Recreating the search index from scratch
+To index existing data in your database, or after loading additional data outside of ActiveRecord into your database,
+you should recreate the search index from scratch.
+
+```bash
+rake pose:index:recreate[MyClass]
+```
+
+
+## Removing the search index
+For development purposes, or if something went wrong, you can remove the search index for a class completely.
+
+```bash
+rake pose:index:remove[MyClass]
+```
+
 
 # Use Pose in your tests
 
-By default, Pose doesn't run in Rails' test environment. This is to not slow down tests due to constant updating of the search index when objects are created.
+By default, Pose doesn't run in Rails' `test` environment. This is to not slow down tests due to constant updating of the search index when objects are created.
 If you want to test your models search functionality, you need to enable searching in tests:
 
 ```ruby
@@ -171,6 +205,8 @@ $ rake spec
 
 ## Road Map
 
-Pose's algorithm works with all sorts of storage technologies that support range queries, i.e. relational databases,
-Google's DataStore, and other NoSQL stores. Right now, only relational databases are supported. NoSQL support is easy,
-but not yet implemented.
+* add `join` to search parameters
+* pagination of search results
+* ordering
+* weighting search results
+* test Pose with more types of data stores (NoSQL, Google DataStore etc)
