@@ -11,9 +11,9 @@ Pose  ("Polymorphic Search") allows fulltext search for ActiveRecord objects in 
 * The search is very fast, doing only simple queries over fully indexed columns.
 
 
-# Installation
+## Installation
 
-## Set up the gem.
+### Set up the gem.
 
 Add the gem to your Gemfile and run `bundle install`
 
@@ -21,7 +21,7 @@ Add the gem to your Gemfile and run `bundle install`
 gem 'pose'
 ```
 
-## Create the database tables for pose.
+### Create the database tables for pose.
 
 ```bash
 $ rails generate pose
@@ -34,7 +34,7 @@ Pose creates two tables in your database. These tables are automatically populat
 * _pose_assignments_: lists which word occurs in which document.
 
 
-## Make your ActiveRecord models searchable
+### Make your ActiveRecord models searchable
 
 ```ruby
 class MyClass < ActiveRecord::Base
@@ -60,7 +60,7 @@ not only data from this object, but also data from related objects, class names,
 Now that this class is posified, any `create`, `update`, or `delete` operation on any instance of this class will update the search index automatically.
 
 
-## Index existing records in your database
+### Index existing records in your database
 
 Data that existed in your database before adding Pose isn't automatically included in the search index.
 You have to index those records manually once. Future updates will happen automatically.
@@ -70,7 +70,7 @@ To index all entries of `MyClass`, run `rake pose:reindex_all[MyClass]` on the c
 At this point, you are all set up. Let's perform a search!
 
 
-# Searching
+## Searching
 
 To search, simply call Pose's `search` method, and tell it the search query as well as in which classes it should search.
 
@@ -92,8 +92,6 @@ In this example, it found two results of type _MyClass_ and no results of type _
 A Pose search returns the object instances that match the query. This behavior, as well as many others, is configurable through
 search options.
 
-
-## Search options
 
 ### Configure the searched classes
 
@@ -135,13 +133,13 @@ result = Pose.search 'foo', MyClass, where: [ public: true, ['user_id <> ?', @cu
 ```
 
 
-# Maintenance
+## Maintenance
 
 Besides an accasional search index cleanup, Pose is relatively maintenance free. 
 The search index is automatically updated when objects are created, updated, or deleted.
 
 
-## Optimizing the search index
+### Optimizing the search index
 
 For performance reasons, the search index keeps all the words that were ever used around, in order to try to reuse them as much as possible.
 After deleting or changing a large number of objects, you can shrink the memory consumption of Pose's search index by 
@@ -152,7 +150,7 @@ $ rake pose:index:vacuum
 ```
 
 
-## Recreating the search index from scratch
+### Recreating the search index from scratch
 To index existing data in your database, or after loading additional data outside of ActiveRecord into your database,
 you should recreate the search index from scratch.
 
@@ -161,7 +159,7 @@ rake pose:index:recreate[MyClass]
 ```
 
 
-## Removing the search index
+### Removing the search index
 For development purposes, or if something went wrong, you can remove the search index for a class completely.
 
 ```bash
@@ -169,7 +167,7 @@ rake pose:index:remove[MyClass]
 ```
 
 
-# Use Pose in your tests
+## Use Pose in your tests
 
 By default, Pose doesn't run in Rails' `test` environment. This is to not slow down tests due to constant updating of the search index when objects are created.
 If you want to test your models search functionality, you need to enable searching in tests:
@@ -181,13 +179,13 @@ Pose::CONFIGURATION[:search_in_tests] = true
 Please don't forget to set this value to `false` when you are done, or your remaining tests will be slow. A good place to enable/disable this flag is in before/after blocks of your test cases.
 
 
-# Development
+## Development
 
 If you find a bug, have a question, or a better idea, please open an issue on the
 <a href="https://github.com/kevgo/pose/issues">Pose issue tracker</a>.
 Or, clone the repository, make your changes, and submit a pull request.
 
-## Run the unit tests for the Pose Gem
+### Run the unit tests for the Pose Gem
 
 Pose uses Postgresql for tests, since it is the most strict database.
 To run tests, first, create a test database.
@@ -203,7 +201,7 @@ $ rake spec
 ```
 
 
-## Road Map
+### Road Map
 
 * add `join` to search parameters
 * pagination of search results
