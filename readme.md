@@ -24,7 +24,7 @@ gem 'pose'
 ### Create the database tables for pose.
 
 ```bash
-$ rails generate pose
+$ rails generate pose:install
 $ rake db:migrate
 ```
 
@@ -93,6 +93,8 @@ A Pose search returns the object instances that match the query. This behavior, 
 search options.
 
 
+## Search options
+
 ### Configure the searched classes
 
 Pose accepts an array of classes to search over. When searching a single class, it can be provided directly, i.e. not as an array.
@@ -159,12 +161,15 @@ rake pose:index:recreate[MyClass]
 ```
 
 
-### Removing the search index
-For development purposes, or if something went wrong, you can remove the search index for a class completely.
+# Uninstalling
+
+To remove all traces of Pose from your database, run:
 
 ```bash
-rake pose:index:remove[MyClass]
+rails generate pose:remove
 ```
+
+Also don't forget to remove the `posify` block from your models as well as the gem entry from your Gemfile.
 
 
 ## Use Pose in your tests
