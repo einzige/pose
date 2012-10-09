@@ -37,3 +37,4 @@ namespace :pose do
     end
     
   end
+end

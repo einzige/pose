@@ -1,4 +1,5 @@
-# Static helper methods of the Pose gem. 
+# This is the public API of static helper methods of the Pose gem.
+
 module Pose
 
   # By default, doesn't run in tests.
@@ -7,9 +8,16 @@ module Pose
 
   class <<self
 
-    ######################
-    # PUBLIC METHODS
+    # Returns all words that begin with the given query string.
+    # This can be used for autocompletion functionality.
     #
+    # @param [String]
+    # @return [Array<String>]
+    def autocomplete_words query
+      return [] if query.blank?
+      PoseWord.where('text LIKE ?', "#{Pose::Helpers.root_word(query)[0]}%").map(&:text)
+    end
+
 
     # Returns whether Pose is configured to perform search.
     # This setting exists to disable search in tests.

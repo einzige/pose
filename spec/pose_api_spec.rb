@@ -273,7 +273,7 @@ describe Pose do
     it 'returns words that start with the given phrase' do
       PosableOne.create text: 'great green pine tree'
 
-      result = Pose::Helpers.autocomplete_words 'gr'
+      result = Pose.autocomplete_words 'gr'
 
       result.should have(2).words
       result.should include 'great'
@@ -282,20 +282,20 @@ describe Pose do
 
     it 'returns words that match the given phrase exactly' do
       PoseWord.create text: 'cat'
-      result = Pose::Helpers.autocomplete_words 'cat'
+      result = Pose.autocomplete_words 'cat'
       result.should == ['cat']
     end
 
     it 'stems the search query' do
       PosableOne.create text: 'car'
-      result = Pose::Helpers.autocomplete_words 'cars'
+      result = Pose.autocomplete_words 'cars'
       result.should have(1).words
       result[0].should == 'car'
     end
 
     it 'returns nothing if the search query is empty' do
       PosableOne.create text: 'foo bar'
-      result = Pose::Helpers.autocomplete_words ''
+      result = Pose.autocomplete_words ''
       result.should be_empty
     end
   end
