@@ -249,10 +249,10 @@ describe Pose do
         end
 
         it 'allows to combine several conditions' do
-          @three = FactoryGirl.create :posable_one, text: 'foo two', private: true
+          three = FactoryGirl.create :posable_one, text: 'foo two', private: true
           result = Pose.search 'foo', PosableOne, where: [ {private: true}, ['text = ?', 'foo two'] ]
           result[PosableOne].should have(1).item
-          result[PosableOne].should include @three
+          result[PosableOne].should include three
         end
       end
 

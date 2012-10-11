@@ -9,7 +9,7 @@ class PoseWord < ActiveRecord::Base
       # Will generate something like:
       #
       # DELETE FROM "pose_words" WHERE "pose_words"."id" IN
-      # (SELECT "pose_words"."id" FROM "pose_words" INNER JOIN "pose_assignments" ON "pose_assignments"."id" = "pose_words"."user_id"
+      # (SELECT "pose_words"."id" FROM "pose_words" INNER JOIN "pose_assignments" ON "pose_assignments"."pose_word_id" = "pose_words"."id"
       # HAVING.... GROUP BY "pose_words"."id")
       PoseWord.delete_all(id: PoseWord.select("pose_words.id").
                           joins("LEFT OUTER JOIN pose_assignments ON pose_assignments.pose_word_id = pose_words.id").
