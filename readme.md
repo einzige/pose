@@ -55,7 +55,7 @@ end
 ```
 
 Note that you can return whatever content you want in the `posify` block,
-not only data from this object, but also data from related objects, class names, etc. 
+not only data from this object, but also data from related objects, class names, etc.
 
 Now that this class is posified, any `create`, `update`, or `delete` operation on any instance of this class will update the search index automatically.
 
@@ -106,7 +106,7 @@ result = Pose.search 'foo', MyClass
 
 ### Configure the result data
 
-By default, search results are the instances of the objects matching the search query. 
+By default, search results are the instances of the objects matching the search query.
 If you want to just get the ids of the search results, and not the full instances, use the parameter `:result_type`.
 
 ```ruby
@@ -126,25 +126,25 @@ result = Pose.search 'foo', MyClass, limit: 20    # Returns only 20 search resul
 
 ### Combine fulltext search with structured data search
 
-You can add your own ActiveRecord query clauses to a fulltext search operation. 
+You can add your own ActiveRecord query clauses to a fulltext search operation.
 For example, given a class `Note` that belongs to a `User` class and has a boolean attribute `public`,
 finding all public notes from other users containing "foo" is as easy as:
 
 ```ruby
-result = Pose.search 'foo', MyClass, where: [ public: true, ['user_id <> ?', @current_user.id] ]    
+result = Pose.search 'foo', MyClass, where: [ public: true, ['user_id <> ?', @current_user.id] ]
 ```
 
 
 ## Maintenance
 
-Besides an accasional search index cleanup, Pose is relatively maintenance free. 
+Besides an accasional search index cleanup, Pose is relatively maintenance free.
 The search index is automatically updated when objects are created, updated, or deleted.
 
 
 ### Optimizing the search index
 
 For performance reasons, the search index keeps all the words that were ever used around, in order to try to reuse them as much as possible.
-After deleting or changing a large number of objects, you can shrink the memory consumption of Pose's search index by 
+After deleting or changing a large number of objects, you can shrink the memory consumption of Pose's search index by
 removing no longer used search terms from it.
 
 ```bash
@@ -161,7 +161,7 @@ rake pose:index:recreate[MyClass]
 ```
 
 
-# Uninstalling
+## Uninstalling
 
 To remove all traces of Pose from your database, run:
 
@@ -174,14 +174,36 @@ Also don't forget to remove the `posify` block from your models as well as the g
 
 ## Use Pose in your tests
 
-By default, Pose doesn't run in Rails' `test` environment. This is to not slow down tests due to constant updating of the search index when objects are created.
-If you want to test your models search functionality, you need to enable searching in tests:
+Pose can slow down your tests, because it updates the search index on every `:create`, `:update`, and `:delete`
+operation in the database.
+If this becomes a problem, you can disable Pose in your `test` environments,
+and only enable it for the tests that actually need search functionality.
+
+To disable Pose for tests, add this line to `config/environments/test.rb`
 
 ```ruby
-Pose::CONFIGURATION[:search_in_tests] = true
+Pose::CONFIGURATION[:perform_search] = false
 ```
-    
-Please don't forget to set this value to `false` when you are done, or your remaining tests will be slow. A good place to enable/disable this flag is in before/after blocks of your test cases.
+
+Now, with search disabled in the test environment, enable Pose in some of your tests by setting the same value to `true` inside the tests:
+
+```ruby
+
+context 'with search enabled' do
+
+  before :all do
+    Pose::CONFIGURATION[:perform_search] = true
+  end
+
+  after :all do
+    Pose::CONFIGURATION[:perform_search] = false
+  end
+
+  it 'has search enabled in this test here...'
+
+  it 'has search enabled in this test as well...'
+end
+```
 
 
 ## Development
@@ -192,8 +214,8 @@ Or, clone the repository, make your changes, and submit a pull request.
 
 ### Run the unit tests for the Pose Gem
 
-Pose uses Postgresql for tests, since it is the most strict database.
-To run tests, first, create a test database.
+For now, Pose uses Postgresql for tests, since it is free, and one of the most strict databases.
+To run tests, first create a test database.
 
 ```bash
 createdb pose_test

@@ -2,9 +2,11 @@
 
 module Pose
 
-  # By default, doesn't run in tests.
-  # Set this to true to test the search functionality.
-  CONFIGURATION = { search_in_tests: false }
+  # By default, performs search functionality everywhere.
+  # Since this can severely slow down your tests,
+  # disable this setting in your "test" environments,
+  # and enable it for tests that verify search functionality.
+  CONFIGURATION = { perform_search: true }
 
   class <<self
 
@@ -24,7 +26,7 @@ module Pose
     #
     # @return [false, true]
     def perform_search?
-      !(Rails.env == 'test' and !CONFIGURATION[:search_in_tests])
+      CONFIGURATION.has_key?(:perform_search) ? CONFIGURATION[:perform_search] : true
     end
 
 

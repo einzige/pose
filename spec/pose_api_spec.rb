@@ -18,16 +18,16 @@ describe Pose do
     context "in the 'test' environment" do
       # Set global env configuration.
       before :each do
-        Pose::CONFIGURATION[:search_in_tests] = search_in_tests
+        Pose::CONFIGURATION[:perform_search] = perform_search
       end
 
       # Restores global configuration to default.
       after :each do
-        Pose::CONFIGURATION[:search_in_tests] = true
+        Pose::CONFIGURATION.delete :perform_search
       end
 
       context "search_in_tests flag is not enabled" do
-        let(:search_in_tests) { false }
+        let(:perform_search) { false }
 
         it "doesn't call update_pose_words" do
           subject.should_not_receive :update_pose_words
@@ -36,7 +36,7 @@ describe Pose do
       end
 
       context "search_in_tests flag is enabled" do
-        let(:search_in_tests) { true }
+        let(:perform_search) { true }
 
         it "calls update_pose_words" do
           subject.should_receive :update_pose_words
