@@ -13,51 +13,30 @@ describe Pose do
     end
   end
 
+
   describe '#update_pose_index' do
 
-    context "in the 'test' environment" do
-      # Set global env configuration.
-      before :each do
-        Pose::CONFIGURATION[:perform_search] = perform_search
-      end
+    before :each do
+      Pose::CONFIGURATION[:perform_search] = perform_search
+    end
 
-      # Restores global configuration to default.
-      after :each do
-        Pose::CONFIGURATION.delete :perform_search
-      end
+    after :each do
+      Pose::CONFIGURATION.delete :perform_search
+    end
 
-      context "search_in_tests flag is not enabled" do
-        let(:perform_search) { false }
+    context "search_in_tests flag is not enabled" do
+      let(:perform_search) { false }
 
-        it "doesn't call update_pose_words" do
-          subject.should_not_receive :update_pose_words
-          subject.update_pose_index
-        end
-      end
-
-      context "search_in_tests flag is enabled" do
-        let(:perform_search) { true }
-
-        it "calls update_pose_words" do
-          subject.should_receive :update_pose_words
-          subject.update_pose_index
-        end
+      it "doesn't call update_pose_words" do
+        subject.should_not_receive :update_pose_words
+        subject.update_pose_index
       end
     end
 
-    context "in the 'production' environment' do" do
-      before :each do
-        @old_env = Rails.env
-        Rails.env = 'production'
-        Pose::CONFIGURATION[:search_in_tests] = false
-      end
+    context "search_in_tests flag is enabled" do
+      let(:perform_search) { true }
 
-      after :each do
-        Rails.env = @old_env
-        Pose::CONFIGURATION[:search_in_tests] = true
-      end
-
-      it "always calls update_pose_words, even when search_in_tests is disabled" do
+      it "calls update_pose_words" do
         subject.should_receive :update_pose_words
         subject.update_pose_index
       end
