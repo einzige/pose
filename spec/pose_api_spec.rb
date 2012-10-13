@@ -9,7 +9,7 @@ describe Pose do
     it 'allows to access the associated words of a posable object directly' do
       subject.should have(0).pose_words
       subject.pose_words << PoseWord.new(text: 'one')
-      subject.should have_pose_words(['one'])
+      subject.should have_pose_words 'one'
     end
   end
 
@@ -70,7 +70,7 @@ describe Pose do
     it 'saves the words for search' do
       subject.text = 'foo bar'
       subject.update_pose_words
-      subject.should have_pose_words ['foo', 'bar']
+      subject.should have_pose_words 'foo', 'bar'
     end
 
     it 'updates the search index when the text is changed' do
@@ -80,7 +80,7 @@ describe Pose do
       subject.text = 'other text'
       subject.update_pose_words
 
-      subject.should have_pose_words ['other', 'text']
+      subject.should have_pose_words 'other', 'text'
     end
 
     it "doesn't create duplicate words" do

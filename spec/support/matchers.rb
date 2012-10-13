@@ -1,5 +1,5 @@
 # Verifies that a posable object has the given pose words in its search index.
-RSpec::Matchers.define :have_pose_words do |expected|
+RSpec::Matchers.define :have_pose_words do |*expected|
 
   match do |actual|
     actual.pose_words.map(&:text).sort == expected.sort
