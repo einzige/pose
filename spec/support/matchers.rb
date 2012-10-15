@@ -2,7 +2,7 @@
 RSpec::Matchers.define :have_pose_words do |*expected|
 
   match do |actual|
-    actual.pose_words.map(&:text).sort == expected.sort
+    actual.pose_words.map(&:text).sort == expected.flatten.sort
   end
 
   failure_message_for_should do |actual|
