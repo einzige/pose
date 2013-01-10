@@ -157,7 +157,7 @@ To index existing data in your database, or after loading additional data outsid
 you should recreate the search index from scratch.
 
 ```bash
-rake pose:index:recreate[MyClass]
+rake pose:index:reindex_all[MyClass]
 ```
 
 
