@@ -52,7 +52,7 @@ module Pose
       # Load the results by id.
       {}.tap do |result|
         result_classes_and_ids.each do |class_name, ids|
-          result_class = Kernel.const_get class_name
+          result_class = class_name.constantize
 
           if ids.size == 0
             # Handle no results.

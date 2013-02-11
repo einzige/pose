@@ -20,7 +20,7 @@ namespace :pose do
 
     desc "Removes the search index for all instances of the given classes."
     task :remove, [:class_name] => :environment do |t, args|
-      clazz = Kernel.const_get args.class_name
+      clazz = args.class_name.constantize
       PoseAssignment.cleanup_class_index clazz
       puts "Search index for class #{clazz.name} deleted.\n\n"
     end
