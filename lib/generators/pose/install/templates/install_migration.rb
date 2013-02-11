@@ -1,4 +1,4 @@
-class AddPoseTables < ActiveRecord::Migration
+class InstallPose < ActiveRecord::Migration
 
   def self.up
     create_table "pose_assignments" do |t|
