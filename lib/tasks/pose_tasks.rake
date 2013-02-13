@@ -1,5 +1,5 @@
 include Rake::DSL if defined?(Rake::DSL)
-require 'progressbar'
+require 'ruby-progressbar'
 namespace :pose do
 
   namespace :index do
@@ -7,11 +7,11 @@ namespace :pose do
     desc "Cleans out unused data from the search index."
     task :vacuum => :environment do |t, args|
       puts "Cleaning Pose search index ...\n\n"
-      progress_bar = ProgressBar.new '  assignments', PoseAssignment.count
+      progress_bar = ProgressBar.create title: '  assignments', total: PoseAssignment.count
       PoseAssignment.cleanup_orphaned_pose_assignments progress_bar
       progress_bar.finish
 
-      progress_bar = ProgressBar.new '  words', PoseWord.count
+      progress_bar = ProgressBar.create title: '  words', total: PoseWord.count
       PoseWord.remove_unused_words progress_bar
       progress_bar.finish
 
@@ -28,10 +28,10 @@ namespace :pose do
     desc "Deletes and recreates the search index for all instances of the given class."
     task :reindex_all, [:class_name] => [:environment] do |t, args|
       clazz = args.class_name.constantize
-      progress_bar = ProgressBar.new "  reindexing", clazz.count
+      progress_bar = ProgressBar.create title: "  reindexing", total: clazz.count
       clazz.find_each do |instance|
         instance.update_pose_words
-        progress_bar.inc
+        progress_bar.increment
       end
       progress_bar.finish
     end

@@ -21,7 +21,7 @@ class PoseWord < ActiveRecord::Base
       #
       PoseWord.select(:id).find_in_batches.each(include: [:pose_assignments], batch_size: 5000) do |pose_word|
         pose_word.delete if pose_word.pose_assignments.size == 0
-        progress_bar.inc if progress_bar
+        progress_bar.increment if progress_bar
       end
     end
   end
