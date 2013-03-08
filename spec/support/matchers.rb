@@ -10,4 +10,3 @@ RSpec::Matchers.define :have_pose_words do |*expected|
     "expected that subject would have pose words [#{expected.join ', '}], but it has [#{texts.join ', '}]"
   end
 end
-

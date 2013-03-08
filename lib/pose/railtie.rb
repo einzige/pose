@@ -7,7 +7,7 @@ module Pose
     # Add the Pose additions to ActiveRecord::Base once it is loaded.
     initializer 'Pose.base_additions' do
       ActiveSupport.on_load :active_record do
-        extend Pose::ActiveRecordBaseAdditions
+        extend ActiveRecordBaseAdditions
       end
     end
 
@@ -16,5 +16,4 @@ module Pose
       load "tasks/pose_tasks.rake"
     end
   end
-
 end

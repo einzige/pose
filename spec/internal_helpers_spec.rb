@@ -1,12 +1,11 @@
 # encoding: utf-8
-
 require "spec_helper"
 
 describe Pose::Helpers do
 
   describe '::get_words_to_add' do
-    let(:one) { PoseWord.new(text: 'one') }
-    let(:two) { PoseWord.new(text: 'two') }
+    let(:one) { Pose::Word.new(text: 'one') }
+    let(:two) { Pose::Word.new(text: 'two') }
 
     context 'having a new word to be added' do
       it 'returns an array with strings that need to be added' do
@@ -23,8 +22,8 @@ describe Pose::Helpers do
 
 
   describe '::get_words_to_remove' do
-    let(:one) { PoseWord.new(text: 'one') }
-    let(:two) { PoseWord.new(text: 'two') }
+    let(:one) { Pose::Word.new(text: 'one') }
+    let(:two) { Pose::Word.new(text: 'two') }
 
     it "returns an array of word objects that need to be removed" do
       Pose::Helpers.get_words_to_remove([one, two], %w{one three}).should eql([two])
@@ -39,11 +38,11 @@ describe Pose::Helpers do
   describe 'make_array' do
 
     it 'converts a single value into an array' do
-      Pose::Helpers.make_array(1).should == [1]
+      Pose::Helpers.make_array(1).should eq [1]
     end
 
     it 'leaves arrays as arrays' do
-      Pose::Helpers.make_array([1]).should == [1]
+      Pose::Helpers.make_array([1]).should eq [1]
     end
   end
 
@@ -57,7 +56,7 @@ describe Pose::Helpers do
 
       it 'sets the given ids as the ids for this class name' do
         Pose::Helpers.merge_search_result_word_matches @result, 'class1', [1, 2]
-        @result.should == { 'class1' => [1, 2] }
+        @result.should eq({ 'class1' => [1, 2] })
       end
     end
 
@@ -69,7 +68,7 @@ describe Pose::Helpers do
 
       it 'only keeps the ids that are included in both sets' do
         Pose::Helpers.merge_search_result_word_matches @result, 'class1', [1, 3]
-        @result.should == { 'class1' => [1] }
+        @result.should eq({ 'class1' => [1] })
       end
     end
   end
@@ -77,19 +76,19 @@ describe Pose::Helpers do
 
   describe 'query_terms' do
     it 'returns all individual words resulting from the given query' do
-      Pose::Helpers.query_terms('foo bar').should == ['foo', 'bar']
+      Pose::Helpers.query_terms('foo bar').should eq ['foo', 'bar']
     end
 
     it 'converts the individual words into their root form' do
-      Pose::Helpers.query_terms('bars').should == ['bar']
+      Pose::Helpers.query_terms('bars').should eq ['bar']
     end
 
     it 'splits complex words into separate terms' do
-      Pose::Helpers.query_terms('one-two').should == ['one', 'two']
+      Pose::Helpers.query_terms('one-two').should eq ['one', 'two']
     end
 
     it 'removes duplicates' do
-      Pose::Helpers.query_terms('foo-bar foo').should == ['foo', 'bar']
+      Pose::Helpers.query_terms('foo-bar foo').should eq ['foo', 'bar']
     end
   end
 
@@ -101,52 +100,52 @@ describe Pose::Helpers do
     end
 
     it 'removes special characters' do
-      Pose::Helpers.root_word('(bar').should == ['bar']
-      Pose::Helpers.root_word('bar)').should == ['bar']
-      Pose::Helpers.root_word('(bar)').should == ['bar']
-      Pose::Helpers.root_word('>foo').should == ['foo']
-      Pose::Helpers.root_word('<foo').should == ['foo']
-      Pose::Helpers.root_word('"foo"').should == ['foo']
-      Pose::Helpers.root_word('"foo').should == ['foo']
-      Pose::Helpers.root_word("'foo'").should == ['foo']
-      Pose::Helpers.root_word("'foo's").should == ['foo']
-      Pose::Helpers.root_word("foo?").should == ['foo']
-      Pose::Helpers.root_word("foo!").should == ['foo']
-      Pose::Helpers.root_word("foo/bar").should == ['foo', 'bar']
-      Pose::Helpers.root_word("foo-bar").should == ['foo', 'bar']
-      Pose::Helpers.root_word("foo--bar").should == ['foo', 'bar']
-      Pose::Helpers.root_word("foo.bar").should == ['foo', 'bar']
+      Pose::Helpers.root_word('(bar').should eq ['bar']
+      Pose::Helpers.root_word('bar)').should eq ['bar']
+      Pose::Helpers.root_word('(bar)').should eq ['bar']
+      Pose::Helpers.root_word('>foo').should eq ['foo']
+      Pose::Helpers.root_word('<foo').should eq ['foo']
+      Pose::Helpers.root_word('"foo"').should eq ['foo']
+      Pose::Helpers.root_word('"foo').should eq ['foo']
+      Pose::Helpers.root_word("'foo'").should eq ['foo']
+      Pose::Helpers.root_word("'foo's").should eq ['foo']
+      Pose::Helpers.root_word("foo?").should eq ['foo']
+      Pose::Helpers.root_word("foo!").should eq ['foo']
+      Pose::Helpers.root_word("foo/bar").should eq ['foo', 'bar']
+      Pose::Helpers.root_word("foo-bar").should eq ['foo', 'bar']
+      Pose::Helpers.root_word("foo--bar").should eq ['foo', 'bar']
+      Pose::Helpers.root_word("foo.bar").should eq ['foo', 'bar']
     end
 
     it 'removes umlauts' do
-      Pose::Helpers.root_word('fünf').should == ['funf']
+      Pose::Helpers.root_word('fünf').should eq ['funf']
     end
 
     it 'splits up numbers' do
-      Pose::Helpers.root_word('11.2.2011').should == ['11', '2', '2011']
-      Pose::Helpers.root_word('11-2-2011').should == ['11', '2', '2011']
-      Pose::Helpers.root_word('30:4-5').should == ['30', '4', '5']
+      Pose::Helpers.root_word('11.2.2011').should eq ['11', '2', '2011']
+      Pose::Helpers.root_word('11-2-2011').should eq ['11', '2', '2011']
+      Pose::Helpers.root_word('30:4-5').should eq ['30', '4', '5']
     end
 
     it 'converts into lowercase' do
-      Pose::Helpers.root_word('London').should == ['london']
+      Pose::Helpers.root_word('London').should eq ['london']
     end
 
     it "stores single-letter words" do
-      Pose::Helpers.root_word('a b').should == ['a', 'b']
+      Pose::Helpers.root_word('a b').should eq ['a', 'b']
     end
 
     it "does't encode external URLs" do
-      Pose::Helpers.root_word('http://web.com').should == ['http', 'web', 'com']
+      Pose::Helpers.root_word('http://web.com').should eq ['http', 'web', 'com']
     end
 
     it "doesn't store empty words" do
-      Pose::Helpers.root_word('  one two  ').should == ['one', 'two']
+      Pose::Helpers.root_word('  one two  ').should eq ['one', 'two']
     end
 
     it "removes duplicates" do
-      Pose::Helpers.root_word('one_one').should == ['one']
-      Pose::Helpers.root_word('one one').should == ['one']
+      Pose::Helpers.root_word('one_one').should eq ['one']
+      Pose::Helpers.root_word('one one').should eq ['one']
     end
 
     it "splits up complex URLs" do
@@ -160,7 +159,7 @@ describe Pose::Helpers do
 
     it 'returns a hash that contains all the given classes' do
       result = Pose::Helpers.search_classes_and_ids_for_word 'foo', %w{PosableOne PosableTwo}
-      result.keys.sort.should == %w{PosableOne PosableTwo}
+      result.keys.sort.should eq %w{PosableOne PosableTwo}
     end
 
     it 'returns the ids of all the posable objects that include the given word' do
@@ -170,9 +169,8 @@ describe Pose::Helpers do
 
       result = Pose::Helpers.search_classes_and_ids_for_word 'one', %w{PosableOne PosableTwo}
 
-      result['PosableOne'].should == [pos1.id]
-      result['PosableTwo'].should == [pos2.id]
+      result['PosableOne'].should eq [pos1.id]
+      result['PosableTwo'].should eq [pos2.id]
     end
   end
 end
-

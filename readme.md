@@ -70,6 +70,17 @@ To index all entries of `MyClass`, run `rake pose:reindex_all[MyClass]` on the c
 At this point, you are all set up. Let's perform a search!
 
 
+## Upgrading from version 1.x
+
+Version 2 is a proper Rails engine, and comes with a slightly different database table schema.
+Upgrading is as simple as
+
+```bash
+$ rails generate pose:upgrade
+$ rake db:migrate
+```
+
+
 ## Searching
 
 To search, simply call Pose's `search` method, and tell it the search query as well as in which classes it should search.

@@ -29,6 +29,12 @@ module Pose
       end
 
 
+      def is_sql_database?
+        ['ActiveRecord::ConnectionAdapters::PostgreSQLAdapter',
+         'ActiveRecord::ConnectionAdapters::SQLite3Adapter'].include? ActiveRecord::Base.connection.class.name
+      end
+
+
       # Returns whether the given string is a URL.
       #
       # @param [String] word The string to check.
@@ -54,11 +60,11 @@ module Pose
       # Returns a hash mapping classes to ids for the a single given word.
       def search_classes_and_ids_for_word word, class_names
         result = {}.tap { |hash| class_names.each { |class_name| hash[class_name] = [] }}
-        query = PoseAssignment.joins(:pose_word) \
-                              .select('pose_assignments.posable_id, pose_assignments.posable_type') \
-                              .where('pose_words.text LIKE ?', "#{word}%") \
-                              .where('posable_type IN (?)', class_names)
-        PoseAssignment.connection.select_all(query.to_sql).each do |pose_assignment|
+        query = Pose::Assignment.joins(:word) \
+                          .select('pose_assignments.posable_id, pose_assignments.posable_type') \
+                          .where('pose_words.text LIKE ?', "#{word}%") \
+                          .where('posable_type IN (?)', class_names)
+        Pose::Assignment.connection.select_all(query.to_sql).each do |pose_assignment|
           result[pose_assignment['posable_type']] << pose_assignment['posable_id'].to_i
         end
         result
@@ -73,7 +79,7 @@ module Pose
 
       # Returns the search terms that are contained in the given query.
       def query_terms query
-        query.split(' ').map{|query_word| Pose::Helpers.root_word query_word}.flatten.uniq
+        query.split(' ').map{|query_word| Helpers.root_word query_word}.flatten.uniq
       end
 
       # Simplifies the given word to a generic search form.
@@ -88,7 +94,7 @@ module Pose
         raw_word_copy.gsub! /[()*<>'",;\?\-\=&%#]/, ' '
         raw_word_copy.gsub! /\s+/, ' '
         raw_word_copy.split(' ').each do |word|
-          if Pose::Helpers.is_url?(word)
+          if Helpers.is_url?(word)
             result.concat word.split(/[\.\/\:]/).delete_if(&:blank?)
           else
             word.gsub! /[\-\/\._:]/, ' '

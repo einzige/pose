@@ -17,7 +17,7 @@ module Pose
     # @return [Array<String>]
     def autocomplete_words query
       return [] if query.blank?
-      PoseWord.where('text LIKE ?', "#{Pose::Helpers.root_word(query)[0]}%").map(&:text)
+      Word.where('text LIKE ?', "#{Helpers.root_word(query)[0]}%").map(&:text)
     end
 
 
@@ -41,11 +41,11 @@ module Pose
 
 
       # Get the ids of the results.
-      class_names = Pose::Helpers.make_array(classes).map &:name
+      class_names = Helpers.make_array(classes).map &:name
       result_classes_and_ids = {}
-      Pose::Helpers.query_terms(query).each do |query_word|
-        Pose::Helpers.search_classes_and_ids_for_word(query_word, class_names).each do |class_name, ids|
-          Pose::Helpers.merge_search_result_word_matches result_classes_and_ids, class_name, ids
+      Helpers.query_terms(query).each do |query_word|
+        Helpers.search_classes_and_ids_for_word(query_word, class_names).each do |class_name, ids|
+          Helpers.merge_search_result_word_matches result_classes_and_ids, class_name, ids
         end
       end
 
@@ -92,6 +92,5 @@ module Pose
         end
       end
     end
-
   end
 end
