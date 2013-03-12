@@ -23,4 +23,16 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'faker'
   s.add_development_dependency 'rspec-rails'
   s.add_development_dependency 'sqlite3'
+
+  s.post_install_message = <<-END
+
+HEADS UP! If you have used Pose 1.x before,
+you need to update your database tables!
+
+* run: rails g pose:upgrade
+* run: rake db:migrate
+
+For more information, see: https://github.com/kevgo/pose
+END
+
 end
