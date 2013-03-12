@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    pose (2.0.0)
+    pose (2.0.1)
       rails (>= 3.0.0)
       ruby-progressbar
 
@@ -105,7 +105,7 @@ GEM
     treetop (1.4.12)
       polyglot
       polyglot (>= 0.3.1)
-    tzinfo (0.3.36)
+    tzinfo (0.3.37)
 
 PLATFORMS
   ruby

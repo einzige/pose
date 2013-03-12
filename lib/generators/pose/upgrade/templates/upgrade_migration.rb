@@ -1,9 +1,7 @@
 class PoseUpgrade < ActiveRecord::Migration
 
   def change
-    change_table 'pose_assignments' do |t|
-      t.rename :pose_word_id, :word_id
-    end
+    rename_column :pose_assignments, :pose_word_id, :word_id
   end
 
 end
