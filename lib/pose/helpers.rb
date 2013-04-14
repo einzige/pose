@@ -1,4 +1,5 @@
 # Internal helper methods for the Pose module.
+# TODO: remove
 module Pose
   module Helpers
     class <<self
