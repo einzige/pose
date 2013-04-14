@@ -68,14 +68,16 @@ module Pose
                 result[result_class] = options[:limit] ? ids.slice(0, options[:limit]) : ids
               else
                 # We have a scope.
-                options[:where].each do |scope|
-                  query = result_class.select('id').where('id IN (?)', ids).where(scope)
-                  query = query.limit(options[:limit]) unless options[:limit].blank?
-                  query = query.to_sql
-                  result[result_class] = result_class.connection.select_values(query).map(&:to_i)
-                end
-              end
+                query = result_class.scoped
+                query = query.limit(options[:limit]) if options[:limit].present?
 
+                options[:where].each do |scope|
+                  query = query.select('id').where('id IN (?)', ids).where(scope)
+                end
+
+                result_class_ids = result_class.connection.select_values(query.to_sql)
+                result[result_class] = result_class_ids.map(&:to_i)
+              end
             else
               result[result_class] = results_for(result_class)
             end
