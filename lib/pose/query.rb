@@ -17,7 +17,7 @@ module Pose
 
     # @param [Class] klass
     # @return [ActiveRecord::Relation]
-    def results_for(klass)
+    def build_relation(klass)
       unless classes.include?(klass)
         raise ArgumentError, "The class #{klass.name} is not included in this query"
       end
@@ -29,7 +29,7 @@ module Pose
 
       if options[:where].present?
         options[:where].each do |scope|
-          result = result.where('id IN (?)', ids).where(scope)
+          result = result.where(scope)
         end
       end
 
@@ -78,7 +78,7 @@ module Pose
                 result[result_class] = result_class_ids.map(&:to_i)
               end
             else
-              result[result_class] = results_for(result_class)
+              result[result_class] = build_relation(result_class)
             end
           end
         end
