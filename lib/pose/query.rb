@@ -25,7 +25,7 @@ module Pose
       ids = result_classes_and_ids[klass.name]
 
       result = klass.where(id: ids)
-      result = result.limit(options[:limit]) if options[:limit].present?
+      result = result.limit(options[:limit])
 
       if options[:where].present?
         options[:where].each do |scope|
@@ -59,7 +59,6 @@ module Pose
             result[result_class] = []
           else
             # Here we have results.
-
             if options[:result_type] == :ids
               # Ids requested for result.
 
@@ -69,7 +68,7 @@ module Pose
               else
                 # We have a scope.
                 query = result_class.scoped
-                query = query.limit(options[:limit]) if options[:limit].present?
+                query = query.limit(options[:limit])
 
                 options[:where].each do |scope|
                   query = query.select('id').where('id IN (?)', ids).where(scope)
