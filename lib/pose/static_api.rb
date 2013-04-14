@@ -32,47 +32,13 @@ module Pose
 
     # Returns all objects matching the given query.
     #
-    # @param [String] query
+    # @param [String] query_string
     # @param (Class|[Array<Class>]) classes
     # @param [Hash?] options Additional options.
     #
     # @return [Hash<Class, ActiveRecord::Relation>]
-    def search query, classes, options = {}
-      {}.tap do |result|
-        query = Pose::Query.new(classes, query, options)
-
-        query.result_classes_and_ids.each do |class_name, ids|
-          result_class = class_name.constantize
-
-          if ids.size == 0
-            # Handle no results.
-            result[result_class] = []
-
-          else
-            # Here we have results.
-
-            if options[:result_type] == :ids
-              # Ids requested for result.
-
-              if options[:where].blank?
-                # No scope.
-                result[result_class] = options[:limit] ? ids.slice(0, options[:limit]) : ids
-              else
-                # We have a scope.
-                options[:where].each do |scope|
-                  query = result_class.select('id').where('id IN (?)', ids).where(scope)
-                  query = query.limit(options[:limit]) unless options[:limit].blank?
-                  query = query.to_sql
-                  result[result_class] = result_class.connection.select_values(query).map(&:to_i)
-                end
-              end
-
-            else
-              result[result_class] = query.results_for(result_class)
-            end
-          end
-        end
-      end
+    def search query_string, classes, options = {}
+      Pose::Query.new(classes, query_string, options).search
     end
   end
 end

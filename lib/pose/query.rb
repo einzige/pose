@@ -47,5 +47,41 @@ module Pose
         end
       end
     end
+
+    # @return [ActiveRecord::Relation]
+    def search
+      {}.tap do |result|
+        result_classes_and_ids.each do |class_name, ids|
+          result_class = class_name.constantize
+
+          if ids.size == 0
+            # Handle no results.
+            result[result_class] = []
+          else
+            # Here we have results.
+
+            if options[:result_type] == :ids
+              # Ids requested for result.
+
+              if options[:where].blank?
+                # No scope.
+                result[result_class] = options[:limit] ? ids.slice(0, options[:limit]) : ids
+              else
+                # We have a scope.
+                options[:where].each do |scope|
+                  query = result_class.select('id').where('id IN (?)', ids).where(scope)
+                  query = query.limit(options[:limit]) unless options[:limit].blank?
+                  query = query.to_sql
+                  result[result_class] = result_class.connection.select_values(query).map(&:to_i)
+                end
+              end
+
+            else
+              result[result_class] = results_for(result_class)
+            end
+          end
+        end
+      end
+    end
   end
 end
