@@ -39,7 +39,6 @@ module Pose
     # @return [Hash<Class, ActiveRecord::Relation>]
     def search query, classes, options = {}
 
-
       # Get the ids of the results.
       class_names = Helpers.make_array(classes).map &:name
       result_classes_and_ids = {}
