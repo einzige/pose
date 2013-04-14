@@ -39,7 +39,7 @@ module Pose
     # @return [Hash<Class, ActiveRecord::Relation>]
     def search query, classes, options = {}
       {}.tap do |result|
-        query = Pose::Query.new(classes, query)
+        query = Pose::Query.new(classes, query, options)
 
         query.result_classes_and_ids.each do |class_name, ids|
           result_class = class_name.constantize
@@ -68,15 +68,7 @@ module Pose
               end
 
             else
-              # Classes requested for result.
-
-              result[result_class] = result_class.where(id: ids)
-              result[result_class] = result[result_class].limit(options[:limit]) unless options[:limit].blank?
-              unless options[:where].blank?
-                options[:where].each do |scope|
-                  result[result_class] = result[result_class].where('id IN (?)', ids).where(scope)
-                end
-              end
+              result[result_class] = query.results_for(result_class)
             end
           end
         end

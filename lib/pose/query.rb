@@ -1,17 +1,39 @@
 module Pose
   class Query
-    attr_reader :classes, :query_string
+    attr_reader :classes, :query_string, :options
 
     # @param [Array<Class>] classes
     # @param [String] query_string
-    def initialize(classes, query_string)
+    def initialize(classes, query_string, options = {})
       @classes = [classes].flatten
       @query_string = query_string
+      @options = options
     end
 
     # @return [Array<String>]
     def class_names
       classes.map &:name
+    end
+
+    # @param [Class] klass
+    # @return [ActiveRecord::Relation]
+    def results_for(klass)
+      unless classes.include?(klass)
+        raise ArgumentError, "The class #{klass.name} is not included in this query"
+      end
+
+      ids = result_classes_and_ids[klass.name]
+
+      result = klass.where(id: ids)
+      result = result.limit(options[:limit]) if options[:limit].present?
+
+      if options[:where].present?
+        options[:where].each do |scope|
+          result = result.where('id IN (?)', ids).where(scope)
+        end
+      end
+
+      result
     end
 
     # Gets the ids of the results.
