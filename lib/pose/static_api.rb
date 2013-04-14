@@ -38,12 +38,10 @@ module Pose
     #
     # @return [Hash<Class, ActiveRecord::Relation>]
     def search query, classes, options = {}
-      query = Pose::Query.new(classes, query)
-      result_classes_and_ids = query.result_classes_and_ids
-
-      # Load the results by id.
       {}.tap do |result|
-        result_classes_and_ids.each do |class_name, ids|
+        query = Pose::Query.new(classes, query)
+
+        query.result_classes_and_ids.each do |class_name, ids|
           result_class = class_name.constantize
 
           if ids.size == 0
