@@ -38,15 +38,8 @@ module Pose
     #
     # @return [Hash<Class, ActiveRecord::Relation>]
     def search query, classes, options = {}
-
-      # Get the ids of the results.
-      class_names = Helpers.make_array(classes).map &:name
-      result_classes_and_ids = {}
-      Helpers.query_terms(query).each do |query_word|
-        Helpers.search_classes_and_ids_for_word(query_word, class_names).each do |class_name, ids|
-          Helpers.merge_search_result_word_matches result_classes_and_ids, class_name, ids
-        end
-      end
+      query = Pose::Query.new(classes, query)
+      result_classes_and_ids = query.result_classes_and_ids
 
       # Load the results by id.
       {}.tap do |result|
