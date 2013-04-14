@@ -17,7 +17,7 @@ module Pose
 
     # @param [Class] klass
     # @return [ActiveRecord::Relation]
-    def build_relation(klass)
+    def relation_for(klass)
       unless classes.include?(klass)
         raise ArgumentError, "The class #{klass.name} is not included in this query"
       end
@@ -88,12 +88,7 @@ module Pose
       @results = {}.tap do |result|
         result_classes_and_ids.each do |class_name, ids|
           result_class = class_name.constantize
-
-          if ids.empty?
-            result[result_class] = []
-          else
-            result[result_class] = build_relation(result_class)
-          end
+          result[result_class] = ids.empty? ? [] : relation_for(result_class)
         end
       end
     end
