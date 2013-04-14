@@ -38,7 +38,10 @@ module Pose
     #
     # @return [Hash<Class, ActiveRecord::Relation>]
     def search query_string, classes, options = {}
-      Pose::Query.new(classes, query_string, options).search
+      query = Pose::Query.new(classes, query_string, options)
+
+      fetch_only_ids = options[:result_type] == :ids
+      fetch_only_ids ? query.result_ids : query.results
     end
   end
 end

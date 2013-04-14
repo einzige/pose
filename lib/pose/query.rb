@@ -36,6 +36,28 @@ module Pose
       result
     end
 
+    def ids_for(klass)
+      ids = result_classes_and_ids[klass.name]
+
+      if options[:where]
+        query = klass.scoped
+        query = query.limit(options[:limit])
+
+        options[:where].each do |scope|
+          query = query.select('id').where('id IN (?)', ids).where(scope)
+        end
+
+        klass_ids = klass.connection.select_values(query.to_sql)
+        klass_ids.map(&:to_i)
+      else
+        if options[:limit]
+          ids.first(options[:limit])
+        else
+          ids
+        end
+      end
+    end
+
     # Gets the ids of the results.
     # @return [Hash<String, Array<Integer>>]
     def result_classes_and_ids
@@ -48,38 +70,29 @@ module Pose
       end
     end
 
-    # @return [ActiveRecord::Relation]
-    def search
+    def results
+      @results ||= search
+    end
+
+    def result_ids
       {}.tap do |result|
         result_classes_and_ids.each do |class_name, ids|
           result_class = class_name.constantize
+          result[result_class] = ids_for(result_class)
+        end
+      end
+    end
 
-          if ids.size == 0
-            # Handle no results.
+    # @return [ActiveRecord::Relation]
+    def search
+      @results = {}.tap do |result|
+        result_classes_and_ids.each do |class_name, ids|
+          result_class = class_name.constantize
+
+          if ids.empty?
             result[result_class] = []
           else
-            # Here we have results.
-            if options[:result_type] == :ids
-              # Ids requested for result.
-
-              if options[:where].blank?
-                # No scope.
-                result[result_class] = options[:limit] ? ids.slice(0, options[:limit]) : ids
-              else
-                # We have a scope.
-                query = result_class.scoped
-                query = query.limit(options[:limit])
-
-                options[:where].each do |scope|
-                  query = query.select('id').where('id IN (?)', ids).where(scope)
-                end
-
-                result_class_ids = result_class.connection.select_values(query.to_sql)
-                result[result_class] = result_class_ids.map(&:to_i)
-              end
-            else
-              result[result_class] = build_relation(result_class)
-            end
+            result[result_class] = build_relation(result_class)
           end
         end
       end
