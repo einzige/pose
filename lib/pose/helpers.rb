@@ -42,9 +42,13 @@ module Pose
       #
       # @return [Boolean]
       def is_url? word
-        URI::parse(word).scheme == 'http'
-      rescue URI::InvalidURIError
-        false
+        /https?:\/\/(\w)+\.(\w+)/ =~ word
+      end
+
+
+      # Makes the given input an array.
+      def make_array input
+        [input].flatten
       end
 
 

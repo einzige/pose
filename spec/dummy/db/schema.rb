@@ -26,7 +26,7 @@ ActiveRecord::Schema.define(:version => 20130308144915) do
   create_table "pose_assignments", :force => true do |t|
     t.integer "word_id",                    :null => false
     t.integer "posable_id",                 :null => false
-    t.string  "posable_type", :limit => 40, :null => false
+    t.string  "posable_type", :limit => 60, :null => false
   end
 
   add_index "pose_assignments", ["posable_id"], :name => "index_pose_assignments_on_posable_id"

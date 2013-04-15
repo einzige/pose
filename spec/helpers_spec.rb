@@ -48,6 +48,25 @@ describe Pose::Helpers do
     end
   end
 
+  describe 'is_url?' do
+
+    it 'returns TRUE if the given string is a URL' do
+      expect(Pose::Helpers.is_url? 'http://web.com').to be_true
+    end
+
+    it 'returns TRUE if the given string is a HTTPS URL' do
+      expect(Pose::Helpers.is_url? 'https://web.com').to be_true
+    end
+
+    it 'returns FALSE if the given string is not a URL' do
+      expect(Pose::Helpers.is_url? 'foo').to be_false
+    end
+
+    it 'returns FALSE if the given string is a malformed URL' do
+      expect(Pose::Helpers.is_url? 'http://web').to be_false
+    end
+  end
+
   describe :make_array do
 
     it 'converts a single value into an array' do
