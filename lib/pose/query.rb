@@ -1,11 +1,12 @@
 module Pose
+
   # TODO: refactor
   class Query
     attr_reader :classes, :query_string, :options
 
     # @param [Array<Class>] classes
     # @param [String] query_string
-    def initialize(classes, query_string, options = {})
+    def initialize classes, query_string, options = {}
       @classes = [classes].flatten
       @query_string = query_string
       @options = options
@@ -18,7 +19,7 @@ module Pose
 
     # @param [Class] klass
     # @return [Array<Integer>]
-    def ids_for(klass)
+    def ids_for klass
       ids = result_classes_and_ids[klass.name]
 
       if options[:where]
@@ -31,7 +32,7 @@ module Pose
 
     # @param [Class] klass
     # @return [ActiveRecord::Relation]
-    def relation_for(klass)
+    def relation_for klass
       ids = result_classes_and_ids[klass.name]
       apply_where_on_scope(klass.where(id: ids)).limit(options[:limit])
     end
@@ -81,7 +82,7 @@ module Pose
     # @param [ActiveRecord::Relation]
     # @return [ActiveRecord::Relation]
     # TODO: remove?
-    def apply_where_on_scope(scope)
+    def apply_where_on_scope scope
       result = scope.clone
       if options[:where].present?
         options[:where].each { |scope| result = result.where(scope) }
