@@ -35,6 +35,19 @@ describe Pose::Helpers do
   end
 
 
+  describe :is_sql_database? do
+
+    it 'recognizes postgres databases' do
+      ActiveRecord::Base.connection.class.stub(:name).and_return 'ActiveRecord::ConnectionAdapters::PostgreSQLAdapter'
+      expect(Pose::Helpers.is_sql_database?).to be_true
+    end
+
+    it 'recognizes sqlite3 databases' do
+      ActiveRecord::Base.connection.class.stub(:name).and_return 'ActiveRecord::ConnectionAdapters::SQLite3Adapter'
+      expect(Pose::Helpers.is_sql_database?).to be_true
+    end
+  end
+
   describe :make_array do
 
     it 'converts a single value into an array' do
@@ -43,6 +56,10 @@ describe Pose::Helpers do
 
     it 'leaves arrays as arrays' do
       Pose::Helpers.make_array([1]).should eq [1]
+    end
+
+    it 'flattens nested arrays' do
+      Pose::Helpers.make_array([1, [2], [[3]]]).should eq [1, 2, 3]
     end
   end
 
@@ -71,10 +88,88 @@ describe Pose::Helpers do
         @result.should eq({ 'class1' => [1] })
       end
     end
+
+    context 'with an existing empty result set from a previous query' do
+
+      before :each do
+        @result = { 'class1' => [] }
+      end
+
+      it 'returns an empty result set' do
+        Pose::Helpers.merge_search_result_word_matches @result, 'class1', [1, 3]
+        @result.should eq({ 'class1' => [] })
+      end
+    end
+
+    context 'with a new empty result set' do
+
+      before :each do
+        @result = { 'class1' => [1, 2] }
+      end
+
+      it 'returns an empty result set' do
+        Pose::Helpers.merge_search_result_word_matches @result, 'class1', []
+        @result.should eq({ 'class1' => [] })
+      end
+    end
+
+    context 'with a completely different result set' do
+
+      before :each do
+        @result = { 'class1' => [1, 2] }
+      end
+
+      it 'returns an empty result set' do
+        Pose::Helpers.merge_search_result_word_matches @result, 'class1', [3, 4]
+        @result.should eq({ 'class1' => [] })
+      end
+    end
+  end
+
+
+  describe :search_classes_and_ids_for_word do
+
+    before :each do
+      @hit_one_a = create :posable_one, text: 'hit one a'
+      @hit_one_b = create :posable_one, text: 'hit one b'
+      @miss_one = create :posable_one, text: 'miss one'
+      @hit_two = create :posable_two, text: 'hit two'
+      @miss_two = create :posable_two, text: 'miss two'
+    end
+
+    context 'simple query' do
+
+      it 'returns the matching classes and ids for all given classes' do
+        result = Pose::Helpers.search_classes_and_ids_for_word 'hit', ['PosableOne', 'PosableTwo']
+        expect(result['PosableOne']).to include @hit_one_a.id
+        expect(result['PosableOne']).to include @hit_one_b.id
+        expect(result['PosableOne']).to_not include @miss_one.id
+        expect(result['PosableTwo']).to include @hit_two.id
+        expect(result['PosableTwo']).to_not include @miss_two.id
+      end
+
+      it 'does not return matches for classes that are not given' do
+        result = Pose::Helpers.search_classes_and_ids_for_word 'hit', ['PosableOne']
+        expect(result['PosableOne']).to include @hit_one_a.id
+        expect(result['PosableOne']).to include @hit_one_b.id
+        expect(result['PosableOne']).to_not include @miss_one.id
+        expect(result).to_not have_key 'PosableTwo'
+      end
+    end
+
+    context 'SQL clauses given' do
+
+      it 'applies the SQL clauses and returns only the matching results' do
+        result = Pose::Helpers.search_classes_and_ids_for_word 'hit', ['PosableOne'], { joins: 'INNER JOIN posable_ones ON posable_ones.id=pose_assignments.posable_id and pose_assignments.posable_type="PosableOne"', where: [ 'posable_ones.id = ?', @hit_one_b.id ] }
+        expect(result['PosableOne']).to_not include @hit_one_a.id
+        expect(result['PosableOne']).to include @hit_one_b.id
+      end
+    end
   end
 
 
   describe :query_terms do
+
     it 'returns all individual words resulting from the given query' do
       Pose::Helpers.query_terms('foo bar').should eq ['foo', 'bar']
     end
