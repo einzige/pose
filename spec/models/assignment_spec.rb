@@ -3,7 +3,7 @@ require 'spec_helper'
 module Pose
   describe Assignment do
 
-    describe "delete_class_index" do
+    describe :delete_class_index do
 
       before :each do
         FactoryGirl.create :assignment, posable_id: 1, posable_type: 'PosableOne'
@@ -21,7 +21,7 @@ module Pose
     end
 
 
-    describe "cleanup_orphaned_pose_assignments" do
+    describe :cleanup_orphaned_pose_assignments do
 
       it "deletes the assignment if the posable object doesn't exist" do
         FactoryGirl.create :assignment, posable_id: 2, posable_type: 'PosableOne'

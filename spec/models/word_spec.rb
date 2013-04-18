@@ -5,7 +5,7 @@ module Pose
 
     describe 'class methods' do
 
-      describe '::remove_unused_words' do
+      describe :remove_unused_words do
 
         shared_examples 'it properly removes unused words' do
           it 'removes unused words' do

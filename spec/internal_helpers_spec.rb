@@ -3,7 +3,7 @@ require "spec_helper"
 
 describe Pose::Helpers do
 
-  describe '::get_words_to_add' do
+  describe :get_words_to_add do
     let(:one) { Pose::Word.new(text: 'one') }
     let(:two) { Pose::Word.new(text: 'two') }
 
@@ -21,7 +21,7 @@ describe Pose::Helpers do
   end
 
 
-  describe '::get_words_to_remove' do
+  describe :get_words_to_remove do
     let(:one) { Pose::Word.new(text: 'one') }
     let(:two) { Pose::Word.new(text: 'two') }
 
@@ -35,7 +35,7 @@ describe Pose::Helpers do
   end
 
 
-  describe 'make_array' do
+  describe :make_array do
 
     it 'converts a single value into an array' do
       Pose::Helpers.make_array(1).should eq [1]
@@ -47,7 +47,7 @@ describe Pose::Helpers do
   end
 
 
-  describe 'merge_search_result_word_matches' do
+  describe :merge_search_result_word_matches do
     context 'given a new class name' do
 
       before :each do
@@ -74,7 +74,7 @@ describe Pose::Helpers do
   end
 
 
-  describe 'query_terms' do
+  describe :query_terms do
     it 'returns all individual words resulting from the given query' do
       Pose::Helpers.query_terms('foo bar').should eq ['foo', 'bar']
     end
@@ -93,7 +93,7 @@ describe Pose::Helpers do
   end
 
 
-  describe 'root_word' do
+  describe :root_word do
 
     it 'converts words into singular' do
       Pose::Helpers.root_word('bars').should eql(['bar'])
@@ -155,7 +155,7 @@ describe Pose::Helpers do
   end
 
 
-  describe 'search_classes_and_ids_for_word' do
+  describe :search_classes_and_ids_for_word do
 
     it 'returns a hash that contains all the given classes' do
       result = Pose::Helpers.search_classes_and_ids_for_word 'foo', %w{PosableOne PosableTwo}

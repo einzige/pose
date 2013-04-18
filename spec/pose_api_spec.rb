@@ -15,7 +15,7 @@ module Pose
     end
 
 
-    describe '#update_pose_index' do
+    describe :update_pose_index do
 
       before :each do
         Pose::CONFIGURATION[:perform_search] = perform_search
@@ -45,7 +45,7 @@ module Pose
     end
 
 
-    describe '#update_pose_words' do
+    describe :update_pose_words do
 
       it 'saves the words for search' do
         subject.text = 'foo bar'
@@ -71,7 +71,7 @@ module Pose
     end
 
 
-    describe 'search' do
+    describe :search do
 
       it 'works' do
         pos = PosableOne.create text: 'foo'
@@ -248,7 +248,7 @@ module Pose
     end
 
 
-    describe 'autocomplete_words' do
+    describe :autocomplete_words do
 
       it 'returns words that start with the given phrase' do
         PosableOne.create text: 'great green pine tree'
