@@ -48,6 +48,12 @@ module Pose
       end
 
 
+      # Makes the given input an array.
+      def make_array input
+        [input].flatten
+      end
+
+
       # Merges the given posable object ids for a single query word into the given search result.
       def merge_search_result_word_matches result, class_name, ids
         if result.has_key? class_name
@@ -69,12 +75,6 @@ module Pose
           result[pose_assignment['posable_type']] << pose_assignment['posable_id'].to_i
         end
         result
-      end
-
-
-      # Makes the given input an array.
-      def make_array input
-        [input].flatten
       end
 
 
