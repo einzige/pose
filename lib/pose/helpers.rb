@@ -102,12 +102,8 @@ module Pose
                           .select('pose_assignments.posable_id, pose_assignments.posable_type') \
                           .where('pose_words.text LIKE ?', "#{word}%") \
                           .where('pose_assignments.posable_type IN (?)', class_names)
-        if options.has_key? :joins
-          query = query.joins options[:joins]
-        end
-        if options.has_key? :where
-          query = query.where options[:where]
-        end
+        query = query.joins options[:joins] if options.has_key? :joins
+        query = query.where options[:where] if options.has_key? :where
         Pose::Assignment.connection.select_all(query.to_sql).each do |pose_assignment|
           result[pose_assignment['posable_type']] << pose_assignment['posable_id'].to_i
         end
