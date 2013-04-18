@@ -64,26 +64,6 @@ module Pose
       end
 
 
-      # Returns a hash mapping classes to ids for the a single given word.
-      def search_classes_and_ids_for_word word, class_names, options = {}
-        result = {}.tap { |hash| class_names.each { |class_name| hash[class_name] = [] }}
-        query = Pose::Assignment.joins(:word) \
-                          .select('pose_assignments.posable_id, pose_assignments.posable_type') \
-                          .where('pose_words.text LIKE ?', "#{word}%") \
-                          .where('pose_assignments.posable_type IN (?)', class_names)
-        if options.has_key? :joins
-          query = query.joins options[:joins]
-        end
-        if options.has_key? :where
-          query = query.where options[:where]
-        end
-        Pose::Assignment.connection.select_all(query.to_sql).each do |pose_assignment|
-          result[pose_assignment['posable_type']] << pose_assignment['posable_id'].to_i
-        end
-        result
-      end
-
-
       # Returns the search terms that are contained in the given query.
       def query_terms query
         query.split(' ').map{|query_word| Helpers.root_word query_word}.flatten.uniq
@@ -113,6 +93,25 @@ module Pose
           end
         end
         result.uniq
+      end
+
+      # Returns a hash mapping classes to ids for the a single given word.
+      def search_classes_and_ids_for_word word, class_names, options = {}
+        result = {}.tap { |hash| class_names.each { |class_name| hash[class_name] = [] }}
+        query = Pose::Assignment.joins(:word) \
+                          .select('pose_assignments.posable_id, pose_assignments.posable_type') \
+                          .where('pose_words.text LIKE ?', "#{word}%") \
+                          .where('pose_assignments.posable_type IN (?)', class_names)
+        if options.has_key? :joins
+          query = query.joins options[:joins]
+        end
+        if options.has_key? :where
+          query = query.where options[:where]
+        end
+        Pose::Assignment.connection.select_all(query.to_sql).each do |pose_assignment|
+          result[pose_assignment['posable_type']] << pose_assignment['posable_id'].to_i
+        end
+        result
       end
 
     end
