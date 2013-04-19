@@ -1,14 +1,13 @@
-# Pose <a href="http://travis-ci.org/#!/kevgo/pose" target="_blank"><img src="https://secure.travis-ci.org/kevgo/pose.png" alt="Build status"></a> [![Code Climate](https://codeclimate.com/github/kevgo/pose.png)](https://codeclimate.com/github/kevgo/pose) [![Coverage Status](https://coveralls.io/repos/kevgo/pose/badge.png?branch=master)](https://coveralls.io/r/kevgo/pose) [![Dependency Status](https://gemnasium.com/kevgo/pose.png)](https://gemnasium.com/kevgo/pose)
+# POlymorphic SEarch <a href="http://travis-ci.org/#!/kevgo/pose" target="_blank"><img src="https://secure.travis-ci.org/kevgo/pose.png" alt="Build status"></a> [![Code Climate](https://codeclimate.com/github/kevgo/pose.png)](https://codeclimate.com/github/kevgo/pose) [![Coverage Status](https://coveralls.io/repos/kevgo/pose/badge.png?branch=master)](https://coveralls.io/r/kevgo/pose) [![Dependency Status](https://gemnasium.com/kevgo/pose.png)](https://gemnasium.com/kevgo/pose)
 
-Pose  ("Polymorphic Search") allows fulltext search for ActiveRecord objects in Ruby on Rails.
+A database agnostic fulltext search engine for ActiveRecord objects in Ruby on Rails.
 
 * Searches over several classes at once.
 * The searchable content of each class and document can be freely customized.
-* Uses the main Rails database, no separate servers, databases, or search engines are necessary.
-* Does not pollute the searchable classes or their database tables with any attributes.
-* Allows to combine the fulltext search with any other custom database searches.
-* The algorithm is designed to work with any data store that allows for range queries, which covers pretty much every SQL or NoSQL database.
-* The search is very fast, doing only simple queries over fully indexed columns.
+* Uses the main Rails database - no separate servers, databases, or search engines required.
+* Does not pollute the searchable classes or their database tables.
+* Very fast search, doing only simple queries over fully indexed columns.
+* Allows to augment the fulltext search query with your own joins and where clauses.
 
 
 ## Installation
@@ -70,7 +69,7 @@ To index all entries of `MyClass`, run `rake pose:reindex_all[MyClass]` on the c
 At this point, you are all set up. Let's perform a search!
 
 
-## Upgrading from version 1.x
+### Upgrading from version 1.x
 
 Version 2 is a proper Rails engine, and comes with a slightly different database table schema.
 Upgrading is as simple as
