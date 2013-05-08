@@ -39,7 +39,7 @@ Pose creates two tables in your database. These tables are automatically populat
 class MyClass < ActiveRecord::Base
 
   # This line makes your class searchable.
-  # The given block must return the searchble content as a string.
+  # The given block must return the searchable content as a string.
   posify do
 
     # Only active instances should show up in search results.
