@@ -64,7 +64,7 @@ Now that this class is posified, any `create`, `update`, or `delete` operation o
 Data that existed in your database before adding Pose isn't automatically included in the search index.
 You have to index those records manually once. Future updates will happen automatically.
 
-To index all entries of `MyClass`, run `rake pose:reindex_all[MyClass]` on the command line.
+To index all entries of `MyClass`, run `rake 'pose:reindex_all[MyClass]'` on the command line.
 
 At this point, you are all set up. Let's perform a search!
 
@@ -167,7 +167,7 @@ To index existing data in your database, or after loading additional data outsid
 you should recreate the search index from scratch.
 
 ```bash
-rake pose:index:reindex_all[MyClass]
+rake 'pose:index:reindex_all[MyClass]'
 ```
 
 
