@@ -229,6 +229,7 @@ To run tests, first create a test database.
 
 ```bash
 rake db:setup
+(cd spec/dummy && rake db:test:prepare)
 ```
 
 Then run the tests.
