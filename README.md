@@ -228,7 +228,8 @@ For now, Pose uses Postgresql for tests, since it is free, and one of the most s
 To run tests, first create a test database.
 
 ```bash
-createdb pose_test
+rake db:setup
+(cd spec/dummy && rake db:test:prepare)
 ```
 
 Then run the tests.
