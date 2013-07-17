@@ -77,7 +77,8 @@ module Pose
       end
     end
 
-    private
+
+  private
 
     # @param [ActiveRecord::Relation]
     # @return [ActiveRecord::Relation]
