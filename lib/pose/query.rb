@@ -7,8 +7,14 @@ module Pose
     # @param [Array<Class>] classes
     # @param [String] query_string
     def initialize classes, query_string, options = {}
+
+      # The classes to search on.
       @classes = [classes].flatten
+
+      # The search query.
       @query_string = query_string
+
+      # Additional search options.
       @options = options
     end
 
@@ -69,7 +75,7 @@ module Pose
 
     # @return [Hash<Class, ActiveRecord::Relation>]
     def search
-      @results = {}.tap do |result|
+      {}.tap do |result|
         result_classes_and_ids.each do |class_name, ids|
           result_class = class_name.constantize
           result[result_class] = ids.empty? ? [] : relation_for(result_class)

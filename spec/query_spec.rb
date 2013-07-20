@@ -3,7 +3,7 @@ require "spec_helper"
 
 describe Pose::Query do
 
-  let(:subject) { Pose::Query.new [PosableOne, [PosableTwo]], 'query string' }
+  subject { Pose::Query.new [PosableOne, [PosableTwo]], 'query string' }
 
   describe :initialize do
 
@@ -19,4 +19,5 @@ describe Pose::Query do
       expect(subject.class_names).to eql ['PosableOne', 'PosableTwo']
     end
   end
+
 end
