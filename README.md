@@ -5,7 +5,7 @@ A database agnostic fulltext search engine for ActiveRecord objects in Ruby on R
 * Searches over several classes at once.
 * The searchable content of each class and document can be freely customized.
 * Uses the main Rails database - no separate servers, databases, or search engines required.
-* Does not pollute the searchable classes or their database tables.
+* Does not pollute the searchable classes nor their database tables.
 * Very fast search, doing only simple queries over fully indexed columns.
 * Allows to augment the fulltext search query with your own joins and where clauses.
 
@@ -107,7 +107,13 @@ search options.
 
 ### Configure the searched classes
 
-Pose accepts an array of classes to search over. When searching a single class, it can be provided directly, i.e. not as an array.
+Pose accepts an array of classes to search over.
+
+```ruby
+result = Pose.search 'search text', [MyClass, MyOtherClass]
+```
+
+When searching a single class, it can be provided directly, i.e. not as an array.
 
 ```ruby
 result = Pose.search 'foo', MyClass
@@ -116,33 +122,41 @@ result = Pose.search 'foo', MyClass
 
 ### Configure the result data
 
-By default, search results are the instances of the objects matching the search query.
+Search results are the instances of the objects matching the search query.
 If you want to just get the ids of the search results, and not the full instances, use the parameter `:result_type`.
 
 ```ruby
-result = Pose.search 'foo', MyClass, result_type: :ids   # Returns ids instead of object instances.
+# Returns ids instead of object instances.
+result = Pose.search 'foo', MyClass, result_type: :ids
 ```
 
 
 ### Limit the amount of search results
 
-By default, Pose returns all matching items. Large result sets can become very slow and resource intensive to process.
+By default, Pose returns all matching items.
 To limit the result set, use the `:limit` search parameter.
 
 ```ruby
-result = Pose.search 'foo', MyClass, limit: 20    # Returns only 20 search results.
+# Returns only 20 search results.
+result = Pose.search 'foo', MyClass, limit: 20
 ```
 
 
 ### Combine fulltext search with structured data search
 
-You can add your own ActiveRecord query clauses to a fulltext search operation.
+You can add your own ActiveRecord query clauses (JOINs and WHEREs) to a fulltext search operation.
 For example, given a class `Note` that belongs to a `User` class and has a boolean attribute `public`,
 finding all public notes from other users containing "foo" is as easy as:
 
 ```ruby
-result = Pose.search 'foo', MyClass, where: [ public: true, ['user_id <> ?', @current_user.id] ]
+result = Pose.search 'foo',
+                     Note,
+                     joins: Note,
+                     where: [ ['notes.public = ?', true],
+                              ['user_id <> ?', @current_user.id] ] ]
 ```
+
+Combining ActiveRecord query clauses with fulltext search only works when searching over a single class.
 
 
 ## Maintenance
@@ -153,8 +167,8 @@ The search index is automatically updated when objects are created, updated, or 
 
 ### Optimizing the search index
 
-For performance reasons, the search index keeps all the words that were ever used around, in order to try to reuse them as much as possible.
-After deleting or changing a large number of objects, you can shrink the memory consumption of Pose's search index by
+The search index keeps all the words that were ever used around.
+After deleting or changing a large number of objects, you can shrink the database storage consumption of Pose's search index by
 removing no longer used search terms from it.
 
 ```bash
@@ -163,11 +177,11 @@ $ rake pose:index:vacuum
 
 
 ### Recreating the search index from scratch
-To index existing data in your database, or after loading additional data outside of ActiveRecord into your database,
+To index existing data in your database, or after buld-loading data outside of ActiveRecord into your database,
 you should recreate the search index from scratch.
 
 ```bash
-rake 'pose:index:reindex_all[MyClass]'
+rake pose:index:reindex_all[MyClass]
 ```
 
 
@@ -179,14 +193,14 @@ To remove all traces of Pose from your database, run:
 rails generate pose:remove
 ```
 
-Also don't forget to remove the `posify` block from your models as well as the gem entry from your Gemfile.
+Also don't forget to remove the `posify` block from your models as well as the _pose_ gem from your Gemfile.
 
 
 ## Use Pose in your tests
 
 Pose can slow down your tests, because it updates the search index on every `:create`, `:update`, and `:delete`
 operation in the database.
-If this becomes a problem, you can disable Pose in your `test` environments,
+To avoid that in your not search-related tests, you can disable Pose in your `test` environments,
 and only enable it for the tests that actually need search functionality.
 
 To disable Pose for tests, add this line to `config/environments/test.rb`
@@ -195,7 +209,8 @@ To disable Pose for tests, add this line to `config/environments/test.rb`
 Pose::CONFIGURATION[:perform_search] = false
 ```
 
-Now, with search disabled in the test environment, enable Pose in some of your tests by setting the same value to `true` inside the tests:
+Now, with search disabled in the test environment, enable Pose in some of your tests
+by setting the same value to `true` inside the tests:
 
 ```ruby
 
@@ -220,28 +235,29 @@ end
 
 If you find a bug, have a question, or a better idea, please open an issue on the
 <a href="https://github.com/kevgo/pose/issues">Pose issue tracker</a>.
-Or, clone the repository, make your changes, and submit a pull request.
+Or, clone the repository, make your changes, and submit a unit-tested pull request!
 
 ### Run the unit tests for the Pose Gem
 
-For now, Pose uses Postgresql for tests, since it is free, and one of the most strict databases.
+Pose uses Sqlite3 for tests.
 To run tests, first create a test database.
 
 ```bash
-rake db:setup
-(cd spec/dummy && rake db:test:prepare)
+bundle
+rake app:db:create
+rake app:db:migrate
+rake app:db:test:prepare
 ```
 
 Then run the tests.
 
 ```bash
-$ rake spec
+rake
 ```
 
 
 ### Road Map
 
-* add `join` to search parameters
 * pagination of search results
 * ordering
 * weighting search results
