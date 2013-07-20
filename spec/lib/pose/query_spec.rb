@@ -81,8 +81,13 @@ module Pose
       end
 
       it 'returns the given multiple WHERE clauses as given' do
-        query = Query.new [], '', where: [ [foo: 'foo'], [bar: 'bar'] ]
-        expect(query.where).to eq [ [foo: 'foo'], [bar: 'bar'] ]
+        query = Query.new [], '', where: [ ['foo = ?', false], ['bar = ?', true] ]
+        expect(query.where).to eq [ ['foo = ?', false], ['bar = ?', true] ]
+      end
+
+      it 'returns the given multiple string WHERE clauses as given' do
+        query = Query.new [], '', where: [ ['foo = 1'], ['bar = 2'] ]
+        expect(query.where).to eq [ ['foo = 1'], ['bar = 2'] ]
       end
 
       it 'returns an empty array if no where clause is given' do

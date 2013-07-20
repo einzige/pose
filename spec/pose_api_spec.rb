@@ -161,7 +161,7 @@ module Pose
                                  PosableOne,
                                  result_type: :ids,
                                  limit: 1,
-                                 joins: "INNER JOIN posable_ones ON pose_assignments.posable_id=posable_ones.id AND pose_assignments.posable_type='PosableOne'",
+                                 joins: PosableOne,
                                  where: ["posable_ones.private = ?", false]
             expect(result[PosableOne]).to have(1).item
           end
@@ -181,7 +181,7 @@ module Pose
             result = Pose.search 'foo',
                                  PosableOne,
                                  limit: 1,
-                                 joins: "INNER JOIN posable_ones ON pose_assignments.posable_id=posable_ones.id AND pose_assignments.posable_type='PosableOne'",
+                                 joins: PosableOne,
                                  where: ["posable_ones.private = ?", false]
             expect(result[PosableOne]).to have(1).item
             expect(result[PosableOne]).to eq [@pos3]
@@ -225,7 +225,7 @@ module Pose
           it 'limits the result set by the given conditions' do
             result = Pose.search 'foo',
                                  PosableOne,
-                                 joins: "INNER JOIN posable_ones ON pose_assignments.posable_id=posable_ones.id AND pose_assignments.posable_type='PosableOne'",
+                                 joins: PosableOne,
                                  where: ["posable_ones.private = ?", true]
             expect(result[PosableOne]).to have(1).item
             expect(result[PosableOne]).to include @one
@@ -234,7 +234,7 @@ module Pose
           it 'allows to use the string syntax for queries' do
             result = Pose.search 'foo',
                                  PosableOne,
-                                 joins: "INNER JOIN posable_ones ON pose_assignments.posable_id=posable_ones.id AND pose_assignments.posable_type='PosableOne'",
+                                 joins: PosableOne,
                                  where: ["posable_ones.private = ?", true]
             expect(result[PosableOne]).to have(1).item
             expect(result[PosableOne]).to include @one
@@ -244,7 +244,7 @@ module Pose
             three = FactoryGirl.create :posable_one, text: 'foo two', private: true
             result = Pose.search 'foo',
                                  PosableOne,
-                                 joins: "INNER JOIN posable_ones ON pose_assignments.posable_id=posable_ones.id AND pose_assignments.posable_type='PosableOne'",
+                                 joins: PosableOne,
                                  where: [ ["posable_ones.private = ?", true],
                                           ['posable_ones.text = ?', 'foo two'] ]
             expect(result[PosableOne]).to have(1).item
@@ -258,7 +258,7 @@ module Pose
             result = Pose.search 'foo',
                                  PosableOne,
                                  result_type: :ids,
-                                 joins: "INNER JOIN posable_ones ON pose_assignments.posable_id=posable_ones.id AND pose_assignments.posable_type='PosableOne'",
+                                 joins: PosableOne,
                                  where: ["posable_ones.private = ?", true]
             expect(result[PosableOne]).to have(1).item
             expect(result[PosableOne]).to include @one.id
@@ -278,7 +278,7 @@ module Pose
         it 'allows to use joined tables for queries' do
           result = Pose.search 'snippet',
                                PosableOne,
-                               { joins: [ "INNER JOIN posable_ones ON pose_assignments.posable_id=posable_ones.id AND pose_assignments.posable_type='PosableOne'",
+                               { joins: [ PosableOne,
                                           "INNER JOIN users on posable_ones.user_id=users.id" ],
                                  where: ["users.name == 'Jeff'"] }
           expect(result[PosableOne].map(&:text)).to eql ['snippet one']

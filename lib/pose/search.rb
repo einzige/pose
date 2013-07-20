@@ -15,6 +15,31 @@ module Pose
     end
 
 
+    # Adds the given join expression to the given arel query.
+    def add_join arel, join_expression
+      case join_expression.class.name
+        when 'Class'
+          table_name = join_expression.name.tableize
+          return arel.joins "INNER JOIN #{table_name} ON pose_assignments.posable_id=#{table_name}.id AND pose_assignments.posable_type='#{join_expression.name}'"
+        when 'String', 'Symbol'
+          return arel.joins join_expression
+        else
+          raise "Unknown join expression: #{join_expression}"
+      end
+    end
+
+
+    # Creates a JOIN to the given expression.
+    def add_joins arel, query
+      query.joins.inject(arel) do |memo, join_data|
+        add_join memo, join_data
+      end
+    end
+
+    def add_wheres arel, query
+      query.where.inject(arel) { |memo, where| memo.where where }
+    end
+
     # Returns an empty result structure.
     def empty_result query
       {}.tap do |result|
@@ -83,8 +108,8 @@ module Pose
                                .select('pose_assignments.posable_id, pose_assignments.posable_type') \
                                .where('pose_words.text LIKE ?', "#{word}%") \
                                .where('pose_assignments.posable_type IN (?)', query.class_names)
-        query.joins.each { |join| data = data.joins join }
-        query.where.each { |where| puts where ; data = data.where where }
+        data = add_joins data, query
+        data = add_wheres data, query
         Pose::Assignment.connection.select_all(data.to_sql).each do |pose_assignment|
           result[pose_assignment['posable_type']] << pose_assignment['posable_id'].to_i
         end
