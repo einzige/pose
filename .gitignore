@@ -1,6 +1,7 @@
 .bundle/
 .idea/
-*.swp
+.ruby-version
+.rvmrc
 coverage/
 Gemfile.lock
 log/*.log
@@ -8,5 +9,4 @@ pkg/
 spec/dummy/db/*.sqlite3
 spec/dummy/log/*.log
 spec/dummy/tmp/
-.rvmrc
-.ruby-version
+tmp/

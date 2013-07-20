@@ -53,6 +53,16 @@ module Pose
       @options[:limit]
     end
 
+    # @return [Hash<Class, ActiveRecord::Relation>]
+    def search
+      {}.tap do |result|
+        result_classes_and_ids.each do |class_name, ids|
+          result_class = class_name.constantize
+          result[result_class] = ids.empty? ? [] : relation_for(result_class)
+        end
+      end
+    end
+
     # Returns the search terms that are contained in the given query.
     def query_words
       @query_words ||= text.split(' ').map{|query_word| Helpers.root_word query_word}.flatten.uniq

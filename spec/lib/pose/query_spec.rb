@@ -12,9 +12,7 @@ module Pose
       it 'flattens the given classes' do
         expect(subject.classes).to eql [PosableOne, PosableTwo]
       end
-
     end
-
 
     describe :class_names do
 
