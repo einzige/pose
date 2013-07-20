@@ -29,7 +29,7 @@ module Pose
 
       # Step 1: get an array of all words for the current object.
       search_text = instance_eval &(self.class.pose_content)
-      new_words = Helpers.query_terms search_text.to_s
+      new_words = Query.new([], search_text.to_s).query_words
 
       # Step 2: Add new words to the search index.
       Helpers.get_words_to_add(self.pose_words, new_words).each do |word_to_add|

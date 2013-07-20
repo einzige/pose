@@ -11,16 +11,18 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130308144915) do
+ActiveRecord::Schema.define(:version => 20130708084009) do
 
   create_table "posable_ones", :force => true do |t|
     t.string  "text"
     t.boolean "private"
+    t.integer "user_id"
   end
 
   create_table "posable_twos", :force => true do |t|
     t.string  "text"
     t.boolean "private"
+    t.integer "user_id"
   end
 
   create_table "pose_assignments", :force => true do |t|
@@ -37,5 +39,9 @@ ActiveRecord::Schema.define(:version => 20130308144915) do
   end
 
   add_index "pose_words", ["text"], :name => "index_pose_words_on_text"
+
+  create_table "users", :force => true do |t|
+    t.string "name"
+  end
 
 end

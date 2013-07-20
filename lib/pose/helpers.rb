@@ -58,21 +58,6 @@ module Pose
       end
 
 
-      # Merges the given posable object ids for a single query word into the given search result.
-      def merge_search_result_word_matches result, class_name, ids
-        if result.has_key? class_name
-          result[class_name] = result[class_name] & ids
-        else
-          result[class_name] = ids
-        end
-      end
-
-
-      # Returns the search terms that are contained in the given query.
-      def query_terms query
-        query.split(' ').map{|query_word| Helpers.root_word query_word}.flatten.uniq
-      end
-
       # Simplifies the given word to a generic search form.
       #
       # @param [String] raw_word The word to make searchable.
@@ -97,21 +82,6 @@ module Pose
           end
         end
         result.uniq
-      end
-
-      # Returns a hash mapping classes to ids for the a single given word.
-      def search_classes_and_ids_for_word word, class_names, options = {}
-        result = {}.tap { |hash| class_names.each { |class_name| hash[class_name] = [] }}
-        query = Pose::Assignment.joins(:word) \
-                          .select('pose_assignments.posable_id, pose_assignments.posable_type') \
-                          .where('pose_words.text LIKE ?', "#{word}%") \
-                          .where('pose_assignments.posable_type IN (?)', class_names)
-        query = query.joins options[:joins] if options.has_key? :joins
-        query = query.where options[:where] if options.has_key? :where
-        Pose::Assignment.connection.select_all(query.to_sql).each do |pose_assignment|
-          result[pose_assignment['posable_type']] << pose_assignment['posable_id'].to_i
-        end
-        result
       end
 
     end

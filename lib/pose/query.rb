@@ -1,94 +1,70 @@
 module Pose
-
-  # TODO: refactor
+  # Represents a search query.
+  #
+  # Provides convenient access to all elements of the search query:
+  #   * fulltext
+  #   * classes to search in
+  #   * additional JOINs
+  #   * additional WHEREs
   class Query
-    attr_reader :classes, :query_string, :options
 
-    # @param [Array<Class>] classes
-    # @param [String] query_string
-    def initialize classes, query_string, options = {}
+    attr_reader :classes, :text, :options
+
+    def initialize classes, text, options = {}
       @classes = [classes].flatten
-      @query_string = query_string
+      @text = text
       @options = options
     end
 
+    # The names of the classes to search in.
     # @return [Array<String>]
     def class_names
       classes.map &:name
     end
 
-    # @param [Class] klass
-    # @return [Array<Integer>]
-    def ids_for klass
-      ids = result_classes_and_ids[klass.name]
+    # Returns whether this query contains custom JOIN expressions.
+    def has_joins?
+      !@options[:joins].blank?
+    end
 
-      if options[:where]
-        query = relation_for(klass)
-        klass.connection.select_values(query.to_sql).map(&:to_i)
-      else
-        options[:limit] ? ids.first(options[:limit]) : ids
+    # Returns whether the query defines a limit on the number of results.
+    def has_limit?
+      !@options[:limit].blank?
+    end
+
+    # Returns whether this query contains WHERE clauses.
+    def has_where?
+      !@options[:where].blank?
+    end
+
+    # Returns whether only result ids are requested,
+    # opposed to full objects.
+    def ids_requested?
+      @options[:result_type] == :ids
+    end
+
+    # Returns the custom JOIN expressions of this query.
+    def joins
+      @joins ||= [@options[:joins]].flatten.compact
+    end
+
+    # Returns the limitation on the number of results.
+    def limit
+      @options[:limit]
+    end
+
+    # Returns the search terms that are contained in the given query.
+    def query_words
+      @query_words ||= text.split(' ').map{|query_word| Helpers.root_word query_word}.flatten.uniq
+    end
+
+    # Returns the WHERE clause of this query.
+    def where
+      return [] unless has_where?
+      if @options[:where].size == 2 and @options[:where][0].class == String
+        return [ @options[:where] ]
       end
-    end
-
-    # @param [Class] klass
-    # @return [ActiveRecord::Relation]
-    def relation_for klass
-      ids = result_classes_and_ids[klass.name]
-      apply_where_on_scope(klass.where(id: ids)).limit(options[:limit])
-    end
-
-    # Gets the ids of the results.
-    # TODO: remove Helpers
-    # @return [Hash<String, Array<Integer>>]
-    def result_classes_and_ids
-      @result_classes_and_ids ||= {}.tap do |classes_and_ids|
-        Helpers.query_terms(query_string).each do |query_word|
-          Helpers.search_classes_and_ids_for_word(query_word, class_names).each do |class_name, ids|
-            Helpers.merge_search_result_word_matches classes_and_ids, class_name, ids
-          end
-        end
-      end
-    end
-
-    # @return [Hash<Class, Array<Integer>>]
-    def result_ids
-      {}.tap do |result|
-        result_classes_and_ids.each do |class_name, ids|
-          result_class = class_name.constantize
-          result[result_class] = ids_for(result_class)
-        end
-      end
-    end
-
-    # Cached #search
-    # @see #search
-    # @return [Hash<Class, ActiveRecord::Relation>]
-    def results
-      @results ||= search
-    end
-
-    # @return [Hash<Class, ActiveRecord::Relation>]
-    def search
-      @results = {}.tap do |result|
-        result_classes_and_ids.each do |class_name, ids|
-          result_class = class_name.constantize
-          result[result_class] = ids.empty? ? [] : relation_for(result_class)
-        end
-      end
-    end
-
-
-  private
-
-    # @param [ActiveRecord::Relation]
-    # @return [ActiveRecord::Relation]
-    # TODO: remove?
-    def apply_where_on_scope scope
-      result = scope.clone
-      if options[:where].present?
-        options[:where].each { |scope| result = result.where(scope) }
-      end
-      result
+      @options[:where]
     end
   end
 end

@@ -157,22 +157,34 @@ module Pose
 
         context 'with ids and scope' do
           it 'limits the result set to the given number' do
-            result = Pose.search 'foo', PosableOne, result_type: :ids, limit: 1, where: [private: false]
+            result = Pose.search 'foo',
+                                 PosableOne,
+                                 result_type: :ids,
+                                 limit: 1,
+                                 joins: "INNER JOIN posable_ones ON pose_assignments.posable_id=posable_ones.id AND pose_assignments.posable_type='PosableOne'",
+                                 where: ["posable_ones.private = ?", false]
             expect(result[PosableOne]).to have(1).item
           end
         end
 
         context 'with classes and no scope' do
           it 'limits the result set to the given number' do
-            result = Pose.search 'foo', PosableOne, limit: 1
+            result = Pose.search 'foo',
+                                 PosableOne,
+                                 limit: 1
             expect(result[PosableOne]).to have(1).item
           end
         end
 
         context 'with classes and scope' do
           it 'limits the result set to the given number' do
-            result = Pose.search 'foo', PosableOne, limit: 1, where: [private: false]
+            result = Pose.search 'foo',
+                                 PosableOne,
+                                 limit: 1,
+                                 joins: "INNER JOIN posable_ones ON pose_assignments.posable_id=posable_ones.id AND pose_assignments.posable_type='PosableOne'",
+                                 where: ["posable_ones.private = ?", false]
             expect(result[PosableOne]).to have(1).item
+            expect(result[PosableOne]).to eq [@pos3]
           end
         end
       end
@@ -211,26 +223,30 @@ module Pose
         context 'with result type :classes' do
 
           it 'limits the result set by the given conditions' do
-            result = Pose.search 'foo', PosableOne, where: [ private: true ]
-            expect(result[PosableOne]).to have(1).item
-            expect(result[PosableOne]).to include @one
-          end
-
-          it 'allows to use the hash syntax for queries' do
-            result = Pose.search 'foo', PosableOne, where: [ private: true ]
+            result = Pose.search 'foo',
+                                 PosableOne,
+                                 joins: "INNER JOIN posable_ones ON pose_assignments.posable_id=posable_ones.id AND pose_assignments.posable_type='PosableOne'",
+                                 where: ["posable_ones.private = ?", true]
             expect(result[PosableOne]).to have(1).item
             expect(result[PosableOne]).to include @one
           end
 
           it 'allows to use the string syntax for queries' do
-            result = Pose.search 'foo', PosableOne, where: [ ['private = ?', true] ]
+            result = Pose.search 'foo',
+                                 PosableOne,
+                                 joins: "INNER JOIN posable_ones ON pose_assignments.posable_id=posable_ones.id AND pose_assignments.posable_type='PosableOne'",
+                                 where: ["posable_ones.private = ?", true]
             expect(result[PosableOne]).to have(1).item
             expect(result[PosableOne]).to include @one
           end
 
           it 'allows to combine several conditions' do
             three = FactoryGirl.create :posable_one, text: 'foo two', private: true
-            result = Pose.search 'foo', PosableOne, where: [ {private: true}, ['text = ?', 'foo two'] ]
+            result = Pose.search 'foo',
+                                 PosableOne,
+                                 joins: "INNER JOIN posable_ones ON pose_assignments.posable_id=posable_ones.id AND pose_assignments.posable_type='PosableOne'",
+                                 where: [ ["posable_ones.private = ?", true],
+                                          ['posable_ones.text = ?', 'foo two'] ]
             expect(result[PosableOne]).to have(1).item
             expect(result[PosableOne]).to include three
           end
@@ -239,11 +255,36 @@ module Pose
         context 'with result type :ids' do
 
           it 'limits the result set by the given condition' do
-            result = Pose.search 'foo', PosableOne, result_type: :ids, where: [ private: true ]
+            result = Pose.search 'foo',
+                                 PosableOne,
+                                 result_type: :ids,
+                                 joins: "INNER JOIN posable_ones ON pose_assignments.posable_id=posable_ones.id AND pose_assignments.posable_type='PosableOne'",
+                                 where: ["posable_ones.private = ?", true]
             expect(result[PosableOne]).to have(1).item
             expect(result[PosableOne]).to include @one.id
           end
         end
+      end
+
+      describe ':joins parameter' do
+
+        before :each do
+          @user_1 = FactoryGirl.create :user, name: 'Jeff'
+          @user_2 = FactoryGirl.create :user, name: 'Jim'
+          @one = FactoryGirl.create :posable_one, text: 'snippet one', user: @user_1
+          @two = FactoryGirl.create :posable_one, text: 'snippet two', user: @user_2
+        end
+
+        it 'allows to use joined tables for queries' do
+          result = Pose.search 'snippet',
+                               PosableOne,
+                               { joins: [ "INNER JOIN posable_ones ON pose_assignments.posable_id=posable_ones.id AND pose_assignments.posable_type='PosableOne'",
+                                          "INNER JOIN users on posable_ones.user_id=users.id" ],
+                                 where: ["users.name == 'Jeff'"] }
+          expect(result[PosableOne].map(&:text)).to eql ['snippet one']
+        end
+
+        it 'allows to load data from joined tables'
       end
     end
 
