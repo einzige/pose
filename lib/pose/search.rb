@@ -50,6 +50,54 @@ module Pose
     end
 
 
+    # Returns all matching ids by class name.
+    def find_ids_for_all_words
+      {}.tap do |result|
+        @query.query_words.each do |query_word|
+          find_ids_for_word(query_word, @query).each do |class_name, ids|
+            merge_search_result_word_matches result, class_name, ids
+          end
+        end
+      end
+    end
+
+
+    # Returns a hash mapping classes to ids for the a single given word.
+    def find_ids_for_word word, query
+      empty_result(query).tap do |result|
+        data = Pose::Assignment.joins(:word) \
+                               .select('pose_assignments.posable_id, pose_assignments.posable_type') \
+                               .where('pose_words.text LIKE ?', "#{word}%") \
+                               .where('pose_assignments.posable_type IN (?)', query.class_names)
+        data = add_joins data, query
+        data = add_wheres data, query
+        Pose::Assignment.connection.select_all(data.to_sql).each do |pose_assignment|
+          result[pose_assignment['posable_type']] << pose_assignment['posable_id'].to_i
+        end
+      end
+    end
+
+
+    # Truncates the result set based on the :limit parameter in the query.
+    def limit_ids result
+      return unless @query.has_limit?
+      result.each do |clazz, ids|
+        result[clazz] = ids.slice 0, @query.limit
+      end
+    end
+
+
+    # Converts the ids to classes, if the user wants classes.
+    def load_classes result
+      return if @query.ids_requested?
+      result.each do |clazz, ids|
+        if ids.size > 0
+          result[clazz] = clazz.where(id: ids)
+        end
+      end
+    end
+
+
     # Merges the given posable object ids for a single query word into the given search result.
     def merge_search_result_word_matches result, class_name, ids
       if result.has_key? class_name
@@ -66,58 +114,12 @@ module Pose
 
 
     def search
-      ids_class_names = search_ids_for_all_words
-
-      # Load the results by id.
       {}.tap do |result|
-        ids_class_names.each do |class_name, ids|
-          result_class = class_name.constantize
-
-          if ids.size == 0
-            # Handle no results.
-            result[result_class] = []
-
-          else
-            # Here we have results.
-
-            if @query.ids_requested?
-              # Ids requested for result.
-              result[result_class] = @query.has_limit? ? ids.slice(0, @query.limit) : ids
-            else
-              # Classes requested for result.
-              result[result_class] = result_class.where(id: ids)
-              result[result_class] = result[result_class].limit(@query.limit) if @query.has_limit?
-            end
-          end
+        find_ids_for_all_words.each do |class_name, ids|
+          result[class_name.constantize] = ids
         end
-      end
-    end
-
-
-    # Returns all matching ids by class name.
-    def search_ids_for_all_words
-      {}.tap do |result|
-        @query.query_words.each do |query_word|
-          search_ids_for_word(query_word, @query).each do |class_name, ids|
-            merge_search_result_word_matches result, class_name, ids
-          end
-        end
-      end
-    end
-
-
-    # Returns a hash mapping classes to ids for the a single given word.
-    def search_ids_for_word word, query
-      empty_result(query).tap do |result|
-        data = Pose::Assignment.joins(:word) \
-                               .select('pose_assignments.posable_id, pose_assignments.posable_type') \
-                               .where('pose_words.text LIKE ?', "#{word}%") \
-                               .where('pose_assignments.posable_type IN (?)', query.class_names)
-        data = add_joins data, query
-        data = add_wheres data, query
-        Pose::Assignment.connection.select_all(data.to_sql).each do |pose_assignment|
-          result[pose_assignment['posable_type']] << pose_assignment['posable_id'].to_i
-        end
+        limit_ids result
+        load_classes result
       end
     end
   end
