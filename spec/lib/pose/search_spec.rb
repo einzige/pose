@@ -213,5 +213,36 @@ module Pose
         end
       end
     end
+    describe :search_word do
+
+      context 'search results' do
+        it 'returns the ids of the matching instances for this class' do
+          posable_one_1 = create :posable_one, text: 'foo'
+          posable_one_2 = create :posable_one, text: 'foo'
+          search = Search.new PosableOne, nil
+          result = search.search_word 'foo'
+          expect(result['PosableOne']).to include posable_one_1.id, posable_one_2.id
+        end
+      end
+
+      context 'no search results' do
+        it 'returns an empty array for the class' do
+          search = Search.new PosableOne, nil
+          result = search.search_word 'foo'
+          expect(result['PosableOne']).to eql []
+        end
+      end
+
+      context 'multiple classes to search over' do
+        it 'returns results for all classes' do
+          posable_one_1 = create :posable_one, text: 'foo'
+          posable_two_1 = create :posable_two, text: 'foo'
+          search = Search.new [PosableOne, PosableTwo], nil
+          result = search.search_word 'foo'
+          expect(result['PosableOne']).to include posable_one_1.id
+          expect(result['PosableTwo']).to include posable_two_1.id
+        end
+      end
+    end
   end
 end
