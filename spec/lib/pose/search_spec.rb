@@ -45,15 +45,15 @@ module Pose
       it 'adds all joins to the given arel' do
         arel.should_receive(:joins).with('one').and_return(arel_2)
         arel_2.should_receive(:joins).with('two').and_return(arel_3)
-        query = Query.new [], '', joins: ['one', 'two']
-        subject.add_joins arel, query
+        search = Search.new [], '', joins: ['one', 'two']
+        search.add_joins arel
       end
 
       it 'returns the given arel' do
         arel.should_receive(:joins).and_return(arel_2)
         arel_2.should_receive(:joins).and_return(arel_3)
-        query = Query.new [], '', joins: ['one', 'two']
-        expect(subject.add_joins arel, query).to eql arel_3
+        search = Search.new [], '', joins: ['one', 'two']
+        expect(search.add_joins arel).to eql arel_3
       end
     end
 
