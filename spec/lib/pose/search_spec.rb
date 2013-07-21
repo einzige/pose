@@ -244,5 +244,38 @@ module Pose
         end
       end
     end
+
+    describe :search_words do
+
+      context 'search results' do
+        it 'returns the ids of all instances that match all query words' do
+          posable_one = create :posable_one, text: 'foo bar'
+          search = Search.new PosableOne, 'foo bar'
+          result = search.search_words
+          expect(result['PosableOne']).to eq [posable_one.id]
+        end
+      end
+
+      context 'instance matches only one query word' do
+        it 'does not return this instance' do
+          posable_one_1 = create :posable_one, text: 'foo'
+          posable_one_2 = create :posable_one, text: 'bar'
+          search = Search.new PosableOne, 'foo bar'
+          result = search.search_words
+          expect(result['PosableOne']).to eq []
+        end
+      end
+
+      context 'multiple classes to search over' do
+        it 'returns all matching instances from all classes' do
+          posable_one = create :posable_one, text: 'foo bar'
+          posable_two = create :posable_two, text: 'foo bar'
+          search = Search.new [PosableOne, PosableTwo], 'foo bar'
+          result = search.search_words
+          expect(result['PosableOne']).to eq [posable_one.id]
+          expect(result['PosableTwo']).to eq [posable_two.id]
+        end
+      end
+    end
   end
 end
