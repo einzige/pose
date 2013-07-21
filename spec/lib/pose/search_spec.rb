@@ -63,15 +63,15 @@ module Pose
       it 'adds all joins to the given arel' do
         arel.should_receive(:where).with(['one = ?', true]).and_return(arel_2)
         arel_2.should_receive(:where).with(['two = ?', false]).and_return(arel_3)
-        query = Query.new [], '', where: [['one = ?', true], ['two = ?', false]]
-        subject.add_wheres arel, query
+        search = Search.new [], '', where: [['one = ?', true], ['two = ?', false]]
+        search.add_wheres arel
       end
 
       it 'returns the given arel' do
         arel.should_receive(:where).and_return(arel_2)
         arel_2.should_receive(:where).and_return(arel_3)
-        query = Query.new [], '', where: [['one'], ['two']]
-        expect(subject.add_wheres arel, query).to eql arel_3
+        search = Search.new [], '', where: [['one'], ['two']]
+        expect(search.add_wheres arel).to eql arel_3
       end
     end
 

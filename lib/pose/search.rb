@@ -36,8 +36,10 @@ module Pose
       end
     end
 
-    def add_wheres arel, query
-      query.where.inject(arel) { |memo, where| memo.where where }
+
+    # Adds the WHERE clauses from the given query to the given arel construct.
+    def add_wheres arel
+      @query.where.inject(arel) { |memo, where| memo.where where }
     end
 
 
@@ -105,7 +107,7 @@ module Pose
                                .where('pose_words.text LIKE ?', "#{word}%") \
                                .where('pose_assignments.posable_type IN (?)', @query.class_names)
         data = add_joins data, @query
-        data = add_wheres data, @query
+        data = add_wheres data
         Pose::Assignment.connection.select_all(data.to_sql).each do |pose_assignment|
           result[pose_assignment['posable_type']] << pose_assignment['posable_id'].to_i
         end
