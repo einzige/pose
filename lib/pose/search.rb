@@ -66,18 +66,11 @@ module Pose
 
 
     def search
-
-      # Get the ids of the results.
-      result_classes_and_ids = {}
-      @query.query_words.each do |query_word|
-        search_classes_and_ids_for_word(query_word, @query).each do |class_name, ids|
-          merge_search_result_word_matches result_classes_and_ids, class_name, ids
-        end
-      end
+      ids_class_names = search_ids_for_all_words
 
       # Load the results by id.
       {}.tap do |result|
-        result_classes_and_ids.each do |class_name, ids|
+        ids_class_names.each do |class_name, ids|
           result_class = class_name.constantize
 
           if ids.size == 0
@@ -101,8 +94,20 @@ module Pose
     end
 
 
+    # Returns all matching ids by class name.
+    def search_ids_for_all_words
+      {}.tap do |result|
+        @query.query_words.each do |query_word|
+          search_ids_for_word(query_word, @query).each do |class_name, ids|
+            merge_search_result_word_matches result, class_name, ids
+          end
+        end
+      end
+    end
+
+
     # Returns a hash mapping classes to ids for the a single given word.
-    def search_classes_and_ids_for_word word, query
+    def search_ids_for_word word, query
       empty_result(query).tap do |result|
         data = Pose::Assignment.joins(:word) \
                                .select('pose_assignments.posable_id, pose_assignments.posable_type') \
@@ -114,20 +119,6 @@ module Pose
           result[pose_assignment['posable_type']] << pose_assignment['posable_id'].to_i
         end
       end
-    end
-
-
-  private
-
-    # @param [ActiveRecord::Relation]
-    # @return [ActiveRecord::Relation]
-    # TODO: remove?
-    def apply_where_on_scope scope
-      result = scope.clone
-      if options[:where].present?
-        options[:where].each { |scope| result = result.where(scope) }
-      end
-      result
     end
   end
 end
