@@ -213,6 +213,84 @@ module Pose
         end
       end
     end
+
+
+    describe :search do
+
+      it 'finds all matching instances of all classes' do
+        posable_one_1 = create :posable_one, text: 'foo bar'
+        posable_one_2 = create :posable_one, text: 'foo bar'
+        posable_one_3 = create :posable_one, text: 'foo'
+        posable_two_1 = create :posable_two, text: 'foo bar'
+        posable_two_2 = create :posable_two, text: 'bar'
+        search = Search.new [PosableOne, PosableTwo], 'foo bar'
+        result = search.search
+        expect(result[PosableOne]).to eq [posable_one_1, posable_one_2]
+      end
+
+      it 'searches through all given classes' do
+        posable_one = create :posable_one, text: 'foo'
+        posable_two = create :posable_two, text: 'foo'
+        search = Search.new [PosableOne, PosableTwo], 'foo'
+        result = search.search
+        expect(result[PosableOne]).to eq [posable_one]
+        expect(result[PosableTwo]).to eq [posable_two]
+      end
+
+      it 'searches through all given search words' do
+        posable_one_1 = create :posable_one, text: 'foo bar'
+        posable_one_2 = create :posable_one, text: 'foo'
+        posable_one_3 = create :posable_one, text: 'bar'
+        search = Search.new PosableOne, 'foo bar'
+        result = search.search
+        expect(result[PosableOne]).to eq [posable_one_1]
+      end
+
+      it 'limits the number of search results to the given limit' do
+        posable_one_1 = create :posable_one, text: 'foo'
+        posable_one_2 = create :posable_one, text: 'foo'
+        search = Search.new PosableOne, 'foo', limit: 1
+        result = search.search
+        expect(result[PosableOne]).to have(1).items
+      end
+
+      describe 'result types' do
+
+        it 'loads classes by default' do
+          posable_one = create :posable_one, text: 'foo'
+          search = Search.new PosableOne, 'foo'
+          result = search.search
+          expect(result[PosableOne]).to eq [posable_one]
+        end
+
+        context 'result_type: :ids parameter' do
+          it 'returns only the ids of the parameters' do
+            posable_one = create :posable_one, text: 'foo'
+            search = Search.new PosableOne, 'foo', result_type: :ids
+            result = search.search
+            expect(result[PosableOne]).to eql [posable_one.id]
+          end
+        end
+      end
+
+      context 'given joins and wheres' do
+        it 'limits the search by the given joins and wheres' do
+          user_1 = create :user, name: 'user one'
+          user_2 = create :user, name: 'user two'
+          posable_one_1 = create :posable_one, user: user_1, text: 'foo'
+          posable_one_2 = create :posable_one, user: user_2, text: 'foo'
+          search = Search.new PosableOne,
+                              'foo',
+                              joins: [ PosableOne,
+                                       'INNER JOIN users ON posable_ones.user_id=users.id' ],
+                              where: ['users.name=?', 'user one']
+          result = search.search
+          expect(result[PosableOne]).to eq [posable_one_1]
+        end
+      end
+    end
+
+
     describe :search_word do
 
       context 'search results' do
@@ -244,6 +322,7 @@ module Pose
         end
       end
     end
+
 
     describe :search_words do
 
