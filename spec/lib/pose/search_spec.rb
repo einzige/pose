@@ -45,14 +45,14 @@ module Pose
       it 'adds all joins to the given arel' do
         arel.should_receive(:joins).with('one').and_return(arel_2)
         arel_2.should_receive(:joins).with('two').and_return(arel_3)
-        search = Search.new [], '', joins: ['one', 'two']
+        search = Search.new nil, nil, joins: ['one', 'two']
         search.add_joins arel
       end
 
       it 'returns the given arel' do
         arel.should_receive(:joins).and_return(arel_2)
         arel_2.should_receive(:joins).and_return(arel_3)
-        search = Search.new [], '', joins: ['one', 'two']
+        search = Search.new nil, nil, joins: ['one', 'two']
         expect(search.add_joins arel).to eql arel_3
       end
     end
@@ -63,14 +63,14 @@ module Pose
       it 'adds all joins to the given arel' do
         arel.should_receive(:where).with(['one = ?', true]).and_return(arel_2)
         arel_2.should_receive(:where).with(['two = ?', false]).and_return(arel_3)
-        search = Search.new [], '', where: [['one = ?', true], ['two = ?', false]]
+        search = Search.new nil, nil, where: [['one = ?', true], ['two = ?', false]]
         search.add_wheres arel
       end
 
       it 'returns the given arel' do
         arel.should_receive(:where).and_return(arel_2)
         arel_2.should_receive(:where).and_return(arel_3)
-        search = Search.new [], '', where: [['one'], ['two']]
+        search = Search.new nil, nil, where: [['one'], ['two']]
         expect(search.add_wheres arel).to eql arel_3
       end
     end
@@ -90,7 +90,7 @@ module Pose
 
     describe :limit_ids do
       before :each do
-        @search = Search.new PosableOne, '', limit: 2
+        @search = Search.new nil, nil, limit: 2
       end
 
       context 'with empty id set' do
@@ -119,7 +119,7 @@ module Pose
 
       context 'without limit in query' do
         it 'does nothing' do
-          @search = Search.new PosableOne, ''
+          @search = Search.new nil, nil
           result = { PosableOne => [1, 2, 3] }
           @search.limit_ids result
           expect(result[PosableOne]).to eql [1, 2, 3]
