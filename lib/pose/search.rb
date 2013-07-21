@@ -40,39 +40,12 @@ module Pose
       query.where.inject(arel) { |memo, where| memo.where where }
     end
 
+
     # Returns an empty result structure.
     def empty_result query
       {}.tap do |result|
         query.class_names.each do |class_name|
           result[class_name] = []
-        end
-      end
-    end
-
-
-    # Returns all matching ids by class name.
-    def find_ids_for_all_words
-      {}.tap do |result|
-        @query.query_words.each do |query_word|
-          find_ids_for_word(query_word, @query).each do |class_name, ids|
-            merge_search_result_word_matches result, class_name, ids
-          end
-        end
-      end
-    end
-
-
-    # Returns a hash mapping classes to ids for the a single given word.
-    def find_ids_for_word word, query
-      empty_result(query).tap do |result|
-        data = Pose::Assignment.joins(:word) \
-                               .select('pose_assignments.posable_id, pose_assignments.posable_type') \
-                               .where('pose_words.text LIKE ?', "#{word}%") \
-                               .where('pose_assignments.posable_type IN (?)', query.class_names)
-        data = add_joins data, query
-        data = add_wheres data, query
-        Pose::Assignment.connection.select_all(data.to_sql).each do |pose_assignment|
-          result[pose_assignment['posable_type']] << pose_assignment['posable_id'].to_i
         end
       end
     end
@@ -115,11 +88,39 @@ module Pose
 
     def search
       {}.tap do |result|
-        find_ids_for_all_words.each do |class_name, ids|
+        search_words.each do |class_name, ids|
           result[class_name.constantize] = ids
         end
         limit_ids result
         load_classes result
+      end
+    end
+
+
+    # Finds all matching ids for a single word of the search query.
+    def search_word word
+      empty_result(@query).tap do |result|
+        data = Pose::Assignment.joins(:word) \
+                               .select('pose_assignments.posable_id, pose_assignments.posable_type') \
+                               .where('pose_words.text LIKE ?', "#{word}%") \
+                               .where('pose_assignments.posable_type IN (?)', @query.class_names)
+        data = add_joins data, @query
+        data = add_wheres data, @query
+        Pose::Assignment.connection.select_all(data.to_sql).each do |pose_assignment|
+          result[pose_assignment['posable_type']] << pose_assignment['posable_id'].to_i
+        end
+      end
+    end
+
+
+    # Returns all matching ids for all words of the search query.
+    def search_words
+      {}.tap do |result|
+        @query.query_words.each do |query_word|
+          search_word(query_word).each do |class_name, ids|
+            merge_search_result_word_matches result, class_name, ids
+          end
+        end
       end
     end
   end
