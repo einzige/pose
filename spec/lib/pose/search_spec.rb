@@ -128,6 +128,30 @@ module Pose
     end
 
 
+    describe :load_classes do
+
+      context 'when the user wants ids' do
+        it 'does nothing' do
+          search = Search.new nil, nil, result_type: :ids
+          result = { PosableOne => [1, 2] }
+          search.load_classes @result
+          expect(result[PosableOne]).to eql [1, 2]
+        end
+      end
+
+      context 'when the user wants classes' do
+        it 'loads the classes' do
+          object_1 = create :posable_one
+          object_2 = create :posable_one
+          result = { PosableOne => [1, 2] }
+          search = Search.new nil, nil
+          search.load_classes result
+          expect(result[PosableOne]).to eq [object_1, object_2]
+        end
+      end
+    end
+
+
     describe :merge_search_result_word_matches do
       context 'given a new class name' do
 
