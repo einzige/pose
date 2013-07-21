@@ -76,6 +76,58 @@ module Pose
     end
 
 
+    describe :empty_result do
+
+      it 'returns a hash with classes and empty arrays for each class in the search query' do
+        search = Search.new [PosableOne, PosableTwo], ''
+        result = search.empty_result
+        expect(result['PosableOne']).to eq []
+        expect(result['PosableTwo']).to eq []
+        expect(result).to_not have_key 'User'
+      end
+    end
+
+
+    describe :limit_ids do
+      before :each do
+        @search = Search.new PosableOne, '', limit: 2
+      end
+
+      context 'with empty id set' do
+        it 'does nothing' do
+          result = { PosableOne => [] }
+          @search.limit_ids result
+          expect(result[PosableOne]).to eql []
+        end
+      end
+
+      context 'with id set less than the given limit' do
+        it 'does nothing' do
+          result = { PosableOne => [1, 2] }
+          @search.limit_ids result
+          expect(result[PosableOne]).to eql [1, 2]
+        end
+      end
+
+      context 'with id set longer than the given limit' do
+        it 'truncates the id set' do
+          result = { PosableOne => [1, 2, 3] }
+          @search.limit_ids result
+          expect(result[PosableOne]).to eql [1, 2]
+        end
+      end
+
+      context 'without limit in query' do
+        it 'does nothing' do
+          @search = Search.new PosableOne, ''
+          result = { PosableOne => [1, 2, 3] }
+          @search.limit_ids result
+          expect(result[PosableOne]).to eql [1, 2, 3]
+        end
+      end
+    end
+
+
     describe :merge_search_result_word_matches do
       context 'given a new class name' do
 

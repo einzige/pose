@@ -44,9 +44,9 @@ module Pose
 
 
     # Returns an empty result structure.
-    def empty_result query
+    def empty_result
       {}.tap do |result|
-        query.class_names.each do |class_name|
+        @query.class_names.each do |class_name|
           result[class_name] = []
         end
       end
@@ -74,6 +74,7 @@ module Pose
 
 
     # Merges the given posable object ids for a single query word into the given search result.
+    # Helper method for :search_words.
     def merge_search_result_word_matches result, class_name, ids
       if result.has_key? class_name
         result[class_name] = result[class_name] & ids
@@ -83,11 +84,16 @@ module Pose
     end
 
 
+    # Returns the search results cached.
+    # Use this method to access the results of the search.
     def results
       @results ||= search
     end
 
 
+    # Performs a complete search.
+    # Clients should use :results to perform a search,
+    # since it caches the results.
     def search
       {}.tap do |result|
         search_words.each do |class_name, ids|
@@ -101,7 +107,7 @@ module Pose
 
     # Finds all matching ids for a single word of the search query.
     def search_word word
-      empty_result(@query).tap do |result|
+      empty_result.tap do |result|
         data = Pose::Assignment.joins(:word) \
                                .select('pose_assignments.posable_id, pose_assignments.posable_type') \
                                .where('pose_words.text LIKE ?', "#{word}%") \
