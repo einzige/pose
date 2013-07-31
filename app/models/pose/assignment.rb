@@ -1,8 +1,6 @@
 # Assigns searchable objects to words in the search index.
 module Pose
   class Assignment < ActiveRecord::Base
-    attr_accessible :word, :posable
-
     belongs_to :word, class_name: 'Pose::Word'
     belongs_to :posable, polymorphic: true
 

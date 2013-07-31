@@ -33,7 +33,7 @@ module Pose
 
       # Step 2: Add new words to the search index.
       Helpers.get_words_to_add(self.pose_words, new_words).each do |word_to_add|
-        self.pose_words << Word.find_or_create_by_text(word_to_add)
+        self.pose_words << Word.find_or_create_by(text: word_to_add)
       end
 
       # Step 3: Remove now obsolete words from search index.

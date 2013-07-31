@@ -9,38 +9,38 @@
 # from scratch. The latter is a flawed and unsustainable approach (the more migrations
 # you'll amass, the slower it'll run and the greater likelihood for issues).
 #
-# It's strongly recommended to check this file into your version control system.
+# It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130708084009) do
+ActiveRecord::Schema.define(version: 20130708084009) do
 
-  create_table "posable_ones", :force => true do |t|
+  create_table "posable_ones", force: true do |t|
     t.string  "text"
     t.boolean "private"
     t.integer "user_id"
   end
 
-  create_table "posable_twos", :force => true do |t|
+  create_table "posable_twos", force: true do |t|
     t.string  "text"
     t.boolean "private"
     t.integer "user_id"
   end
 
-  create_table "pose_assignments", :force => true do |t|
-    t.integer "word_id",                    :null => false
-    t.integer "posable_id",                 :null => false
-    t.string  "posable_type", :limit => 60, :null => false
+  create_table "pose_assignments", force: true do |t|
+    t.integer "word_id",                 null: false
+    t.integer "posable_id",              null: false
+    t.string  "posable_type", limit: 60, null: false
   end
 
-  add_index "pose_assignments", ["posable_id"], :name => "index_pose_assignments_on_posable_id"
-  add_index "pose_assignments", ["word_id"], :name => "index_pose_assignments_on_word_id"
+  add_index "pose_assignments", ["posable_id"], name: "index_pose_assignments_on_posable_id"
+  add_index "pose_assignments", ["word_id"], name: "index_pose_assignments_on_word_id"
 
-  create_table "pose_words", :force => true do |t|
-    t.string "text", :limit => 80, :null => false
+  create_table "pose_words", force: true do |t|
+    t.string "text", limit: 80, null: false
   end
 
-  add_index "pose_words", ["text"], :name => "index_pose_words_on_text"
+  add_index "pose_words", ["text"], name: "index_pose_words_on_text"
 
-  create_table "users", :force => true do |t|
+  create_table "users", force: true do |t|
     t.string "name"
   end
 

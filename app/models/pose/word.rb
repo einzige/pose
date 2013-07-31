@@ -1,8 +1,6 @@
 # A single word in the search index.
 module Pose
   class Word < ActiveRecord::Base
-    attr_accessible :text
-
     has_many :assignments, class_name: 'Pose::Assignment', dependent: :destroy
 
     def self.remove_unused_words progress_bar = nil

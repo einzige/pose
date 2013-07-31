@@ -9,6 +9,8 @@ A database agnostic fulltext search engine for ActiveRecord objects in Ruby on R
 * Very fast search, doing only simple queries over fully indexed columns.
 * Allows to augment the fulltext search query with your own joins and where clauses.
 
+Version 3.x is for Rails 4 compatibilty. For Rails 3.x, please use versions 2.x.
+
 
 ## Installation
 
