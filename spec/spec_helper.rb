@@ -1,4 +1,4 @@
-if ENV['COVERALLS_CONFIG'] == 'nocoveralls'
+if ENV['COVERALLS_CONFIG'] != 'nocoveralls'
   require 'coveralls'
   Coveralls.wear!
 end
