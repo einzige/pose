@@ -4,9 +4,9 @@ module Pose
 
   describe Search do
     let(:subject) { Search.new [PosableOne, [PosableTwo]], 'query string' }
-    let(:arel) { stub() }
-    let(:arel_2) { stub() }
-    let(:arel_3) { stub() }
+    let(:arel) { double() }
+    let(:arel_2) { double() }
+    let(:arel_3) { double() }
 
 
     describe :add_join do
