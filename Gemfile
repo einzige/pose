@@ -4,12 +4,13 @@ source "http://rubygems.org"
 # Bundler will treat runtime dependencies like base dependencies, and
 # development dependencies will be added by default to the :development group.
 gemspec
-gem 'coveralls', require: false
 gem 'activerecord'
 
-group :test do
-  gem 'pg'
+group :development, :test do
+  gem 'coveralls', require: false
+  gem 'database_cleaner'
   gem 'factory_girl'
+  gem 'pg'
 end
 
 # Declare any dependencies that are still in development here instead of in

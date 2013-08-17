@@ -8,9 +8,7 @@ module Pose
     let(:arel_2) { double() }
     let(:arel_3) { double() }
 
-
     describe :add_join do
-
       it 'returns the new arel' do
         arel.should_receive(:joins).with('foo').and_return(arel_2)
         expect(subject.add_join arel, 'foo').to eql arel_2
@@ -39,9 +37,7 @@ module Pose
       end
     end
 
-
     describe :add_joins do
-
       it 'adds all joins to the given arel' do
         arel.should_receive(:joins).with('one').and_return(arel_2)
         arel_2.should_receive(:joins).with('two').and_return(arel_3)
@@ -57,9 +53,7 @@ module Pose
       end
     end
 
-
     describe :add_wheres do
-
       it 'adds all joins to the given arel' do
         arel.should_receive(:where).with(['one = ?', true]).and_return(arel_2)
         arel_2.should_receive(:where).with(['two = ?', false]).and_return(arel_3)
@@ -75,9 +69,7 @@ module Pose
       end
     end
 
-
     describe :empty_result do
-
       it 'returns a hash with classes and empty arrays for each class in the search query' do
         search = Search.new [PosableOne, PosableTwo], ''
         result = search.empty_result
@@ -86,7 +78,6 @@ module Pose
         expect(result).to_not have_key 'User'
       end
     end
-
 
     describe :limit_ids do
       before :each do
@@ -129,7 +120,6 @@ module Pose
 
 
     describe :load_classes do
-
       context 'when the user wants ids' do
         it 'does nothing' do
           search = Search.new nil, nil, result_type: :ids
@@ -154,7 +144,6 @@ module Pose
 
     describe :merge_search_result_word_matches do
       context 'given a new class name' do
-
         before :each do
           @result = {}
         end
@@ -166,7 +155,6 @@ module Pose
       end
 
       context 'given a class name with already existing ids from another word' do
-
         before :each do
           @result = { 'class1' => [1, 2] }
         end
@@ -178,7 +166,6 @@ module Pose
       end
 
       context 'with an existing empty result set from a previous query' do
-
         before :each do
           @result = { 'class1' => [] }
         end
@@ -190,7 +177,6 @@ module Pose
       end
 
       context 'with a new empty result set' do
-
         before :each do
           @result = { 'class1' => [1, 2] }
         end
@@ -202,7 +188,6 @@ module Pose
       end
 
       context 'with a completely different result set' do
-
         before :each do
           @result = { 'class1' => [1, 2] }
         end
@@ -216,7 +201,6 @@ module Pose
 
 
     describe :search do
-
       it 'finds all matching instances of all classes' do
         posable_one_1 = create :posable_one, text: 'foo bar'
         posable_one_2 = create :posable_one, text: 'foo bar'
@@ -255,7 +239,6 @@ module Pose
       end
 
       describe 'result types' do
-
         it 'loads classes by default' do
           posable_one = create :posable_one, text: 'foo'
           search = Search.new PosableOne, 'foo'
@@ -292,7 +275,6 @@ module Pose
 
 
     describe :search_word do
-
       context 'search results' do
         it 'returns the ids of the matching instances for this class' do
           posable_one_1 = create :posable_one, text: 'foo'
@@ -323,9 +305,7 @@ module Pose
       end
     end
 
-
     describe :search_words do
-
       context 'search results' do
         it 'returns the ids of all instances that match all query words' do
           posable_one = create :posable_one, text: 'foo bar'
