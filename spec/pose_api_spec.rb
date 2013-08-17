@@ -280,7 +280,7 @@ module Pose
                                PosableOne,
                                { joins: [ PosableOne,
                                           "INNER JOIN users on posable_ones.user_id=users.id" ],
-                                 where: ["users.name == 'Jeff'"] }
+                                 where: ["users.name = 'Jeff'"] }
           expect(result[PosableOne].map(&:text)).to eql ['snippet one']
         end
 

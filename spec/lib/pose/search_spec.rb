@@ -133,7 +133,7 @@ module Pose
         it 'loads the classes' do
           object_1 = create :posable_one
           object_2 = create :posable_one
-          result = { PosableOne => [1, 2] }
+          result = { PosableOne => [object_1.id, object_2.id] }
           search = Search.new nil, nil
           search.load_classes result
           expect(result[PosableOne]).to eq [object_1, object_2]
