@@ -7,5 +7,3 @@ rvm:
 
 before_script:
   - bundle install
-  - rake db:create
-  - rake db:migrate
