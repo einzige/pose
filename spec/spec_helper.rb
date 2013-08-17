@@ -12,27 +12,6 @@ Dir["#{File.dirname __FILE__}/factories/**/*.rb"].each {|f| require f}
 Dir["#{File.dirname __FILE__}/support/**/*.rb"].each {|f| require f}
 
 RSpec.configure do |config|
-  config.order = "random"
-
-  config.include FactoryGirl::Syntax::Methods
-
-  config.before(:each) do
-    DatabaseCleaner.start
-  end
-
-  config.after(:each) do
-    DatabaseCleaner.clean
-  end
-
-  spec_manager = SpecManager.new(:default)
-
-  config.before(:suite) do
-    spec_manager.init!
-    DatabaseCleaner.strategy = :transaction
-    DatabaseCleaner.clean_with(:truncation)
-  end
-
-  config.after(:suite) do
-    spec_manager.drop_database
-  end
+  #SpecManager.manage(config, :postgres)
+  SpecManager.manage(config, :sqlite)
 end

@@ -5,3 +5,9 @@ default:
   username: pose
   password: pose
   min_messages: WARNING
+
+sqlite:
+  adapter: sqlite3
+  database: db/pose.sqlite3
+  pool: 5
+  timeout: 5000
