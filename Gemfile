@@ -6,7 +6,6 @@ source "http://rubygems.org"
 gemspec
 gem 'activerecord'
 gem 'activesupport'
-gem 'rake'
 gem 'ruby-progressbar'
 
 group :development do
