@@ -13,7 +13,7 @@ module Pose
                                  group("pose_words.id").
                                  having("COUNT(pose_assignments.id) = 0"))
       else
-        # Unknown database --> use the standard Rails API.
+        # Unknown database --> use metawhere.
         Word.select(:id).includes(:assignments).find_each(batch_size: 100) do |word|
           word.delete if word.assignments.size == 0
           progress_bar.increment if progress_bar
