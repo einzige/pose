@@ -59,6 +59,9 @@ class SpecManager
   def create_database
     establish_service_connection
     db_connection.create_database(database_config['database']) if db_connection.respond_to?(:create_database)
+  rescue PG::DuplicateDatabase
+    drop_database
+    retry
   end
 
   def drop_database
