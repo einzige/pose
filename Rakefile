@@ -11,11 +11,11 @@ Bundler::GemHelper.install_tasks
 # RSpec tasks.
 require 'rspec/core/rake_task'
 RSpec::Core::RakeTask.new :spec_sqlite do
-  ENV['pose_env'] = 'sqlite'
+  ENV['POSE_ENV'] = 'sqlite'
 end
 
 RSpec::Core::RakeTask.new :spec_postgres do
-  ENV['pose_env'] = 'postgres'
+  ENV['POSE_ENV'] = 'postgres'
 end
 
 task :default => [:spec_sqlite, :spec_postgres]
