@@ -13,7 +13,4 @@ require 'pose/jobs/vacuum'
 
 Dir["tasks/**/*.rake"].each { |ext| load ext } if defined?(Rake)
 
-module Pose
-end
-
 ActiveRecord::Base.send :extend, Pose::ActiveRecordBaseAdditions
