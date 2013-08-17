@@ -10,5 +10,5 @@ spec/dummy/db/*.sqlite3
 spec/dummy/log/*.log
 spec/dummy/tmp/
 spec/support/config/database.yml
-spec/db/*
+spec/db/*.sqlite3
 tmp/
