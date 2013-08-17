@@ -5,6 +5,11 @@ module Pose
 
     has_many :assignments, class_name: 'Pose::Assignment', dependent: :destroy
 
+    # @param [Array<String>]
+    def self.factory(words)
+      words.map { |word| Word.find_or_create_by(text: word) }
+    end
+
     def self.remove_unused_words progress_bar = nil
       if Helpers.is_sql_database?
         # SQL database --> use an optimized query.

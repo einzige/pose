@@ -4,32 +4,6 @@ module Pose
   module Helpers
     class <<self
 
-      # Returns all strings that are in new_words, but not in existing_words.
-      # Helper method.
-      #
-      # @param [Array<String>] existing_words The words that are already associated with the object.
-      # @param [Array<String>] new_words The words thet the object should have from now on.
-      #
-      # @return [Array<String>] The words that need to be added to the existing_words array.
-      def get_words_to_add existing_words, new_words
-        new_words - existing_words.map(&:text)
-      end
-
-
-      # Helper method.
-      # Returns the id of all word objects that are in existing_words, but not in new_words.
-      #
-      # @param [Array<String>] existing_words The words that are already associated with the object.
-      # @param [Array<String>] new_words The words thet the object should have from now on.
-      #
-      # @return [Array<String>] The words that need to be removed from the existing_words array.
-      def get_words_to_remove existing_words, new_words
-        existing_words.map do |existing_word|
-          existing_word unless new_words.include?(existing_word.text)
-        end.compact
-      end
-
-
       def is_sql_database?
         ['ActiveRecord::ConnectionAdapters::PostgreSQLAdapter',
          'ActiveRecord::ConnectionAdapters::SQLite3Adapter'].include? ActiveRecord::Base.connection.class.name

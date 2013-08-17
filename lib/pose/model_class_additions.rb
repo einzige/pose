@@ -13,6 +13,31 @@ module Pose
       cattr_accessor :pose_content
     end
 
+    # @return [Array<String>]
+    def pose_current_words
+      pose_words.map(&:text)
+    end
+
+    # @return [String]
+    def pose_fetch_content
+      instance_eval(&(pose_content)).to_s
+    end
+
+    # @return [Array<String>]
+    def pose_fresh_words
+      @pose_fresh_words ||= Query.new([], pose_fetch_content).query_words
+    end
+
+    # @return [Array<String>]
+    def pose_stale_words
+      pose_current_words - pose_fresh_words
+    end
+
+    # @return [Array<String>]
+    def pose_words_to_add
+      pose_fresh_words - pose_current_words
+    end
+
     # Updates the associated words for this object in the database.
     def update_pose_index
       update_pose_words if Pose.perform_search?
@@ -26,20 +51,9 @@ module Pose
     # Helper method.
     # Updates the search words with the text returned by search_strings.
     def update_pose_words
-
-      # Step 1: get an array of all words for the current object.
-      search_text = instance_eval &(self.class.pose_content)
-      new_words = Query.new([], search_text.to_s).query_words
-
-      # Step 2: Add new words to the search index.
-      Helpers.get_words_to_add(self.pose_words, new_words).each do |word_to_add|
-        self.pose_words << Word.find_or_create_by(text: word_to_add)
-      end
-
-      # Step 3: Remove now obsolete words from search index.
-      Helpers.get_words_to_remove(self.pose_words, new_words).each do |word_to_remove|
-        self.pose_words.delete word_to_remove
-      end
+      @pose_fresh_words = nil
+      self.pose_words << Word.factory(pose_words_to_add)
+      self.pose_words.delete(Word.factory(pose_stale_words))
     end
   end
 end
