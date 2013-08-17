@@ -1,5 +1,15 @@
 namespace :pose do
 
+  desc "Creates Pose tables."
+  task :install => :environment do
+    Pose::Jobs::Install.new.perform
+  end
+
+  desc "Drops Pose tables."
+  task :uninstall => :environment do
+    Pose::Jobs::Uninstall.new.perform
+  end
+
   desc "Cleans out unused data from the search index."
   task :vacuum => :environment do
     Pose::Jobs::Vacuum.new.perform

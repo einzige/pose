@@ -10,6 +10,8 @@ require 'pose/word'
 require 'pose/jobs/reindex_all'
 require 'pose/jobs/remove'
 require 'pose/jobs/vacuum'
+require 'pose/jobs/install'
+require 'pose/jobs/uninstall'
 
 Dir["tasks/**/*.rake"].each { |ext| load ext } if defined?(Rake)
 
