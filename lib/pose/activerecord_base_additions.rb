@@ -10,6 +10,5 @@ module Pose
       include ModelClassAdditions
       self.pose_content = block
     end
-
   end
 end

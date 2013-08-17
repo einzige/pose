@@ -1,39 +1,8 @@
 # encoding: utf-8
 require "spec_helper"
 
+
 describe Pose::Helpers do
-
-  describe :get_words_to_add do
-    let(:one) { Pose::Word.new(text: 'one') }
-    let(:two) { Pose::Word.new(text: 'two') }
-
-    context 'having a new word to be added' do
-      it 'returns an array with strings that need to be added' do
-        expect(Pose::Helpers.get_words_to_add([one, two], %w{one three})).to eql(['three'])
-      end
-    end
-
-    context 'nothing to add' do
-      it 'returns an empty array' do
-        expect(Pose::Helpers.get_words_to_add([one, two], %w{one two})).to be_empty
-      end
-    end
-  end
-
-
-  describe :get_words_to_remove do
-    let(:one) { Pose::Word.new(text: 'one') }
-    let(:two) { Pose::Word.new(text: 'two') }
-
-    it "returns an array of word objects that need to be removed" do
-      expect(Pose::Helpers.get_words_to_remove([one, two], %w{one three})).to eql([two])
-    end
-
-    it 'returns an empty array if there are no words to be removed' do
-      expect(Pose::Helpers.get_words_to_remove([one, two], %w{one two})).to be_empty
-    end
-  end
-
 
   describe :is_sql_database? do
 
