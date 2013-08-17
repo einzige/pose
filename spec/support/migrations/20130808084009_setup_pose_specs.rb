@@ -1,5 +1,4 @@
-class PoseInstall < ActiveRecord::Migration
-
+class SetupPoseSpecs < ActiveRecord::Migration
   def change
     create_table "pose_assignments" do |t|
       t.integer "word_id",                 null: false

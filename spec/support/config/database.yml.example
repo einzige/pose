@@ -1,0 +1,7 @@
+default:
+  adapter: postgresql
+  encoding: utf8
+  database: pose
+  username: pose
+  password: pose
+  min_messages: WARNING

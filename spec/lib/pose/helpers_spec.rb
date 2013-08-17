@@ -1,6 +1,7 @@
 # encoding: utf-8
 require "spec_helper"
 
+
 describe Pose::Helpers do
 
   describe :get_words_to_add do
