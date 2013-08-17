@@ -10,9 +10,11 @@ class SpecManager
     @env = env.to_s
   end
 
-  # @param [RSpecConfig] config
+  # @param [Rspec::Config] config
   # @param [String, Symbol] env
   def self.manage(config, env)
+    env ||= 'default'
+
     config.order = "random"
 
     config.include FactoryGirl::Syntax::Methods
@@ -36,12 +38,14 @@ class SpecManager
     end
   end
 
+  # @return [String]
   def db_adapter
     database_config['adapter']
   end
 
   def init!
     database_config or raise 'Wrong database configuration, please specify spec/support/config/database.yml'
+    puts "Running specs with #{db_adapter}."
     create_database
     establish_db_connection
     migrate_database

@@ -12,6 +12,5 @@ Dir["#{File.dirname __FILE__}/factories/**/*.rb"].each {|f| require f}
 Dir["#{File.dirname __FILE__}/support/**/*.rb"].each {|f| require f}
 
 RSpec.configure do |config|
-  #SpecManager.manage(config, :postgres)
-  SpecManager.manage(config, :sqlite)
+  SpecManager.manage(config, ENV['pose_env'])
 end

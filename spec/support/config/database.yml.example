@@ -1,4 +1,10 @@
 default: &default
+  adapter: sqlite3
+  database: spec/db/pose.sqlite3
+  pool: 5
+  timeout: 5000
+
+postgres:
   adapter: postgresql
   encoding: utf8
   database: pose
@@ -6,11 +12,5 @@ default: &default
   password: pose
   min_messages: WARNING
 
-postgres:
-  <<: *default
-
 sqlite:
-  adapter: sqlite3
-  database: spec/db/pose.sqlite3
-  pool: 5
-  timeout: 5000
+  <<: *default
