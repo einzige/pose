@@ -20,8 +20,8 @@ module Pose
       else
         # Unknown database --> use metawhere.
         Word.select(:id).includes(:assignments).find_each(batch_size: 100) do |word|
-          word.delete if word.assignments.size == 0
-          progress_bar.increment if progress_bar
+          word.delete if word.assignments.size.zero?
+          progress_bar.try(:increment)
         end
       end
     end
