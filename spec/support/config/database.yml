@@ -1,0 +1,14 @@
+default: &default
+  adapter: sqlite3
+  database: ":memory:"
+  timeout: 500
+
+postgres:
+  adapter: postgresql
+  encoding: utf8
+  database: pose
+  username: postgres
+  min_messages: WARNING
+
+sqlite:
+  <<: *default

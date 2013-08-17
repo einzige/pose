@@ -7,3 +7,4 @@ rvm:
 
 before_script:
   - bundle install
+  - psql -c 'create database pose;' -U postgres
