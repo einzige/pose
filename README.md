@@ -1,10 +1,10 @@
 # POlymorphic SEarch <a href="http://travis-ci.org/#!/kevgo/pose" target="_blank"><img src="https://secure.travis-ci.org/kevgo/pose.png" alt="Build status"></a> [![Code Climate](https://codeclimate.com/github/kevgo/pose.png)](https://codeclimate.com/github/kevgo/pose) [![Coverage Status](https://coveralls.io/repos/kevgo/pose/badge.png?branch=master)](https://coveralls.io/r/kevgo/pose) [![Dependency Status](https://gemnasium.com/kevgo/pose.png)](https://gemnasium.com/kevgo/pose)
 
-A database agnostic fulltext search engine for ActiveRecord objects in Ruby on Rails.
+A database agnostic fulltext search engine for ActiveRecord objects. See also [Pose Rails Adapter](http://github.com/einzige/pose-rails).
 
 * Searches over several classes at once.
 * The searchable content of each class and document can be freely customized.
-* Uses the main Rails database - no separate servers, databases, or search engines required.
+* Uses application database - no separate servers, databases, or search engines required.
 * Does not pollute the searchable classes nor their database tables.
 * Very fast search, doing only simple queries over fully indexed columns.
 * Allows to augment the fulltext search query with your own joins and where clauses.
@@ -25,8 +25,7 @@ gem 'pose'
 ### Create the database tables for pose.
 
 ```bash
-$ rails generate pose:install
-$ rake db:migrate
+$ rake pose:install
 ```
 
 Pose creates two tables in your database. These tables are automatically populated and kept up to date.
@@ -241,22 +240,15 @@ Or, clone the repository, make your changes, and submit a unit-tested pull reque
 
 ### Run the unit tests for the Pose Gem
 
-Pose uses Sqlite3 for tests.
-To run tests, first create a test database.
-
-```bash
-bundle
-rake app:db:create
-rake app:db:migrate
-rake app:db:test:prepare
-```
+Pose uses Sqlite3 and Postgesql by default.
+To run tests, please create database configuration file `spec/support/config/database.yml`, please refer to the template:
+[spec/support/config/database.yml.example](spec/support/config/database.yml.example)
 
 Then run the tests.
 
 ```bash
-rake
+bundle exec rake test
 ```
-
 
 ### Road Map
 
