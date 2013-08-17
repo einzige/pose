@@ -1,5 +1,4 @@
 require 'active_record'
-require "pose/engine" if defined? Rails
 require 'pose/query'
 require 'pose/search'
 require 'pose/static_api'
