@@ -18,4 +18,5 @@ RSpec::Core::RakeTask.new :spec_postgres do
   ENV['POSE_ENV'] = 'postgres'
 end
 
-task :default => [:spec_sqlite, :spec_postgres]
+task :test => [:spec_sqlite, :spec_postgres]
+task :default => :test
