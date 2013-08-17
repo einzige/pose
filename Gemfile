@@ -6,6 +6,7 @@ source "http://rubygems.org"
 gemspec
 gem 'activerecord'
 gem 'activesupport'
+gem 'ruby-progressbar'
 
 group :development do
   gem 'coveralls', require: false
