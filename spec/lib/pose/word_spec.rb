@@ -2,27 +2,33 @@ require 'spec_helper'
 
 module Pose
   describe Word do
+
     describe "::factory" do
-      let(:words) { ['1'] }
 
-      subject { described_class.factory(words) }
-
-      context "new word passed" do
-        it 'creates words' do
-          subject.should have(1).word
-          subject.first.text.should == '1'
+      context 'given a non-existing word' do
+        it 'creates the word in the database' do
+          expect(Word).to have(0).instances
+          Word.factory ['one']
+          expect(Word.pluck :text).to eql %w[ one ]
         end
       end
 
-      context "existing word" do
+      context 'existing word' do
         before do
-          Word.create(text: '1')
+          Word.create text: 'one'
+          @words = Word.factory ['one']
         end
 
-        it { expect { subject }.not_to change { Word.count } }
-        it { should == [Word.first] }
+        it 'returns the word' do
+          expect(@words.map &:text).to eql %w[one]
+        end
+
+        it 'does not create a new Word in the database' do
+          expect(Word).to have(1).instance
+        end
       end
     end
+
 
     describe 'class methods' do
 
