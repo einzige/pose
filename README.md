@@ -44,11 +44,32 @@ Pose creates two tables in your database. These tables are automatically populat
 
 ### Make your ActiveRecord models searchable
 
+Each model defines the searchable content through the `posify` method.
+Valid parameters are
+* names of __fields__
+* names of __methods__
+* a __block__
+
+The value/result of each parameter is added to the search index for this instance.
+Here are a few examples:
+
+```ruby
+class User < ActiveRecord::Base
+  # first_name and last_name are attributes
+
+  # This line makes the class searchable.
+  posify :first_name, :last_name, :address
+
+  def address
+    "#{street} #{city} #{state}"
+  end
+end
+```
+
 ```ruby
 class MyClass < ActiveRecord::Base
 
-  # This line makes your class searchable.
-  # The given block must return the searchable content as a string.
+  # This line makes the class searchable.
   posify do
 
     # Only active instances should show up in search results.
@@ -62,6 +83,7 @@ class MyClass < ActiveRecord::Base
 end
 ```
 
+You can mix and match all parameter types for `posify` at will.
 Note that you can return whatever content you want in the `posify` block,
 not only data from this object, but also data from related objects, class names, etc.
 
