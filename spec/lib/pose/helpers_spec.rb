@@ -23,6 +23,14 @@ describe Pose::Helpers do
       expect(Pose::Helpers.is_url? 'http://web.com').to be_true
     end
 
+    it 'returns TRUE if the given string is localhost' do
+      expect(Pose::Helpers.is_url? 'http://localhost').to be_true
+    end
+
+    it 'returns TRUE if the given string has a port' do
+      expect(Pose::Helpers.is_url? 'http://localhost:3000').to be_true
+    end
+
     it 'returns TRUE if the given string is a HTTPS URL' do
       expect(Pose::Helpers.is_url? 'https://web.com').to be_true
     end
