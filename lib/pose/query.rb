@@ -51,6 +51,20 @@ module Pose
     end
 
 
+    # Returns whether the given string is a URL.
+    #
+    # @param [String] word The string to check.
+    #
+    # @return [Boolean]
+    def self.is_url? word
+
+      # Handle localhost separately.
+      return true if /^http:\/\/localhost(:\d+)?/ =~ word
+
+      /^https?:\/\/([\w\.])+\.([\w\.])+/ =~ word
+    end
+
+
     # Returns the custom JOIN expressions of this query.
     def joins
       @joins ||= [@options[:joins]].flatten.compact
@@ -70,7 +84,34 @@ module Pose
 
 
     def self.query_words query_string
-      query_string.split(' ').map{|query_word| Helpers.root_word query_word}.flatten.uniq
+      query_string.split(' ').map{|query_word| Query.root_word query_word}.flatten.uniq
+    end
+
+
+    # Simplifies the given word to a generic search form.
+    #
+    # @param [String] raw_word The word to make searchable.
+    #
+    # @return [String] The stemmed version of the word.
+    def self.root_word raw_word
+      result = []
+      raw_word_copy = raw_word[0..-1]
+      raw_word_copy.gsub! '%20', ' '
+      raw_word_copy.gsub! /[()*<>'",;\?\-\=&%#]/, ' '
+      raw_word_copy.gsub! /\s+/, ' '
+      raw_word_copy.split(' ').each do |word|
+        if Query.is_url?(word)
+          result.concat word.split(/[\.\/\:]/).delete_if(&:blank?)
+        else
+          word.gsub! /[\-\/\._:]/, ' '
+          word.gsub! /\s+/, ' '
+          word.split(' ').each do |w|
+            stemmed_word =  w.parameterize.singularize
+            result.concat stemmed_word.split ' '
+          end
+        end
+      end
+      result.uniq
     end
 
 
