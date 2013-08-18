@@ -29,7 +29,7 @@ module Pose
 
     # @return [Array<String>]
     def pose_fresh_words
-      @pose_fresh_words ||= Query.new([], pose_fetch_content).query_words
+      Query.query_words pose_fetch_content
     end
 
     # @return [Array<String>]
