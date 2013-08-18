@@ -56,8 +56,8 @@ module Pose
     # Updates the search words with the text returned by search_strings.
     def update_pose_words
       @pose_fresh_words = nil
-      self.pose_words << Word.factory(pose_words_to_add)
       self.pose_words.delete(Word.factory(pose_stale_words))
+      self.pose_words << Word.factory(pose_words_to_add)
     end
   end
 end
