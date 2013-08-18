@@ -18,20 +18,4 @@ describe Pose::Helpers do
   end
 
 
-  describe :make_array do
-
-    it 'converts a single value into an array' do
-      expect(Pose::Helpers.make_array(1)).to eq [1]
-    end
-
-    it 'leaves arrays as arrays' do
-      expect(Pose::Helpers.make_array([1])).to eq [1]
-    end
-
-    it 'flattens nested arrays' do
-      Pose::Helpers.make_array([1, [2], [[3]]]).should eq [1, 2, 3]
-    end
-  end
-
-
 end

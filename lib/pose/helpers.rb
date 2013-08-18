@@ -9,13 +9,6 @@ module Pose
          'ActiveRecord::ConnectionAdapters::SQLite3Adapter'].include? ActiveRecord::Base.connection.class.name
       end
 
-
-      # Makes the given input an array.
-      def make_array input
-        [input].flatten
-      end
-
-
     end
   end
 end
