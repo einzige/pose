@@ -15,8 +15,8 @@ describe Pose::Jobs::ReindexAll do
   end
 
   describe "#perform" do
-    let(:posable_one_1) { FactoryGirl.create(:posable_one, text: '1') }
-    let(:posable_one_2) { FactoryGirl.create(:posable_one, text: '1 2') }
+    let(:posable_one_1) { create(:posable_one, text: '1') }
+    let(:posable_one_2) { create(:posable_one, text: '1 2') }
 
     context "records were updated without running callbacks" do
       before do

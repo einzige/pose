@@ -143,9 +143,9 @@ module Pose
       describe "'limit' parameter" do
 
         before :each do
-          @pos1 = FactoryGirl.create :posable_one, text: 'foo', private: true
-          @pos2 = FactoryGirl.create :posable_one, text: 'foo', private: true
-          @pos3 = FactoryGirl.create :posable_one, text: 'foo', private: false
+          @pos1 = create :posable_one, text: 'foo', private: true
+          @pos2 = create :posable_one, text: 'foo', private: true
+          @pos3 = create :posable_one, text: 'foo', private: false
         end
 
         context 'with ids and no scope' do
@@ -193,7 +193,7 @@ module Pose
       describe "'result_type' parameter" do
 
         before :each do
-          @foo_one = FactoryGirl.create :posable_one, text: 'foo one'
+          @foo_one = create :posable_one, text: 'foo one'
         end
 
         describe 'default behavior' do
@@ -215,9 +215,9 @@ module Pose
       describe "'where' parameter" do
 
         before :each do
-          @one = FactoryGirl.create :posable_one, text: 'foo one', private: true
-          @bar = FactoryGirl.create :posable_one, text: 'bar one', private: true
-          @two = FactoryGirl.create :posable_one, text: 'foo two', private: false
+          @one = create :posable_one, text: 'foo one', private: true
+          @bar = create :posable_one, text: 'bar one', private: true
+          @two = create :posable_one, text: 'foo two', private: false
         end
 
         context 'with result type :classes' do
@@ -241,7 +241,7 @@ module Pose
           end
 
           it 'allows to combine several conditions' do
-            three = FactoryGirl.create :posable_one, text: 'foo two', private: true
+            three = create :posable_one, text: 'foo two', private: true
             result = Pose.search 'foo',
                                  PosableOne,
                                  joins: PosableOne,
@@ -269,10 +269,10 @@ module Pose
       describe ':joins parameter' do
 
         before :each do
-          @user_1 = FactoryGirl.create :user, name: 'Jeff'
-          @user_2 = FactoryGirl.create :user, name: 'Jim'
-          @one = FactoryGirl.create :posable_one, text: 'snippet one', user: @user_1
-          @two = FactoryGirl.create :posable_one, text: 'snippet two', user: @user_2
+          @user_1 = create :user, name: 'Jeff'
+          @user_2 = create :user, name: 'Jim'
+          @one = create :posable_one, text: 'snippet one', user: @user_1
+          @two = create :posable_one, text: 'snippet two', user: @user_2
         end
 
         it 'allows to use joined tables for queries' do
