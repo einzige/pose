@@ -9,10 +9,18 @@ A database agnostic fulltext search engine for ActiveRecord objects. See also [P
 * Very fast search, doing only simple queries over fully indexed columns.
 * Allows to augment the fulltext search query with your own joins and where clauses.
 
-Version 3.x is for Rails 4 compatibilty. For Rails 3.x, please use versions 2.x.
-
 
 ## Installation
+
+### Versions
+
+* __2.x__ for _Rails 3.x_ compatibilty
+* __3.x__ for _Rails 4_ compatibilty
+* __4.x__ introduces a new setup. The _pose_ gem is now a generic Ruby gem that works
+    with any Ruby web server that uses ActiveRecord, like [Sinatra](http://www.sinatrarb.com),
+    [Padrino](http://www.padrinorb.com), or [Rails](http://rubyonrails.org).
+    The [pose_rails]() makes _pose_ available with more Rails-specific support.
+
 
 ### Set up the gem.
 
