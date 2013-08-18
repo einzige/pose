@@ -2,6 +2,8 @@ require 'ruby-progressbar'
 
 module Pose
   module Jobs
+
+    # Cleans up unused data in the search index.
     class Vacuum
       def perform
         puts "Cleaning Pose search index...\n\n"

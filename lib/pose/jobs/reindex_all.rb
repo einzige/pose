@@ -2,6 +2,8 @@ require 'ruby-progressbar'
 
 module Pose
   module Jobs
+
+    # Recreates the Pose search index for the given class from scratch.
     class ReindexAll
       attr_reader :klass
 

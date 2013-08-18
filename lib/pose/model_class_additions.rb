@@ -13,11 +13,15 @@ module Pose
       cattr_accessor :pose_content
     end
 
+    # Returns all words in the search index for this instance.
     # @return [Array<String>]
     def pose_current_words
       pose_words.map(&:text)
     end
 
+    # Returns the searchable text snippet for this instance.
+    # This data is not stored in the search engine.
+    # It is recomputes this from data in the database here.
     # @return [String]
     def pose_fetch_content
       instance_eval(&(pose_content)).to_s

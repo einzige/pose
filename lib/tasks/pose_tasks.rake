@@ -1,11 +1,11 @@
 namespace :pose do
 
-  desc "Creates Pose tables."
+  desc "Creates the Pose tables in the database."
   task :install => :environment do
     Pose::Jobs::Install.new.perform
   end
 
-  desc "Drops Pose tables."
+  desc "Removes the Pose tables from the database."
   task :uninstall => :environment do
     Pose::Jobs::Uninstall.new.perform
   end
@@ -20,7 +20,7 @@ namespace :pose do
     Pose::Jobs::Remove.new(args.class_name).perform
   end
 
-  desc "Deletes and recreates the search index for all instances of the given class."
+  desc "Recreates the search index for all instances of the given class from scratch."
   task :reindex_all, [:class_name] => [:environment] do |_, args|
     Pose::Jobs::ReindexAll.new(args.class_name).perform
   end

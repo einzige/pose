@@ -2,6 +2,8 @@ require 'ruby-progressbar'
 
 module Pose
   module Jobs
+
+    # Removes the Pose search index for the given class.
     class Remove
       attr_reader :klass
 

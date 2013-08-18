@@ -17,6 +17,7 @@ module Pose
       end
     end
 
+    # Creates the Pose tables in the database.
     class Install
       def perform
         InitialMigration.new.change
