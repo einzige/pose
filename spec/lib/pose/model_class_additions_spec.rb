@@ -74,6 +74,7 @@ describe Pose::ModelClassAdditions do
     context 'after a content change in the instance' do
       it 'returns only the current words' do
         subject.text = 'two three'
+        subject.clear_fresh_word_cache
         expect(subject.pose_fresh_words).to match_array %w[two three]
       end
     end
@@ -91,6 +92,7 @@ describe Pose::ModelClassAdditions do
     context 'object with unsaved changes' do
       it 'returns the words that have to be removed from the search index' do
         subject.text = 'two three'
+        subject.clear_fresh_word_cache
         expect(subject.pose_stale_words).to match_array %w[one]
       end
     end
@@ -108,6 +110,7 @@ describe Pose::ModelClassAdditions do
     context 'object with unsaved changes' do
       it 'returns the words that are missing in the search index for this instance' do
         subject.text = 'two three'
+        subject.clear_fresh_word_cache
         expect(subject.pose_words_to_add).to match_array %w[three]
       end
     end

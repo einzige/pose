@@ -6,7 +6,7 @@ module Pose
     has_many :assignments, class_name: 'Pose::Assignment', dependent: :destroy
 
 
-    # Returns the Pose::Word instances with the given text.
+    # Returns the Pose::Word instances with the given texts.
     # @param [Array<String>]
     def self.factory texts
       texts.map {|text| Word.find_or_create_by text: text}

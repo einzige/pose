@@ -15,11 +15,12 @@ A database agnostic fulltext search engine for ActiveRecord objects. See also [P
 ### Versions
 
 * __2.x__ for _Rails 3.x_ compatibilty
-* __3.x__ for _Rails 4_ compatibilty
-* __4.x__ introduces a new setup. The _pose_ gem is now a generic Ruby gem that works
+* __3.0__ for _Rails 4_ compatibilty
+* __3.1__ introduces a new setup. The _pose_ gem is now a generic Ruby gem that works
     with any Ruby web server that uses ActiveRecord, like [Sinatra](http://www.sinatrarb.com),
     [Padrino](http://www.padrinorb.com), or [Rails](http://rubyonrails.org).
-    The [pose_rails]() makes _pose_ available with more Rails-specific support.
+    Generators for installation and uninstallation are extracted into the
+    [pose_rails](https://github.com/po-se/pose-rails) gem.
 
 
 ### Set up the gem.
