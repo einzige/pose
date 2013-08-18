@@ -26,12 +26,6 @@ module Pose
       end
 
 
-      # Makes the given input an array.
-      def make_array input
-        [input].flatten
-      end
-
-
       # Simplifies the given word to a generic search form.
       #
       # @param [String] raw_word The word to make searchable.
