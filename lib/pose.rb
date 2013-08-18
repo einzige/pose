@@ -13,6 +13,6 @@ require 'pose/jobs/vacuum'
 require 'pose/jobs/install'
 require 'pose/jobs/uninstall'
 
-Dir[File.join(File.dirname(__FILE__), "tasks/**/*.rake")].each { |ext| load ext } if defined?(Rake)
+Dir[File.join(File.dirname(__FILE__), "tasks/**/*.rake")].each { |ext| load ext } if defined? Rake
 
 ActiveRecord::Base.send :extend, Pose::ActiveRecordBaseAdditions

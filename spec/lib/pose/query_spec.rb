@@ -2,10 +2,9 @@
 require "spec_helper"
 
 module Pose
-
   describe Query do
+    let(:subject) { Query.new [PosableOne, [PosableTwo]], 'query string' }
 
-    let(:subject) { Pose::Query.new [PosableOne, [PosableTwo]], 'query string' }
 
     describe :initialize do
 
@@ -14,15 +13,17 @@ module Pose
       end
     end
 
+
     describe :class_names do
 
       it 'returns the names of the given classes' do
-        expect(subject.class_names).to eql ['PosableOne', 'PosableTwo']
+        expect(subject.class_names).to eql %w[PosableOne PosableTwo]
       end
     end
 
 
     describe :has_joins? do
+
       it 'returns TRUE if the query has joins' do
         query = Query.new [], '', joins: :user
         expect(query).to have_joins
@@ -34,6 +35,7 @@ module Pose
       end
     end
 
+
     describe :joins do
 
       it 'returns the given joins' do
@@ -41,7 +43,7 @@ module Pose
         expect(query.joins).to eql [:foo, :bar]
       end
 
-      it 'returns the given join as an array' do
+      it 'returns a single given join as an array' do
         query = Query.new [], '', joins: :foo
         expect(query.joins).to eql [:foo]
       end
@@ -52,24 +54,26 @@ module Pose
       end
     end
 
+
     describe :query_words do
 
       it 'returns all individual words resulting from the given query' do
-        expect(Pose::Query.new([], 'foo bar').query_words).to eq ['foo', 'bar']
+        expect(Query.new([], 'foo bar').query_words).to eq ['foo', 'bar']
       end
 
       it 'converts the individual words into their root form' do
-        expect(Pose::Query.new([], 'bars').query_words).to eq ['bar']
+        expect(Query.new([], 'bars').query_words).to eq ['bar']
       end
 
       it 'splits complex words into separate terms' do
-        expect(Pose::Query.new([], 'one-two').query_words).to eq ['one', 'two']
+        expect(Query.new([], 'one-two').query_words).to eq ['one', 'two']
       end
 
       it 'removes duplicates' do
-        expect(Pose::Query.new([], 'foo-bar foo').query_words).to eq ['foo', 'bar']
+        expect(Query.new([], 'foo-bar foo').query_words).to eq ['foo', 'bar']
       end
     end
+
 
     describe :where do
 

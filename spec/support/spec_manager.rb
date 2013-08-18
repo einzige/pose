@@ -71,6 +71,7 @@ class SpecManager
     @database_config ||= YAML.load_file('spec/support/config/database.yml')[env]
   end
 
+
   private
 
   def apply_cleaner_strategy
@@ -86,17 +87,17 @@ class SpecManager
   end
 
   # @param [Integer, nil] version
-  def migrate_database(version = nil)
+  def migrate_database version = nil
     ActiveRecord::Migrator.migrate "spec/support/migrations", version.try(:to_i)
   end
 
   def establish_service_connection
     case db_adapter
-    when 'postgresql'
-      ActiveRecord::Base.establish_connection(database_config.merge('database' => 'postgres',
-                                                                    'schema_search_path' => 'public'))
-    when 'sqlite3'
-      ActiveRecord::Base.establish_connection(database_config)
+      when 'postgresql'
+        ActiveRecord::Base.establish_connection(database_config.merge('database' => 'postgres',
+                                                                      'schema_search_path' => 'public'))
+      when 'sqlite3'
+        ActiveRecord::Base.establish_connection(database_config)
     end
   end
 end

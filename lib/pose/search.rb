@@ -108,13 +108,13 @@ module Pose
     # Finds all matching ids for a single word of the search query.
     def search_word word
       empty_result.tap do |result|
-        data = Pose::Assignment.joins(:word) \
-                               .select('pose_assignments.posable_id, pose_assignments.posable_type') \
-                               .where('pose_words.text LIKE ?', "#{word}%") \
-                               .where('pose_assignments.posable_type IN (?)', @query.class_names)
+        data = Assignment.joins(:word) \
+                         .select('pose_assignments.posable_id, pose_assignments.posable_type') \
+                         .where('pose_words.text LIKE ?', "#{word}%") \
+                         .where('pose_assignments.posable_type IN (?)', @query.class_names)
         data = add_joins data
         data = add_wheres data
-        Pose::Assignment.connection.select_all(data.to_sql).each do |pose_assignment|
+        Assignment.connection.select_all(data.to_sql).each do |pose_assignment|
           result[pose_assignment['posable_type']] << pose_assignment['posable_id'].to_i
         end
       end

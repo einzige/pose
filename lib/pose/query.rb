@@ -1,4 +1,5 @@
 module Pose
+
   # Represents a search query.
   #
   # Provides convenient access to all elements of the search query:
@@ -27,19 +28,19 @@ module Pose
 
     # Returns whether this query contains custom JOIN expressions.
     def has_joins?
-      !@options[:joins].blank?
+      @options[:joins].present?
     end
 
 
     # Returns whether the query defines a limit on the number of results.
     def has_limit?
-      !@options[:limit].blank?
+      @options[:limit].present?
     end
 
 
     # Returns whether this query contains WHERE clauses.
     def has_where?
-      !@options[:where].blank?
+      @options[:where].present?
     end
 
 
@@ -76,9 +77,7 @@ module Pose
     # Returns the WHERE clause of this query.
     def where
       return [] unless has_where?
-      if @options[:where].size == 2 and @options[:where][0].class == String
-        return [ @options[:where] ]
-      end
+      return [ @options[:where] ] if @options[:where].size == 2 and @options[:where][0].class == String
       @options[:where]
     end
   end

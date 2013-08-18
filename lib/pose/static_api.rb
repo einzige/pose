@@ -38,8 +38,7 @@ module Pose
     #
     # @return [Hash<Class, ActiveRecord::Relation>]
     def search query_string, classes, options = {}
-      search = Pose::Search.new classes, query_string, options
-      search.results
+      Search.new(classes, query_string, options).results
     end
   end
 end

@@ -3,7 +3,6 @@ if ENV['COVERALLS_CONFIG'] != 'nocoveralls'
   Coveralls.wear!
 end
 
-# This file is copied to spec/ when you run 'rails generate rspec:install'
 require 'factory_girl'
 require 'faker'
 require 'pose'

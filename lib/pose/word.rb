@@ -5,10 +5,13 @@ module Pose
 
     has_many :assignments, class_name: 'Pose::Assignment', dependent: :destroy
 
+
+    # Returns the Pose::Word instances with the given text.
     # @param [Array<String>]
-    def self.factory(words)
-      words.map { |word| Word.find_or_create_by(text: word) }
+    def self.factory texts
+      texts.map {|text| Word.find_or_create_by text: text}
     end
+
 
     def self.remove_unused_words progress_bar = nil
       if Helpers.is_sql_database?
