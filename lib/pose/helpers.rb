@@ -16,7 +16,11 @@ module Pose
       #
       # @return [Boolean]
       def is_url? word
-        /https?:\/\/(\w)+\.(\w+)/ =~ word
+
+        # Handle localhost separately.
+        return true if /^http:\/\/localhost(:\d+)?/ =~ word
+
+        /^https?:\/\/([\w\.])+\.([\w\.])+/ =~ word
       end
 
 

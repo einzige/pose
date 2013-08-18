@@ -17,10 +17,23 @@ describe Pose::Helpers do
     end
   end
 
+
   describe 'is_url?' do
 
     it 'returns TRUE if the given string is a URL' do
       expect(Pose::Helpers.is_url? 'http://web.com').to be_true
+    end
+
+    it 'returns TRUE if the given string is localhost' do
+      expect(Pose::Helpers.is_url? 'http://localhost').to be_true
+    end
+
+    it 'returns TRUE if localhost has a port' do
+      expect(Pose::Helpers.is_url? 'http://localhost:3000').to be_true
+    end
+
+    it 'returns TRUE if the given url has a port' do
+      expect(Pose::Helpers.is_url? 'http://web.com:8080').to be_true
     end
 
     it 'returns TRUE if the given string is a HTTPS URL' do
@@ -35,6 +48,7 @@ describe Pose::Helpers do
       expect(Pose::Helpers.is_url? 'http://web').to be_false
     end
   end
+
 
   describe :make_array do
 
@@ -112,5 +126,4 @@ describe Pose::Helpers do
         "book", "id", "p7uywpcvgzsc", "dq", "closure", "definitive", "guide", "pg", "pp1", "v", "onepage", "q", "f", "false"])
     end
   end
-
 end
