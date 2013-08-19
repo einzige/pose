@@ -1,3 +1,3 @@
 module Pose
-  VERSION = "4.0.0"
+  VERSION = "3.1.0"
 end
