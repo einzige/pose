@@ -74,8 +74,32 @@ describe Pose::ModelClassAdditions do
     context 'after a content change in the instance' do
       it 'returns only the current words' do
         subject.text = 'two three'
-        subject.clear_fresh_word_cache
-        expect(subject.pose_fresh_words).to match_array %w[two three]
+        expect(subject.pose_fresh_words true).to match_array %w[two three]
+      end
+    end
+
+    describe 'reload parameter' do
+      before :each do
+        subject.pose_fresh_words
+        subject.text = 'new text'
+      end
+
+      context 'given nothing' do
+        it 'caches the data' do
+          expect(subject.pose_fresh_words).to match_array %w[one two]
+        end
+      end
+
+      context 'given false' do
+        it 'caches the data' do
+          expect(subject.pose_fresh_words false).to match_array %w[one two]
+        end
+      end
+
+      context 'given true' do
+        it 'always recalculates the data' do
+          expect(subject.pose_fresh_words true).to match_array %w[new text]
+        end
       end
     end
   end
@@ -92,8 +116,7 @@ describe Pose::ModelClassAdditions do
     context 'object with unsaved changes' do
       it 'returns the words that have to be removed from the search index' do
         subject.text = 'two three'
-        subject.clear_fresh_word_cache
-        expect(subject.pose_stale_words).to match_array %w[one]
+        expect(subject.pose_stale_words true).to match_array %w[one]
       end
     end
   end
@@ -110,8 +133,7 @@ describe Pose::ModelClassAdditions do
     context 'object with unsaved changes' do
       it 'returns the words that are missing in the search index for this instance' do
         subject.text = 'two three'
-        subject.clear_fresh_word_cache
-        expect(subject.pose_words_to_add).to match_array %w[three]
+        expect(subject.pose_words_to_add true).to match_array %w[three]
       end
     end
   end

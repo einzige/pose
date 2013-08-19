@@ -77,7 +77,7 @@ module Pose
     # Returns the WHERE clause of this query.
     def where
       return [] unless has_where?
-      return [ @options[:where] ] if @options[:where].size == 2 && @options[:where][0].class == String
+      return [ @options[:where] ] if @options[:where].size == 2 && @options[:where][0].is_a?(String)
       @options[:where]
     end
   end
