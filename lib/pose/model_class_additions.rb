@@ -13,13 +13,6 @@ module Pose
       cattr_accessor :pose_content
     end
 
-    # Resets the cache for fresh words.
-    # This happens automatically with normal usage of Pose.
-    # This method makes testing easier.
-    def clear_fresh_word_cache
-      @pose_fresh_words = nil
-    end
-
     # Returns all words in the search index for this instance.
     # @return [Array<String>]
     def pose_current_words
@@ -35,18 +28,19 @@ module Pose
     end
 
     # @return [Array<String>]
-    def pose_fresh_words
+    def pose_fresh_words reload = false
+      @pose_fresh_words = nil if reload
       @pose_fresh_words ||= Query.query_words pose_fetch_content
     end
 
     # @return [Array<String>]
-    def pose_stale_words
-      pose_current_words - pose_fresh_words
+    def pose_stale_words reload = false
+      pose_current_words - pose_fresh_words(reload)
     end
 
     # @return [Array<String>]
-    def pose_words_to_add
-      pose_fresh_words - pose_current_words
+    def pose_words_to_add reload = false
+      pose_fresh_words(reload) - pose_current_words
     end
 
     # Updates the associated words for this object in the database.
@@ -62,8 +56,7 @@ module Pose
     # Helper method.
     # Updates the search words with the text returned by search_strings.
     def update_pose_words
-      clear_fresh_word_cache
-      self.pose_words.delete(Word.factory(pose_stale_words))
+      self.pose_words.delete(Word.factory(pose_stale_words true))
       self.pose_words << Word.factory(pose_words_to_add)
     end
   end
