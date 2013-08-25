@@ -11,8 +11,8 @@ Bundler::GemHelper.install_tasks
 # RSpec tasks.
 require 'rspec/core/rake_task'
 
-RSpec::Core::RakeTask.new :spec_mysql do
-  ENV['POSE_ENV'] = 'mysql'
+RSpec::Core::RakeTask.new :spec_mysql2 do
+  ENV['POSE_ENV'] = 'mysql2'
 end
 
 RSpec::Core::RakeTask.new :spec_sqlite do
@@ -23,8 +23,8 @@ RSpec::Core::RakeTask.new :spec_postgres do
   ENV['POSE_ENV'] = 'postgres'
 end
 
-RSpec::Core::RakeTask.new :spec_mysql_ci do
-  ENV['POSE_ENV'] = 'mysql_ci'
+RSpec::Core::RakeTask.new :spec_mysql2_ci do
+  ENV['POSE_ENV'] = 'mysql2_ci'
 end
 
 RSpec::Core::RakeTask.new :spec_sqlite_ci do
@@ -36,5 +36,5 @@ RSpec::Core::RakeTask.new :spec_postgres_ci do
 end
 
 task :test_ci => [:spec_sqlite_ci, :spec_postgres_ci, :spec_mysql_ci]
-task :test    => [:spec_sqlite,    :spec_postgres,    :spec_mysql]
+task :test    => [:spec_sqlite,    :spec_postgres,    :spec_mysql2]
 task :default => :test_ci

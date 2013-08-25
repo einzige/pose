@@ -4,7 +4,7 @@ default: &default
   pool: 5
   timeout: 5000
 
-mysql:
+mysql2:
   adapter: mysql2
   encoding: utf8
   database: pose
@@ -19,7 +19,7 @@ postgres:
 sqlite:
   <<: *default
 
-mysql_ci:
+mysql2_ci:
   adapter: mysql2
   encoding: utf8
   database: pose

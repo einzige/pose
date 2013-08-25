@@ -13,6 +13,7 @@ group :development do
   gem 'database_cleaner'
   gem 'factory_girl'
   gem 'mysql2'
+  gem 'mysql'
   gem 'pg'
   gem 'sqlite3'
 end
