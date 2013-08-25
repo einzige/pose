@@ -36,5 +36,5 @@ RSpec::Core::RakeTask.new :spec_postgres_ci do
 end
 
 task :test_ci => [:spec_sqlite_ci, :spec_postgres_ci, :spec_mysql_ci]
-task :test    => [:spec_mysql]
+task :test    => [:spec_sqlite,    :spec_postgres,    :spec_mysql]
 task :default => :test_ci
