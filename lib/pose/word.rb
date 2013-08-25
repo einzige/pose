@@ -13,16 +13,8 @@ module Pose
     end
 
 
-    # Returns whether the currently used database
-    # is a relational one.
-    def self.is_sql_database?
-      ['ActiveRecord::ConnectionAdapters::PostgreSQLAdapter',
-       'ActiveRecord::ConnectionAdapters::SQLite3Adapter'].include? ActiveRecord::Base.connection.class.name
-    end
-
-
     def self.remove_unused_words progress_bar = nil
-      if Word.is_sql_database?
+      if Pose.has_sql_connection?
         # SQL database --> use an optimized query.
         Word.delete_all(id: Word.select("pose_words.id").
                                  joins("LEFT OUTER JOIN pose_assignments ON pose_assignments.word_id = pose_words.id").

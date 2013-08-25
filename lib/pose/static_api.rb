@@ -40,5 +40,13 @@ module Pose
     def search query_string, classes, options = {}
       Search.new(classes, query_string, options).results
     end
+
+
+    # Returns whether the currently used database
+    # is a relational one.
+    def has_sql_connection?
+      ['ActiveRecord::ConnectionAdapters::PostgreSQLAdapter',
+       'ActiveRecord::ConnectionAdapters::SQLite3Adapter'].include? ActiveRecord::Base.connection.class.name
+    end
   end
 end

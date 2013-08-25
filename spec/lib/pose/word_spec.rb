@@ -48,7 +48,8 @@ module Pose
 
       context 'with a SQL database' do
         before :each do
-          Word.should_receive(:is_sql_database?).and_return(true)
+          # TODO: do not mock class method
+          Pose.should_receive(:has_sql_connection?).and_return(true)
         end
 
         it_should_behave_like 'cleans unused words'
@@ -56,24 +57,11 @@ module Pose
 
       context 'without a SQL database' do
         before :each do
-          Word.should_receive(:is_sql_database?).and_return(false)
+          # TODO: do not mock class method
+          Pose.should_receive(:has_sql_connection?).and_return(false)
         end
 
         it_should_behave_like 'cleans unused words'
-      end
-    end
-
-
-    describe :is_sql_database? do
-
-      it 'recognizes postgres databases' do
-        ActiveRecord::Base.connection.class.stub(:name).and_return 'ActiveRecord::ConnectionAdapters::PostgreSQLAdapter'
-        expect(Word.is_sql_database?).to be_true
-      end
-
-      it 'recognizes sqlite3 databases' do
-        ActiveRecord::Base.connection.class.stub(:name).and_return 'ActiveRecord::ConnectionAdapters::SQLite3Adapter'
-        expect(Word.is_sql_database?).to be_true
       end
     end
   end

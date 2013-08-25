@@ -320,5 +320,18 @@ module Pose
         expect(result).to be_empty
       end
     end
+
+    describe "::has_sql_connection?" do
+
+      it 'recognizes postgres databases' do
+        ActiveRecord::Base.connection.class.stub(:name).and_return 'ActiveRecord::ConnectionAdapters::PostgreSQLAdapter'
+        expect(Pose.has_sql_connection?).to be_true
+      end
+
+      it 'recognizes sqlite3 databases' do
+        ActiveRecord::Base.connection.class.stub(:name).and_return 'ActiveRecord::ConnectionAdapters::SQLite3Adapter'
+        expect(Pose.has_sql_connection?).to be_true
+      end
+    end
   end
 end
