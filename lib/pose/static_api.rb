@@ -17,7 +17,7 @@ module Pose
     # @return [Array<String>]
     def autocomplete_words query
       return [] if query.blank?
-      Word.where('text LIKE ?', "#{Helpers.root_word(query)[0]}%").map(&:text)
+      Word.where('text LIKE ?', "#{Query.root_word(query)[0]}%").map(&:text)
     end
 
 

@@ -36,6 +36,38 @@ module Pose
     end
 
 
+    describe 'is_url?' do
+
+      it 'returns TRUE if the given string is a URL' do
+        expect(Query.is_url? 'http://web.com').to be_true
+      end
+
+      it 'returns TRUE if the given string is localhost' do
+        expect(Query.is_url? 'http://localhost').to be_true
+      end
+
+      it 'returns TRUE if localhost has a port' do
+        expect(Query.is_url? 'http://localhost:3000').to be_true
+      end
+
+      it 'returns TRUE if the given url has a port' do
+        expect(Query.is_url? 'http://web.com:8080').to be_true
+      end
+
+      it 'returns TRUE if the given string is a HTTPS URL' do
+        expect(Query.is_url? 'https://web.com').to be_true
+      end
+
+      it 'returns FALSE if the given string is not a URL' do
+        expect(Query.is_url? 'foo').to be_false
+      end
+
+      it 'returns FALSE if the given string is a malformed URL' do
+        expect(Query.is_url? 'http://web').to be_false
+      end
+    end
+
+
     describe :joins do
 
       it 'returns the given joins' do
@@ -71,6 +103,68 @@ module Pose
 
       it 'removes duplicates' do
         expect(Query.new([], 'foo-bar foo').query_words).to eq ['foo', 'bar']
+      end
+    end
+
+
+    describe :root_word do
+
+      it 'converts words into singular' do
+        expect(Query.root_word('bars')).to eql(['bar'])
+      end
+
+      it 'removes special characters' do
+        expect(Query.root_word('(bar')).to eq ['bar']
+        expect(Query.root_word('bar)')).to eq ['bar']
+        expect(Query.root_word('(bar)')).to eq ['bar']
+        expect(Query.root_word('>foo')).to eq ['foo']
+        expect(Query.root_word('<foo')).to eq ['foo']
+        expect(Query.root_word('"foo"')).to eq ['foo']
+        expect(Query.root_word('"foo')).to eq ['foo']
+        expect(Query.root_word("'foo'")).to eq ['foo']
+        expect(Query.root_word("'foo's")).to eq ['foo']
+        expect(Query.root_word("foo?")).to eq ['foo']
+        expect(Query.root_word("foo!")).to eq ['foo']
+        expect(Query.root_word("foo/bar")).to eq ['foo', 'bar']
+        expect(Query.root_word("foo-bar")).to eq ['foo', 'bar']
+        expect(Query.root_word("foo--bar")).to eq ['foo', 'bar']
+        expect(Query.root_word("foo.bar")).to eq ['foo', 'bar']
+      end
+
+      it 'removes umlauts' do
+        expect(Query.root_word('fünf')).to eq ['funf']
+      end
+
+      it 'splits up numbers' do
+        expect(Query.root_word('11.2.2011')).to eq ['11', '2', '2011']
+        expect(Query.root_word('11-2-2011')).to eq ['11', '2', '2011']
+        expect(Query.root_word('30:4-5')).to eq ['30', '4', '5']
+      end
+
+      it 'converts into lowercase' do
+        expect(Query.root_word('London')).to eq ['london']
+      end
+
+      it "stores single-letter words" do
+        expect(Query.root_word('a b')).to eq ['a', 'b']
+      end
+
+      it "does't encode external URLs" do
+        expect(Query.root_word('http://web.com')).to eq ['http', 'web', 'com']
+      end
+
+      it "doesn't store empty words" do
+        expect(Query.root_word('  one two  ')).to eq ['one', 'two']
+      end
+
+      it "removes duplicates" do
+        expect(Query.root_word('one_one')).to eq ['one']
+        expect(Query.root_word('one one')).to eq ['one']
+      end
+
+      it "splits up complex URLs" do
+        expect(Query.root_word('books?id=p7uyWPcVGZsC&dq=closure%20definitive%20guide&pg=PP1#v=onepage&q&f=false')).to eql([
+          "book", "id", "p7uywpcvgzsc", "dq", "closure", "definitive", "guide", "pg", "pp1", "v", "onepage", "q", "f", "false"])
       end
     end
 
