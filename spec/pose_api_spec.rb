@@ -323,6 +323,13 @@ module Pose
 
     describe "::has_sql_connection?" do
 
+      it 'recognizes mysql databases' do
+        ActiveRecord::Base.connection.class.stub(:name).and_return 'ActiveRecord::ConnectionAdapters::Mysql2Adapter'
+        expect(Pose.has_sql_connection?).to be_true
+        ActiveRecord::Base.connection.class.stub(:name).and_return 'ActiveRecord::ConnectionAdapters::MysqlAdapter'
+        expect(Pose.has_sql_connection?).to be_true
+      end
+
       it 'recognizes postgres databases' do
         ActiveRecord::Base.connection.class.stub(:name).and_return 'ActiveRecord::ConnectionAdapters::PostgreSQLAdapter'
         expect(Pose.has_sql_connection?).to be_true

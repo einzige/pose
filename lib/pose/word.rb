@@ -16,10 +16,13 @@ module Pose
     def self.remove_unused_words progress_bar = nil
       if Pose.has_sql_connection?
         # SQL database --> use an optimized query.
-        Word.delete_all(id: Word.select("pose_words.id").
-                                 joins("LEFT OUTER JOIN pose_assignments ON pose_assignments.word_id = pose_words.id").
-                                 group("pose_words.id").
-                                 having("COUNT(pose_assignments.id) = 0"))
+        ids_source = Word.select("pose_words.id").
+                          joins("LEFT OUTER JOIN pose_assignments ON pose_assignments.word_id = pose_words.id").
+                          group("pose_words.id").
+                          having("COUNT(pose_assignments.id) = 0")
+
+        ids = Pose.has_mysql_connection? ? ids_source.pluck(:id) : ids_source
+        Word.delete_all(id: ids)
       else
         # Unknown database --> use metawhere.
         Word.select(:id).includes(:assignments).find_each(batch_size: 100) do |word|

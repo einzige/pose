@@ -4,22 +4,32 @@ default: &default
   pool: 5
   timeout: 5000
 
+mysql:
+  adapter: mysql2
+  encoding: utf8
+  database: pose
+  min_messages: WARNING
+
 postgres:
   adapter: postgresql
   encoding: utf8
   database: pose
-  # username: pose
-  # password: pose
   min_messages: WARNING
 
 sqlite:
   <<: *default
 
+mysql_ci:
+  adapter: mysql2
+  encoding: utf8
+  database: pose
+  username: travis
+  min_messages: WARNING
+
 postgres_ci:
   adapter: postgresql
   encoding: utf8
   database: pose
-  # username: postgres
   min_messages: WARNING
 
 sqlite_ci:

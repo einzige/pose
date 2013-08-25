@@ -42,11 +42,22 @@ module Pose
     end
 
 
-    # Returns whether the currently used database
-    # is a relational one.
+    # Returns whether the currently used database is a relational one.
     def has_sql_connection?
-      ['ActiveRecord::ConnectionAdapters::PostgreSQLAdapter',
-       'ActiveRecord::ConnectionAdapters::SQLite3Adapter'].include? ActiveRecord::Base.connection.class.name
+      has_mysql_connection? || has_postgres_connection? || has_sqlite_connection?
+    end
+
+    def has_mysql_connection?
+      ['ActiveRecord::ConnectionAdapters::MysqlAdapter',
+       'ActiveRecord::ConnectionAdapters::Mysql2Adapter'].include? ActiveRecord::Base.connection.class.name
+    end
+
+    def has_postgres_connection?
+      ActiveRecord::Base.connection.class.name == 'ActiveRecord::ConnectionAdapters::PostgreSQLAdapter'
+    end
+
+    def has_sqlite_connection?
+      ActiveRecord::Base.connection.class.name == 'ActiveRecord::ConnectionAdapters::SQLite3Adapter'
     end
   end
 end

@@ -76,7 +76,7 @@ class SpecManager
 
   def apply_cleaner_strategy
     case db_adapter
-      when 'postgresql'
+      when 'postgresql', 'mysql', 'mysql2'
         DatabaseCleaner.strategy = :transaction
         DatabaseCleaner.clean_with(:truncation)
     end
@@ -93,6 +93,8 @@ class SpecManager
 
   def establish_service_connection
     case db_adapter
+      when 'mysql', 'mysql2'
+        ActiveRecord::Base.establish_connection(database_config.merge('database' => nil))
       when 'postgresql'
         ActiveRecord::Base.establish_connection(database_config.merge('database' => 'postgres',
                                                                       'schema_search_path' => 'public'))

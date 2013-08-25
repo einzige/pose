@@ -12,6 +12,7 @@ group :development do
   gem 'coveralls', require: false
   gem 'database_cleaner'
   gem 'factory_girl'
+  gem 'mysql2'
   gem 'pg'
   gem 'sqlite3'
 end
