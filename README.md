@@ -271,7 +271,7 @@ Or, clone the repository, make your changes, and submit a unit-tested pull reque
 
 ### Run the unit tests for the Pose Gem
 
-Pose uses Sqlite3 and Postgesql by default.
+Pose can work with Sqlite3, Postgesql and MySQL by default.
 To run tests, please create database configuration file `spec/support/config/database.yml`, please refer to the template:
 [spec/support/config/database.yml.example](spec/support/config/database.yml.example)
 
